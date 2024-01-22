@@ -6,7 +6,7 @@
 
 {% block content %}
     <h1>Login page</h1>
-    <form action="">
+    <form action="" method="post">
         {% csrf_token %}
         {{ form|crispy }}
         <button type="submit">Login</button>
