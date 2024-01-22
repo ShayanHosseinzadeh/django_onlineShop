@@ -166,7 +166,6 @@ LOGOUT_REDIRECT_URL ='home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
 # All auth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

@@ -17,6 +17,14 @@
       {% endblock styles %}
   </style>
   <body>
+      {% if user.is_authenticated %}
+          Hello <span class="text-danger">{{ user.username }}</span>
+      <a href="{% url 'account_logout' %}">Logout</a>
+      	{% else %}
+      <a href="{% url 'account_login' %}">Login</a>
+      <a href="{% url 'account_signup' %}">Signup</a>
+      {% endif %}
+      <a href="{% url 'aboutus' %}">about us</a>
 {% block content %}
     
 {% endblock content %}
