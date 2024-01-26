@@ -8,5 +8,5 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 @admin.register(Comment)
-class ProductComment(admin.ModelAdmin):
+class CommentAdmin(admin.ModelAdmin):
     list_display = ('text','user','product','datetime_created','stars','is_verified')

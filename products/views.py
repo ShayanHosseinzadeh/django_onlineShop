@@ -18,7 +18,7 @@ class ProductListView(generic.ListView):
 
 def ProductDetailView(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    comments = product.comments.filter(is_verified=True).order_by('-datetime_created')
+    comments = Comment.verified_comments.order_by('-datetime_created')
     comment_form = CommentForm()
     return render(request, 'products/product_detail.html',
                   {'product': product,
