@@ -2,6 +2,7 @@
 {% block page_title %} {{ product.title }} {% endblock page_title %}
 {% load  static %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 {% block content %}
     <!-- Breadcrumb area Start -->
     <div class="breadcrumb-area bg-color ptb--90" data-bg-color="#f6f6f6">
@@ -9,7 +10,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center flex-sm-row flex-column">
-                        <h1 class="page-title">جزئیات محصول «{{ product.title }}»</h1>
+                        <h1 class="page-title"> {% trans 'Product Detail of' %} {{ product.title }}»</h1>
                     </div>
                 </div>
             </div>
@@ -34,9 +35,7 @@
                                 {{ product.description|truncatewords:30 }}
                             </p>
                             <div class="my-5 py-5 product-price-wrapper mb--25">
-                                <span class="money text-success">{{ product.price }} تومان</span>
-                                {#                                <span class="price-separator">-</span>#}
-                                {#                                <span class="money old-price text-danger">۲۱۰,۰۰۰ تومان</span>#}
+                                <span class="money text-success">{{ product.price }} {% trans '$' %}</span>
                             </div>
                             <div class="product-action d-flex align-items-sm-center align-content-center mb--30">
                                 <div class="quantity-wrapper d-flex justify-content-start">
@@ -47,7 +46,7 @@
                                 </div>
                                 <button type="button" class="btn btn-small btn-bg-red btn-color-white btn-hover-2"
                                         onclick="window.location.href='cart.html'">
-                                    اضافه به سبد خرید
+                                    {% trans 'Add to cart ' %}
                                 </button>
                             </div>
                             <div class="product-footer-meta mt-5 pt-5">
@@ -67,15 +66,15 @@
                             <div class="nav nav-tabs product-data-tab__head" id="product-tab" role="tablist">
                                 <a class="m-0 product-data-tab__link nav-link active" id="nav-description-tab"
                                    data-toggle="tab" href="#nav-description" role="tab" aria-selected="true">
-                                    <span>توضیحات محصول</span>
+                                    <span>{% trans 'Product Description' %}</span>
                                 </a>
                                 <a class="m-0 product-data-tab__link nav-link" id="nav-info-tab" data-toggle="tab"
                                    href="#nav-info" role="tab" aria-selected="true">
-                                    <span>ویژگی ها</span>
+                                    <span>{% trans 'Features' %}</span>
                                 </a>
                                 <a class="m-0 product-data-tab__link nav-link" id="nav-reviews-tab" data-toggle="tab"
                                    href="#nav-reviews" role="tab" aria-selected="true">
-                                    <span>نظرات ({{ comments.count }})</span>
+                                    <span>{% trans 'Comments' %} ({{ comments.count }})</span>
                                 </a>
                             </div>
                             <div class="tab-content product-data-tab__content" id="product-tabContent">
@@ -92,15 +91,15 @@
                                         <table class="table shop_attributes">
                                             <tbody>
                                             <tr>
-                                                <th>وزن</th>
+                                                <th>{% trans 'weight' %}</th>
                                                 <td>۴۳۰ گرم</td>
                                             </tr>
                                             <tr>
-                                                <th>سایز</th>
+                                                <th>{% trans 'size' %}</th>
                                                 <td>XL</td>
                                             </tr>
                                             <tr>
-                                                <th>رنگ</th>
+                                                <th>{% trans 'color' %}</th>
                                                 <td>
                                                     <a href="shop-sidebar.html">مشکی</a>,
                                                     <a href="shop-sidebar.html">سبز</a>,
@@ -115,7 +114,7 @@
                                 <div class="tab-pane fade" id="nav-reviews" role="tabpanel"
                                      aria-labelledby="nav-reviews-tab">
                                     <div class="product-reviews">
-                                        <h3 class="review__title">{{comments.count}} نظر برای لباس تابستانی</h3>
+                                        <h3 class="review__title">{{comments.count}} {% trans 'comments for' %}{{ product.title }}</h3>
                                         <ul class="review__list">
                                             {% for  comment in comments %}
                                                 <li class="review__item">
@@ -150,45 +149,14 @@
                                             <div class="row">
                                                 <div class="border-top py-5 w-100"></div>
                                                 <div class="col-lg-8 m-auto">
-                                                    <span class="reply-title pull-right">نظر خود را بنویسید</span>
+                                                    <span class="reply-title pull-right">{% trans 'Write your comment: ' %}</span>
                                                     <br>
                                                     <form action="" method="post">
                                                         {% csrf_token %}
                                                         {{ comment_form|crispy}}
-                                                        <button class="btn btn-success" type="submit">ارسال </button>
+                                                        <button class="btn btn-success" type="submit">{% trans 'Send' %} </button>
                                                     </form>
-{#                                                    <form action="#" class="form text-right">#}
-{#                                                        <div class="form-notes mb--20">#}
-{#                                                            <p class="my-3"><span class="required">*</span>ایمیل شما#}
-{#                                                                برای دیگران نشان داده نمیشود.</p>#}
-{#                                                        </div>#}
-{#                                                        <div class="form__group mb--10">#}
-{#                                                            <label class="form__label d-block" for="email">متن نظر#}
-{#                                                                شما<span class="required">*</span></label>#}
-{#                                                            <textarea name="review" id="review"#}
-{#                                                                      class="form__input form__input--textarea"></textarea>#}
-{#                                                        </div>#}
-{#                                                        <div class="form__group mb--20">#}
-{#                                                            <label class="form__label d-block" for="name">نام شما<span#}
-{#                                                                    class="required">*</span></label>#}
-{#                                                            <input type="text" name="name" id="name"#}
-{#                                                                   class="form__input">#}
-{#                                                        </div>#}
-{#                                                        <div class="form__group mb--20">#}
-{#                                                            <label class="form__label d-block" for="email">ایمیل#}
-{#                                                                شما<span class="required">*</span></label>#}
-{#                                                            <input type="email" name="email" id="email"#}
-{#                                                                   class="form__input">#}
-{#                                                        </div>#}
-{#                                                        <div class="form__group">#}
-{#                                                            <div class="form-row">#}
-{#                                                                <div class="col-12">#}
-{#                                                                    <input type="submit" value="ارسال"#}
-{#                                                                           class="btn-submit">#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                    </form>#}
+{#
                                                 </div>
                                             </div>
                                         </div>
