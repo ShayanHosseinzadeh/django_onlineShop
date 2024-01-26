@@ -13,7 +13,7 @@ class ProductListView(generic.ListView):
     paginate_by = 4
 
     def get_queryset(self):
-        return Product.objects.filter(status='avl').order_by('-price')
+        return Product.available.order_by('-price')
 
 #
 def ProductDetailView(request, pk):
@@ -28,7 +28,6 @@ def ProductDetailView(request, pk):
             comment.product = product
             comment.user = request.user
             comment.save()
-        else:
             comment_form = CommentForm()
 
     return render(request, 'products/product_detail.html',

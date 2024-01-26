@@ -44,11 +44,13 @@ INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'products.apps.ProductsConfig',
 
-
+# third party
     'allauth',
     'allauth.account',
     'crispy_forms',
     'crispy_bootstrap4',
+    'rosetta',
+
 
 
 ]
@@ -136,7 +138,11 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'fa'
 
 TIME_ZONE = 'Asia/Tehran'
+LANGUAGES = (
+    ('en', 'English'),
+    ('fa','Persian'),
 
+)
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

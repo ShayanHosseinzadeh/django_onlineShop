@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 21:32+0330\n"
+"POT-Creation-Date: 2024-01-26 22:35+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: models.py:44
+msgid "Very Bad"
+msgstr "خیلی بد"
+
+#: models.py:45
+msgid " Bad"
+msgstr "بد"
+
+#: models.py:46
+msgid " Normal"
+msgstr "معمولی"
+
+#: models.py:47
+msgid " Good"
+msgstr "خوب"
+
+#: models.py:48
+msgid "Very Good"
+msgstr "خیلی خوب"
+
+#: models.py:50
+msgid "product"
+msgstr "محصول"
+
+#: models.py:51
+msgid "Comment Author"
+msgstr "نظر دهنده  "
+
+#: models.py:52
+msgid "Text"
+msgstr "متن"
+
+#: models.py:53
+msgid "Verifed?"
+msgstr "تایید شده؟"
+
+#: models.py:54
+msgid "Created at"
+msgstr "زمان ساخته شدن"
+
+#: models.py:55
+msgid "Modified at"
+msgstr "آخرین ویرایش"
+
+#: models.py:56
+msgid "Rate"
+msgstr "امتیاز"
 
 #: templates/products/product_detail.html:13
 msgid "Product Detail of"
