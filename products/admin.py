@@ -1,9 +1,16 @@
 from django.contrib import admin
 from .models import Product,Comment
 # Register your models here.
+
+
+class CommentInline(admin.StackedInline):
+    model = Comment
+    fields = ('text','user','stars','is_verified')
+    extra = 1
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('title','price','quantity','status')
+    inlines = [CommentInline]
 
 
 

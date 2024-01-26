@@ -40,12 +40,12 @@ class Comment(models.Model):
         ('5', 'Very Good'),
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    text = models.TextField(blank=False)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name='comments')
+    text = models.TextField(blank=False,verbose_name='متن نظر')
     is_verified = models.BooleanField(default=False)
     datetime_created = models.DateTimeField(auto_now_add=True)
     datetime_modified = models.DateTimeField(auto_now=True)
-    stars = models.CharField(max_length=10, choices=PRODUCT_STARS)
+    stars = models.CharField(max_length=10, choices=PRODUCT_STARS,verbose_name='امتیاز')
 
     objects = models.Manager()
     verified_comments = VerifiedComments()
