@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from django.shortcuts import get_object_or_404, reverse
+from django.contrib import messages
 
 from .forms import CommentForm
 from .models import Product, Comment
@@ -11,6 +12,9 @@ class ProductListView(generic.ListView):
     template_name = 'products/products_list.html'
     context_object_name = 'products'
     paginate_by = 4
+    # def get(self,request, *args, **kwargs):
+    #     messages.success(self.request, ' Welcome to the page')
+    #     return super().get(request, args, kwargs)
 
     def get_queryset(self):
         return Product.available.order_by('-price')
@@ -20,6 +24,7 @@ def ProductDetailView(request, pk):
     product = get_object_or_404(Product, pk=pk)
     comments = Comment.verified_comments.filter(product=product).order_by('-datetime_created')
     comment_form = CommentForm()
+
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
