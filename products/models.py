@@ -23,6 +23,7 @@ class Product(models.Model):
     price = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=3, choices=STATUS_CHOICES)
     stock_quantity = models.PositiveIntegerField(default=1)
+    image = models.ImageField(verbose_name=_('Product Image'), upload_to='product/product_image', blank=True)
 
     objects = models.Manager()
     available = AvailableProducts()
