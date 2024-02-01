@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -52,23 +53,23 @@
                                 <div class="mainmenu-nav d-none d-lg-block w-100 pr-3">
                                     <ul class="mainmenu d-lg-flex jusity-content-end jusity-content-lg-start pt-4">
                                         <li class="mainmenu__item menu-item-has-children active">
-                                            <a href="index.html" class="mainmenu__link">
-                                                <span class="mm-text">خانه</span>
+                                            <a href="{% url 'product_list' %}" class="mainmenu__link">
+                                                <span class="mm-text">{% trans 'Home' %}</span>
                                             </a>
                                         </li>
                                         <li class="mainmenu__item menu-item-has-children">
                                             <a href="Blog.html" class="mainmenu__link">
-                                                <span class="mm-text">وبلاگ</span>
+                                                <span class="mm-text">{% trans 'Blog' %}</span>
                                             </a>
                                         </li>
                                         <li class="mainmenu__item menu-item-has-children">
                                             <a href="#" class="mainmenu__link">
-                                                <span class="mm-text">صفحات</span>
+                                                <span class="mm-text">{% trans 'Pages' %}</span>
                                             </a>
                                          </li>
                                         <li class="mainmenu__item">
                                             <a href="contact-us.html" class="mainmenu__link">
-                                                <span class="mm-text">تماس با ما</span>
+                                                <span class="mm-text">{% trans 'Contact us' %}</span>
                                             </a>
                                         </li>
                                     </ul>
@@ -124,7 +125,7 @@
             </div>
         </header>
 {% if messages %}
-	<div>
+	<div class="container text-center">
     {% for message in messages %}
     	<div class="alert alert-{{ message.tags }}">{{ message }}</div>
     {% endfor %}

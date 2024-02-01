@@ -22,7 +22,7 @@ class Product(models.Model):
     datetime_modified = models.DateTimeField(auto_now=True)
     price = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=3, choices=STATUS_CHOICES)
-    quantity = models.PositiveIntegerField(default=1)
+    stock_quantity = models.PositiveIntegerField(default=1)
 
     objects = models.Manager()
     available = AvailableProducts()

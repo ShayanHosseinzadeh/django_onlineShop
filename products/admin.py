@@ -9,7 +9,7 @@ class CommentInline(admin.StackedInline):
     extra = 1
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title','price','quantity','status')
+    list_display = ('title','price','stock_quantity','status')
     inlines = [CommentInline]
 
 

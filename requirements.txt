@@ -19,6 +19,7 @@ marshmallow==3.20.2
 oauthlib==3.2.2
 packaging==23.2
 polib==1.2.0
+python-gettext==4.0 
 psycopg2-binary==2.9.3
 pycparser==2.21
 PyJWT==2.8.0

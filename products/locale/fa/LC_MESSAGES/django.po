@@ -8,15 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 22:35+0330\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2024-02-01 15:21+0330\n"
+"PO-Revision-Date: 2024-02-01 15:08+0330\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Translated-Using: django-rosetta 0.10.0\n"
 
 #: models.py:44
 msgid "Very Bad"
@@ -74,42 +75,60 @@ msgstr "جزیات محصول"
 msgid "$"
 msgstr "تومان"
 
-#: templates/products/product_detail.html:49
-msgid "Add to cart "
+#: templates/products/product_detail.html:46
+#, fuzzy
+#| msgid "Add to cart "
+msgid "Add to cart"
 msgstr "اضافه به سبد خرید"
 
-#: templates/products/product_detail.html:69
+#: templates/products/product_detail.html:66
 msgid "Product Description"
 msgstr "توضیحات محصول"
 
-#: templates/products/product_detail.html:73
+#: templates/products/product_detail.html:70
 msgid "Features"
 msgstr "ویژگی ها"
 
-#: templates/products/product_detail.html:77
+#: templates/products/product_detail.html:74
 msgid "Comments"
 msgstr "نظرات"
 
-#: templates/products/product_detail.html:94
+#: templates/products/product_detail.html:91
 msgid "weight"
 msgstr "ورزن"
 
-#: templates/products/product_detail.html:98
+#: templates/products/product_detail.html:95
 msgid "size"
 msgstr "اندازه"
 
-#: templates/products/product_detail.html:102
+#: templates/products/product_detail.html:99
 msgid "color"
 msgstr "رنگ"
 
-#: templates/products/product_detail.html:117
+#: templates/products/product_detail.html:115
 msgid "comments for"
 msgstr "نظرات درباره "
 
-#: templates/products/product_detail.html:152
+#: templates/products/product_detail.html:151
 msgid "Write your comment: "
 msgstr "نظر خود را ارسال کنید"
 
 #: templates/products/product_detail.html:157
 msgid "Send"
 msgstr "ارسال"
+
+#: templates/products/product_detail.html:165
+msgid "You have to "
+msgstr "شما باید "
+
+#: templates/products/product_detail.html:166
+msgid "Login"
+msgstr "لاگین "
+
+#: templates/products/product_detail.html:167
+msgid "to send a comment "
+msgstr " کنید تا نظر خود را ارسال کنید"
+
+#: views.py:39
+msgid "Your comment has been submited and would be shown after verification."
+msgstr "نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد."

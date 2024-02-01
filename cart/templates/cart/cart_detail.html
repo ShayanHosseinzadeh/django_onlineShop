@@ -1,0 +1,133 @@
+{% extends '_base.html' %}
+{% block page_title %} {{ product.title }} {% endblock page_title %}
+{% load  static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% block content %}
+    <!-- Breadcrumb area Start -->
+    <div class="breadcrumb-area bg-color ptb--90" data-bg-color="#f6f6f6">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center flex-sm-row flex-column">
+                        <h1 class="page-title">سبد خرید</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb area End -->
+
+    <!-- Main Content Wrapper Start -->
+    <div class="main-content-wrapper">
+        <div class="page-content-inner ptb--80">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mb-md--50">
+                            <div class="row no-gutters">
+                                <div class="col-12">
+                                {% if cart %}
+                                    <div class="table-content table-responsive">
+                                        <table class="table text-center">
+                                            <thead>
+                                            <tr>
+                                                <th>&nbsp;</th>
+                                                <th>عکس محصول</th>
+                                                <th class="text-left">نام محصول</th>
+                                                <th>قیمت</th>
+                                                <th>مقدار</th>
+                                                <th>مجموع</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for item in cart %}
+                                            <tr>
+                                                <td class="product-remove text-left"><a href="{% url 'cart_remove' item.product_obj.id %}"><i
+                                                        class="flaticon flaticon-cross"></i></a></td>
+                                                <td class="product-thumbnail text-left">
+                                                    <img src="assets/img/products/prod-10-70x88.jpg"
+                                                         alt="Product Thumnail">
+                                                </td>
+                                                <td class="product-name">
+                                                    <h3>
+                                                        <a href="product-details.html">{{ item.product_obj.title }}</a>
+                                                    </h3>
+                                                </td>
+                                                <td class="product-price">
+                                                            <span class="product-price-wrapper">
+                                                                <span class="money">{{item.product_obj.price}}</span>
+                                                            </span>
+                                                </td>
+                                                <td class="product-quantity">
+                                                    <form class="d-flex" action="{% url 'cart_add' item.product_obj.id %}" method="post">
+                                                        {% csrf_token %}
+                                                    <div class="quantity ">
+                                                        <input type="number" class="quantity-input" name="quantity"
+                                                               id="qty-1" value="{{ item.quantity }}" min="1">
+                                                        {{ item.product_quantity_update_form.inplace }}
+                                                    </div>
+                                                        <button class="small" type="submit" >{% trans 'Update' %}</button>
+
+                                                    </form>
+                                                </td>
+                                                <td class="product-total-price">
+                                                            <span class="product-price-wrapper">
+                                                                <span class="money">{{ item.total_price }}</span>
+                                                            </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            <div class="row no-gutters border-top pt--20 mt--20">
+                                <div class="col-sm-6 text-sm-right">
+                                    <button type="submit" class="cart-form__btn">خالی کردن سبد خرید</button>
+                                </div>
+                            </div>
+                                	{% else %}
+                                    <p>{% trans 'Your cart is empty' %}</p>
+                                    <a href="{% url 'product_list' %}">{% trans 'Go shopping' %}</a>
+                                {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="cart-collaterals">
+                            <div class="cart-totals">
+                                <h5 class="font-size-14 font-bold mb--15">مجموع</h5>
+                                <div class="cart-calculator">
+{#                                    <div class="cart-calculator__item">#}
+{#                                        <div class="cart-calculator__item--head">#}
+{#                                            <span>مجموع</span>#}
+{#                                        </div>#}
+{#                                        <div class="cart-calculator__item--value">#}
+{#                                            <span>۳۴۶,۰۰۰ تومان</span>#}
+{#                                        </div>#}
+{#                                    </div>#}
+                                    <div class="cart-calculator__item order-total">
+                                        <div class="cart-calculator__item--head">
+                                            <span>جمع کل</span>
+                                        </div>
+                                        <div class="cart-calculator__item--value">
+                                                <span class="product-price-wrapper">
+                                                    <span class="money">{{cart.get_total}} تومان</span>
+                                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="checkout.html" class="btn btn-fullwidth btn-bg-red btn-color-white btn-hover-2">
+                                ثبت سفارش
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content Wrapper Start -->
+{% endblock content %}
