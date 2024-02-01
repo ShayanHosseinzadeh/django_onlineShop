@@ -1,5 +1,8 @@
 from django.contrib import admin
+
 from .models import Product,Comment
+from jalali_date.admin import ModelAdminJalaliMixin
+
 # Register your models here.
 
 
@@ -8,7 +11,7 @@ class CommentInline(admin.StackedInline):
     fields = ('text','user','stars','is_verified')
     extra = 1
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ModelAdminJalaliMixin,admin.ModelAdmin):
     list_display = ('title','price','stock_quantity','status')
     inlines = [CommentInline]
 

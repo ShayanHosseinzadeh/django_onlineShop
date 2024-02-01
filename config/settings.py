@@ -38,17 +38,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'accounts.apps.AccountsConfig',
-    'pages.apps.PagesConfig',
-    'products.apps.ProductsConfig',
-    'cart.apps.CartConfig',
-
     # third party
     'allauth',
     'allauth.account',
     'crispy_forms',
     'crispy_bootstrap4',
     'rosetta',
+    'jalali_date',
+
+    # my apps
+    'accounts.apps.AccountsConfig',
+    'pages.apps.PagesConfig',
+    'products.apps.ProductsConfig',
+    'cart.apps.CartConfig',
+
 
 ]
 

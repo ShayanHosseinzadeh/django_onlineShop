@@ -1,7 +1,9 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
+
 
 # Create your models here.
 
@@ -12,18 +14,18 @@ class AvailableProducts(models.Manager):
 
 class Product(models.Model):
     STATUS_CHOICES = (
-        ('avl', 'Available'),
-        ('una', 'Unavailable'),
+        ('avl', _('Available')),
+        ('una', _('Unavailable')),
 
     )
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    datetime_created = models.DateTimeField(auto_now_add=True)
-    datetime_modified = models.DateTimeField(auto_now=True)
-    price = models.PositiveIntegerField(default=0)
-    status = models.CharField(max_length=3, choices=STATUS_CHOICES)
-    stock_quantity = models.PositiveIntegerField(default=1)
-    image = models.ImageField(verbose_name=_('Product Image'), upload_to='product/product_image', blank=True)
+    title = models.CharField(max_length=100,verbose_name=_('Title'))
+    description = models.TextField(verbose_name=_('Description'))
+    datetime_created = models.DateTimeField(default=timezone.now,verbose_name=_('Date of Creation'))
+    datetime_modified = models.DateTimeField(auto_now=True,verbose_name=_('Last modifed'))
+    price = models.PositiveIntegerField(default=0,verbose_name=_('Price'))
+    status = models.CharField(max_length=3, choices=STATUS_CHOICES,verbose_name=_('Status'))
+    stock_quantity = models.PositiveIntegerField(default=1,verbose_name=_('In stock'))
+    image = models.ImageField(verbose_name=_('Product Image'), upload_to='product/product_image', blank=True,)
 
     objects = models.Manager()
     available = AvailableProducts()

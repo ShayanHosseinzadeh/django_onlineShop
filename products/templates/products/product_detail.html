@@ -3,6 +3,7 @@
 {% load  static %}
 {% load crispy_forms_tags %}
 {% load i18n %}
+{% load jalali_tags %}
 {% block content %}
     <!-- Breadcrumb area Start -->
     {% include 'Header.html' with header_name=product.title  %}
@@ -113,8 +114,8 @@
                                                                 <img src="{% static  'img/others/comment-1.jpg' %}"
                                                                      alt="Review Avatar" class="review__avatar  mx-3 ">
                                                                 <div>
-                                                                    <div class="review__meta">
-                                                                        <span class="review__published-date">{{ comment.datetime_created }}</span>
+                                                                    <div class="review__meta " dir = ltr>
+                                                                        <span class="review__published-date">{{ comment.datetime_created|to_jalali:'%Y/%M/%D _ %H:%M:%S' }}</span>
                                                                         <span class="review__dash">-</span>
                                                                         <strong class="review__author px-4">{{ comment.user.username }}</strong>
                                                                     </div>
