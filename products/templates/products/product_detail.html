@@ -176,5 +176,220 @@
             </div>
         </div>
     </div>
+       <!-- Search form Popup Start -->
+    <div class="searchform__popup" id="searchForm">
+        <a href="#" class="btn-close"><i class="flaticon flaticon-cross"></i></a>
+        <div class="searchform__body">
+            <p>Start typing and press Enter to search</p>
+            <form class="searchform">
+                <input type="text" name="popup-search" id="popup-search" class="searchform__input"
+                       placeholder="Search Entire Store...">
+                <button type="submit" class="searchform__submit"><i class="flaticon flaticon-magnifying-glass-icon"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- Search form Popup End -->
+
+    <!-- Mini Cart Start -->
+    <aside class="mini-cart" id="miniCart">
+        <div class="mini-cart-wrapper">
+            <a href="" class="btn-close"><i class="flaticon flaticon-cross"></i></a>
+            <div class="mini-cart-inner">
+                <h3 class="mini-cart__heading mb--40 mb-lg--30 text-right">{% trans ' Cart' %}</h3>
+                <div class="mini-cart__content">
+                    <ul class="mini-cart__list text-right">
+                        {% for item in cart %}
+                        <li class="mini-cart__product d-flex justify-content-between">
+
+                            <div class="mini-cart__product__image">
+                                <a href="#">
+                                    <img src="assets/img/products/prod-1-100x100.jpg">
+                                </a>
+                            </div>
+                            <div class="mini-cart__product__content pt-2">
+                                    <span class="mini-cart__product__title d-flex flex-row justify-content-between">
+                                        <a href="#">{{item.product_obj.title}}</a>
+                                        <a href="{% url 'cart_remove' item.product_obj.id %}" class="">
+                                            &#10060;
+                                        </a>
+                                    </span>
+                                <span class="mini-cart__product__quantity">
+                                        <span>{{ item.product_obj.price }}</span> &#215; <span>{{ item.quantity }}</span>
+                                    </span>
+                            </div>
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+                    <div class="mini-cart__total">
+                        <span>{% trans 'Total' %} </span>
+                        <span class="ammount">{{ cart.get_total }} {% trans '$' %}</span>
+                    </div>
+                    <div class="mini-cart__buttons">
+                        <a href="{% url 'cart_detail' %}" class="btn btn-fullwidth btn-bg-sand mb--20">{% trans 'Go to cart' %}</a>
+                        <a href="checkout.html" class="btn btn-fullwidth btn-bg-sand">{% trans  'Checkout' %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Mini Cart End -->
+
+    <!-- Global Overlay Start -->
+    <div class="ShoppingYar-global-overlay"></div>
+    <!-- Global Overlay End -->
+
+    <!-- Qicuk View Modal Start -->
+    <div class="modal fade product-modal" id="productModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="flaticon flaticon-cross"></i></span>
+                    </button>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="ShoppingYar-element-carousel nav-vertical-center"
+                                 data-slick-options='{
+                            "slidesToShow": 1,
+                            "slidesToScroll": 1,
+                            "arrows": true,
+                            "prevArrow": {"buttonClass": "slick-btn slick-prev", "iconClass": "fa fa-angle-double-left" },
+                            "nextArrow": {"buttonClass": "slick-btn slick-next", "iconClass": "fa fa-angle-double-right" }
+                        }'
+                            >
+                                <div class="product-image">
+                                    <div class="product-image--holder">
+                                        <a href="product-details.html">
+                                            <img src="assets/img/products/prod-9-1.jpg" alt="Product Image"
+                                                 class="primary-image">
+                                        </a>
+                                    </div>
+                                    <span class="product-badge sale">sale</span>
+                                </div>
+                                <div class="product-image">
+                                    <div class="product-image--holder">
+                                        <a href="product-details.html">
+                                            <img src="assets/img/products/prod-9-1.jpg" alt="Product Image"
+                                                 class="primary-image">
+                                        </a>
+                                    </div>
+                                    <span class="product-badge sale">sale</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="modal-box product-summary">
+                                <div class="product-navigation text-right mb--20">
+                                    <a href="#" class="prev"><i class="fa fa-angle-double-left"></i></a>
+                                    <a href="#" class="next"><i class="fa fa-angle-double-right"></i></a>
+                                </div>
+                                <div class="product-rating d-flex mb--20">
+                                    <div class="star-rating star-three">
+                                        <span>Rated <strong class="rating">5.00</strong> out of 5</span>
+                                    </div>
+                                </div>
+                                <h3 class="product-title mb--20">لباس تابستانی</h3>
+                                <p class="product-short-description mb--25">Donec accumsan auctor iaculis. Sed suscipit
+                                    arcu ligula, at egestas magna molestie a. Proin ac ex maximus, ultrices justo eget,
+                                    sodales orci. Aliquam egestas libero ac turpis pharetra, in vehicula lacus
+                                    scelerisque. Vestibulum ut sem laoreet, feugiat tellus at, hendrerit arcu.</p>
+                                <div class="product-price-wrapper mb--25">
+                                    <span class="money">$200.00</span>
+                                    <span class="price-separator">-</span>
+                                    <span class="money">$400.00</span>
+                                </div>
+                                <form action="#" class="variation-form mb--30">
+                                    <div class="product-color-variations d-flex align-items-center mb--20">
+                                        <p class="variation-label">Color:</p>
+                                        <div class="product-color-variation variation-wrapper">
+                                            <div class="variation">
+                                                <a class="product-color-variation-btn red selected"
+                                                   data-toggle="tooltip" data-placement="top" title="Red">
+                                                    <span class="product-color-variation-label">Red</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-color-variation-btn black" data-toggle="tooltip"
+                                                   data-placement="top" title="Black">
+                                                    <span class="product-color-variation-label">Black</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-color-variation-btn pink" data-toggle="tooltip"
+                                                   data-placement="top" title="Pink">
+                                                    <span class="product-color-variation-label">Pink</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-color-variation-btn blue" data-toggle="tooltip"
+                                                   data-placement="top" title="Blue">
+                                                    <span class="product-color-variation-label">Blue</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-size-variations d-flex align-items-center mb--15">
+                                        <p class="variation-label">Size:</p>
+                                        <div class="product-size-variation variation-wrapper">
+                                            <div class="variation">
+                                                <a class="product-size-variation-btn selected" data-toggle="tooltip"
+                                                   data-placement="top" title="S">
+                                                    <span class="product-size-variation-label">S</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-size-variation-btn" data-toggle="tooltip"
+                                                   data-placement="top" title="M">
+                                                    <span class="product-size-variation-label">M</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-size-variation-btn" data-toggle="tooltip"
+                                                   data-placement="top" title="L">
+                                                    <span class="product-size-variation-label">L</span>
+                                                </a>
+                                            </div>
+                                            <div class="variation">
+                                                <a class="product-size-variation-btn" data-toggle="tooltip"
+                                                   data-placement="top" title="XL">
+                                                    <span class="product-size-variation-label">XL</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="" class="reset_variations">Clear</a>
+                                </form>
+                                <div class="product-action d-flex flex-sm-row flex-column align-items-sm-center align-items-start mb--30">
+                                    <div class="quantity-wrapper d-flex align-items-center mr--30 mr-xs--0 mb-xs--30">
+                                        <label class="quantity-label" for="quick-qty">Quantity:</label>
+                                        <div class="quantity">
+                                            <input type="number" class="quantity-input" name="qty" id="quick-qty"
+                                                   value="1" min="1">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-small btn-bg-red btn-color-white btn-hover-2"
+                                            onclick="window.location.href='cart.html'">
+                                        Add To Cart
+                                    </button>
+                                </div>
+                                <div class="product-footer-meta">
+                                    <p><span>Category:</span>
+                                        <a href="shop.html">Full Sweater</a>,
+                                        <a href="shop.html">SweatShirt</a>,
+                                        <a href="shop.html">Jacket</a>,
+                                        <a href="shop.html">Blazer</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Qicuk View Modal End -->
     <!-- Main Content Wrapper End -->
 {% endblock content %}
