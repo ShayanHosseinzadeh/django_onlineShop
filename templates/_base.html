@@ -93,20 +93,32 @@
                                     <a href="my-account.html" class="header-toolbar__btn">
                                         <i class="flaticon flaticon-user"></i>
                                     </a>
-                                    <ul class="user-info-menu">
+                                         <ul class="user-info-menu">
                                         <li>
-                                            <a class="text-right" href="my-account.html">حساب کاربری</a>
+                                            <a class="text-center" href="{% url 'cart_detail' %}">{% trans 'Shopping Cart' %}</a>
+                                        </li>
+                                    {% if user.is_authenticated %}
+                                        <li>
+                                            <a class="text-center" href="my-account.html"> {% trans 'User Profile' %}</a>
                                         </li>
                                         <li>
-                                            <a class="text-right" href="cart.html">سبد خرید</a>
+                                            <a class="text-center" href="wishlist.html">{% trans 'Favorites' %}</a>
                                         </li>
                                         <li>
-                                            <a class="text-right" href="wishlist.html">علاقه مندی ها</a>
+                                            <a class="text-center" href="order-tracking.html">{% trans 'Order History' %}</a>
                                         </li>
                                         <li>
-                                            <a class="text-right" href="order-tracking.html">تاریخچه سفارشات</a>
+                                            <a class=" text-danger text-center" href="{% url 'account_logout' %}">{% trans ' Logout' %}</a>
                                         </li>
+
+                                        {% else %}
+                                            <li>
+                                            <a class=" text-success text-center" href="{% url 'account_login' %}">{% trans ' Login' %}</a>  <a class=" text-info text-center" href="{% url 'account_signup' %}">{% trans ' Signup' %}</a>
+                                            </li>
+
+                                    {% endif %}
                                     </ul>
+
                                 </li>
                                 <li class="header-toolbar__item">
                                     <a href="#searchForm" class="header-toolbar__btn toolbar-btn">

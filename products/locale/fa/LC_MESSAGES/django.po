@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-01 15:21+0330\n"
+"POT-Creation-Date: 2024-02-01 15:33+0330\n"
 "PO-Revision-Date: 2024-02-01 15:08+0330\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,116 +19,116 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.10.0\n"
 
-#: models.py:44
+#: products/models.py:44
 msgid "Very Bad"
 msgstr "خیلی بد"
 
-#: models.py:45
+#: products/models.py:45
 msgid " Bad"
 msgstr "بد"
 
-#: models.py:46
+#: products/models.py:46
 msgid " Normal"
 msgstr "معمولی"
 
-#: models.py:47
+#: products/models.py:47
 msgid " Good"
 msgstr "خوب"
 
-#: models.py:48
+#: products/models.py:48
 msgid "Very Good"
 msgstr "خیلی خوب"
 
-#: models.py:50
+#: products/models.py:50
 msgid "product"
 msgstr "محصول"
 
-#: models.py:51
+#: products/models.py:51
 msgid "Comment Author"
 msgstr "نظر دهنده  "
 
-#: models.py:52
+#: products/models.py:52
 msgid "Text"
 msgstr "متن"
 
-#: models.py:53
+#: products/models.py:53
 msgid "Verifed?"
 msgstr "تایید شده؟"
 
-#: models.py:54
+#: products/models.py:54
 msgid "Created at"
 msgstr "زمان ساخته شدن"
 
-#: models.py:55
+#: products/models.py:55
 msgid "Modified at"
 msgstr "آخرین ویرایش"
 
-#: models.py:56
+#: products/models.py:56
 msgid "Rate"
 msgstr "امتیاز"
 
-#: templates/products/product_detail.html:13
+#: products/templates/products/product_detail.html:13
 msgid "Product Detail of"
 msgstr "جزیات محصول"
 
-#: templates/products/product_detail.html:38
+#: products/templates/products/product_detail.html:38
 msgid "$"
 msgstr "تومان"
 
-#: templates/products/product_detail.html:46
+#: products/templates/products/product_detail.html:46
 #, fuzzy
 #| msgid "Add to cart "
 msgid "Add to cart"
 msgstr "اضافه به سبد خرید"
 
-#: templates/products/product_detail.html:66
+#: products/templates/products/product_detail.html:66
 msgid "Product Description"
 msgstr "توضیحات محصول"
 
-#: templates/products/product_detail.html:70
+#: products/templates/products/product_detail.html:70
 msgid "Features"
 msgstr "ویژگی ها"
 
-#: templates/products/product_detail.html:74
+#: products/templates/products/product_detail.html:74
 msgid "Comments"
 msgstr "نظرات"
 
-#: templates/products/product_detail.html:91
+#: products/templates/products/product_detail.html:91
 msgid "weight"
 msgstr "ورزن"
 
-#: templates/products/product_detail.html:95
+#: products/templates/products/product_detail.html:95
 msgid "size"
 msgstr "اندازه"
 
-#: templates/products/product_detail.html:99
+#: products/templates/products/product_detail.html:99
 msgid "color"
 msgstr "رنگ"
 
-#: templates/products/product_detail.html:115
+#: products/templates/products/product_detail.html:115
 msgid "comments for"
 msgstr "نظرات درباره "
 
-#: templates/products/product_detail.html:151
+#: products/templates/products/product_detail.html:151
 msgid "Write your comment: "
 msgstr "نظر خود را ارسال کنید"
 
-#: templates/products/product_detail.html:157
+#: products/templates/products/product_detail.html:157
 msgid "Send"
 msgstr "ارسال"
 
-#: templates/products/product_detail.html:165
+#: products/templates/products/product_detail.html:165
 msgid "You have to "
 msgstr "شما باید "
 
-#: templates/products/product_detail.html:166
+#: products/templates/products/product_detail.html:166
 msgid "Login"
 msgstr "لاگین "
 
-#: templates/products/product_detail.html:167
+#: products/templates/products/product_detail.html:167
 msgid "to send a comment "
 msgstr " کنید تا نظر خود را ارسال کنید"
 
-#: views.py:39
+#: products/views.py:39
 msgid "Your comment has been submited and would be shown after verification."
 msgstr "نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد."
