@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-01 15:33+0330\n"
+"POT-Creation-Date: 2024-02-01 17:38+0330\n"
 "PO-Revision-Date: 2024-02-01 15:08+0330\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,68 +67,67 @@ msgstr "آخرین ویرایش"
 msgid "Rate"
 msgstr "امتیاز"
 
-#: products/templates/products/product_detail.html:13
-msgid "Product Detail of"
-msgstr "جزیات محصول"
-
-#: products/templates/products/product_detail.html:38
+#: products/templates/products/product_detail.html:28
 msgid "$"
 msgstr "تومان"
 
-#: products/templates/products/product_detail.html:46
+#: products/templates/products/product_detail.html:36
 #, fuzzy
 #| msgid "Add to cart "
 msgid "Add to cart"
 msgstr "اضافه به سبد خرید"
 
-#: products/templates/products/product_detail.html:66
+#: products/templates/products/product_detail.html:56
 msgid "Product Description"
 msgstr "توضیحات محصول"
 
-#: products/templates/products/product_detail.html:70
+#: products/templates/products/product_detail.html:60
 msgid "Features"
 msgstr "ویژگی ها"
 
-#: products/templates/products/product_detail.html:74
+#: products/templates/products/product_detail.html:64
 msgid "Comments"
 msgstr "نظرات"
 
-#: products/templates/products/product_detail.html:91
+#: products/templates/products/product_detail.html:81
 msgid "weight"
 msgstr "ورزن"
 
-#: products/templates/products/product_detail.html:95
+#: products/templates/products/product_detail.html:85
 msgid "size"
 msgstr "اندازه"
 
-#: products/templates/products/product_detail.html:99
+#: products/templates/products/product_detail.html:89
 msgid "color"
 msgstr "رنگ"
 
-#: products/templates/products/product_detail.html:115
+#: products/templates/products/product_detail.html:105
 msgid "comments for"
 msgstr "نظرات درباره "
 
-#: products/templates/products/product_detail.html:151
+#: products/templates/products/product_detail.html:141
 msgid "Write your comment: "
 msgstr "نظر خود را ارسال کنید"
 
-#: products/templates/products/product_detail.html:157
+#: products/templates/products/product_detail.html:147
 msgid "Send"
 msgstr "ارسال"
 
-#: products/templates/products/product_detail.html:165
+#: products/templates/products/product_detail.html:155
 msgid "You have to "
 msgstr "شما باید "
 
-#: products/templates/products/product_detail.html:166
+#: products/templates/products/product_detail.html:156
 msgid "Login"
 msgstr "لاگین "
 
-#: products/templates/products/product_detail.html:167
+#: products/templates/products/product_detail.html:157
 msgid "to send a comment "
 msgstr " کنید تا نظر خود را ارسال کنید"
 
 #: products/views.py:39
 msgid "Your comment has been submited and would be shown after verification."
 msgstr "نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد."
+
+#~ msgid "Product Detail of"
+#~ msgstr "جزیات محصول"
