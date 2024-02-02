@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'rosetta',
     'jalali_date',
+    'ckeditor',
+
 
     # my apps
     'accounts.apps.AccountsConfig',
@@ -157,6 +159,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
 # Default primary key field type

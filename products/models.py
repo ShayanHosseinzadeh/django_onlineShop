@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 
+from ckeditor.fields import RichTextField
+
 
 # Create your models here.
 
@@ -19,7 +21,7 @@ class Product(models.Model):
 
     )
     title = models.CharField(max_length=100,verbose_name=_('Title'))
-    description = models.TextField(verbose_name=_('Description'))
+    description = RichTextField(verbose_name=_('Description'))
     datetime_created = models.DateTimeField(default=timezone.now,verbose_name=_('Date of Creation'))
     datetime_modified = models.DateTimeField(auto_now=True,verbose_name=_('Last modifed'))
     price = models.PositiveIntegerField(default=0,verbose_name=_('Price'))

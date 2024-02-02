@@ -18,5 +18,5 @@ class ProductAdmin(ModelAdminJalaliMixin,admin.ModelAdmin):
 
 
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(ModelAdminJalaliMixin,admin.ModelAdmin):
     list_display = ('text','user','product','datetime_created','stars','is_verified')
