@@ -22,6 +22,7 @@ class Product(models.Model):
     )
     title = models.CharField(max_length=100,verbose_name=_('Title'))
     description = RichTextField(verbose_name=_('Description'))
+    short_description = models.TextField(verbose_name=_('Short Description'),blank=True)
     datetime_created = models.DateTimeField(default=timezone.now,verbose_name=_('Date of Creation'))
     datetime_modified = models.DateTimeField(auto_now=True,verbose_name=_('Last modifed'))
     price = models.PositiveIntegerField(default=0,verbose_name=_('Price'))
