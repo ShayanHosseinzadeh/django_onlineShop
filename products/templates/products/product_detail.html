@@ -1,8 +1,10 @@
 {% extends '_base.html' %}
 {% block page_title %} {{ product.title }} {% endblock page_title %}
 {% load  static %}
+{% load persian_numbers %}
 {% load crispy_forms_tags %}
 {% load i18n %}
+{% load humanize %}
 {% load jalali_tags %}
 {% block content %}
     <!-- Breadcrumb area Start -->
@@ -27,7 +29,7 @@
                                 {{ product.description|truncatewords:30 }}
                             </p>
                             <div class="my-5 py-5 product-price-wrapper mb--25">
-                                <span class="money text-success">{{ product.price }} {% trans '$' %}</span>
+                                <span class="money text-success">{{ product.price|intcomma:False|translate_number }} {% trans '$' %}</span>
                             </div>
                             <div class="product-action d-flex align-items-sm-center align-content-center mb--30">
                                 <form action="{% url 'cart_add' product.id %}" method="post">
@@ -115,7 +117,7 @@
                                                                      alt="Review Avatar" class="review__avatar  mx-3 ">
                                                                 <div>
                                                                     <div class="review__meta " dir = ltr>
-                                                                        <span class="review__published-date">{{ comment.datetime_created|to_jalali:'%Y/%M/%D _ %H:%M:%S' }}</span>
+                                                                        <span class="review__published-date">{{ comment.datetime_created|to_jalali:'%Y/%m/%d _ %H:%M:%S' }}</span>
                                                                         <span class="review__dash">-</span>
                                                                         <strong class="review__author px-4">{{ comment.user.username }}</strong>
                                                                     </div>

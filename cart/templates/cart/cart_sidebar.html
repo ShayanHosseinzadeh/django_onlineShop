@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load humanize %}
+{% load persian_numbers %}
 <aside class="mini-cart" id="miniCart">
         <div class="mini-cart-wrapper">
             <a href="" class="btn-close"><i class="flaticon flaticon-cross"></i></a>
@@ -23,14 +25,14 @@
                                         </a>
                                     </span>
                                 <span class="mini-cart__product__quantity">
-                                        <span>{{ item.product_obj.price }}</span> &#215; <span>{{ item.quantity }}</span>
+                                        <span>{{ item.product_obj.price|intcomma:False|translate_number }}</span> &#215; <span>{{ item.quantity }}</span>
                                     </span>
                             </div>
                         </li>
                         {% endfor %}
                         <div class="mini-cart__total">
                         <span>{% trans 'Total' %} </span>
-                        <span class="ammount">{{ cart.get_total }} {% trans '$' %}</span>
+                        <span class="ammount">{{ cart.get_total|intcomma:False|translate_number}} {% trans '$' %}</span>
                     </div>
                     <div class="mini-cart__buttons">
                         <a href="{% url 'cart_detail' %}" class="btn btn-fullwidth btn-bg-sand mb--20">{% trans 'Go to cart' %}</a>

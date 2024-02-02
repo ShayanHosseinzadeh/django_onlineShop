@@ -1,6 +1,8 @@
 {% extends '_base.html' %}
 {% block page_title %} Product list {% endblock page_title %}
 {% load static %}
+{% load persian_numbers %}
+{% load humanize %}
 {% block content %}
     <body dir='rtl'>
 
@@ -58,14 +60,14 @@
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                        <span class="product-badge">تخفیف ویژه</span>
+                                                         <span class="product-badge">تخفیف ویژه</span>
                                                     </figure>
                                                     <div class="product-info">
                                                         <h3 class="product-title h6 mb--15">
                                                             <a href="{{ product.get_absolute_url }}">{{ product.title}}</a>
                                                         </h3>
                                                         <div class="product-price-wrapper mb--30">
-                                                            <span class="money text-info">{{product.price}} تومان</span>
+                                                            <span class="money text-info">{{product.price|intcomma:False|translate_number}} تومان</span>
 
                                                         </div>
                                                         <a href="cart.html"
