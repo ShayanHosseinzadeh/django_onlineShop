@@ -19,8 +19,18 @@ class Order(models.Model):
     datetime_created = models.DateTimeField(_('Created at'), auto_now_add=True)
     datetime_modified = models.DateTimeField(_('Modified at'), auto_now=True)
 
+    authority = models.CharField(max_length=255, blank=True)
+
     def __str__(self):
         return f"Order {self.id}"
+
+    def get_total_price(self):
+        result = 0
+        # for item in self.items.all():
+        #     result += item.price * item.quantity
+        return sum(item.quantity * item.price for item in self.items.all())
+
+
 
 
 class OrderItem(models.Model):
