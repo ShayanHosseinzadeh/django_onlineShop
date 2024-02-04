@@ -15,12 +15,13 @@ class Cart:
             cart = request.session['cart'] = {}
         self.cart = cart
 
-    def add(self, product, quantity=1,replace_current_quantity = False):
+    def add(self, product, quantity=1,replace_current_quantity=False):
         """
         Add a product to the cart or update the cart
         """
         product_id = str(product.id)
-        self.cart[product_id] = {'quantity': quantity}
+        if product_id not in self.cart:
+            self.cart[product_id] = {'quantity': 0}
         if replace_current_quantity:
             self.cart[product_id]['quantity'] = quantity
         else:

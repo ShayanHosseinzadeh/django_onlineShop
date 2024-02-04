@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-01 17:38+0330\n"
-"PO-Revision-Date: 2024-02-01 17:33+0330\n"
+"POT-Creation-Date: 2024-02-04 13:28+0330\n"
+"PO-Revision-Date: 2024-02-04 13:29+0330\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,47 +19,90 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.10.0\n"
 
-#: cart/cart.py:28
+#: cart.py:29
 msgid "Product added successfully"
 msgstr "محصول مورد نظر با موفقیت به سبد خرید اضافه شد."
 
-#: cart/cart.py:38
+#: cart.py:39
 msgid "Product removed successfully"
 msgstr "محصول مورد نظر با موفقیت از سبد خرید حذف شد."
 
-#: cart/templates/cart/cart_detail.html:8
+#: templates/cart/cart_detail.html:10
 msgid "Cart"
 msgstr "سبد خرید"
 
-#: cart/templates/cart/cart_detail.html:61
-msgid "Update"
-msgstr "بروزرسانی "
+#: templates/cart/cart_detail.html:29
+msgid "Product Image"
+msgstr "عکس محصول"
 
-#: cart/templates/cart/cart_detail.html:84
-#: cart/templates/cart/cart_sidebar.html:41
-msgid "Your cart is empty"
-msgstr "سبد خرید شما خالی است!"
+#: templates/cart/cart_detail.html:30
+msgid "Product Title"
+msgstr "عنوان محصول"
 
-#: cart/templates/cart/cart_detail.html:85
-msgid "Go shopping"
-msgstr "رفتن به صفحه محصولات"
+#: templates/cart/cart_detail.html:31
+msgid "price"
+msgstr "قیمت "
 
-#: cart/templates/cart/cart_sidebar.html:6
-msgid " Cart"
-msgstr "سبد خرید"
+#: templates/cart/cart_detail.html:32
+msgid "quantity"
+msgstr "مقدار"
 
-#: cart/templates/cart/cart_sidebar.html:32
-msgid "Total"
-msgstr "قیمت کل"
+#: templates/cart/cart_detail.html:33 templates/cart/cart_detail.html:103
+#| msgid "Total"
+msgid "total"
+msgstr "مجموع"
 
-#: cart/templates/cart/cart_sidebar.html:33
+#: templates/cart/cart_detail.html:58 templates/cart/cart_detail.html:75
+#: templates/cart/cart_detail.html:119 templates/cart/cart_sidebar.html:35
 msgid "$"
 msgstr "تومان"
 
-#: cart/templates/cart/cart_sidebar.html:36
+#: templates/cart/cart_detail.html:69
+msgid "Update"
+msgstr "بروزرسانی "
+
+#: templates/cart/cart_detail.html:89
+msgid "Clear your cart"
+msgstr "خالی کردن سبد خرید"
+
+#: templates/cart/cart_detail.html:94 templates/cart/cart_sidebar.html:43
+msgid "Your cart is empty"
+msgstr "سبد خرید شما خالی است!"
+
+#: templates/cart/cart_detail.html:95
+msgid "Go shopping"
+msgstr "رفتن به صفحه محصولات"
+
+#: templates/cart/cart_detail.html:115
+#| msgid "Total"
+msgid "Total price"
+msgstr "قیمت کل"
+
+#: templates/cart/cart_detail.html:126
+msgid "Submit"
+msgstr "ثبت "
+
+#: templates/cart/cart_sidebar.html:8
+msgid " Cart"
+msgstr "سبد خرید"
+
+#: templates/cart/cart_sidebar.html:34
+msgid "Total"
+msgstr "قیمت کل"
+
+#: templates/cart/cart_sidebar.html:38
 msgid "Go to cart"
 msgstr "رفتن به سبد خرید"
 
-#: cart/templates/cart/cart_sidebar.html:37
+#: templates/cart/cart_sidebar.html:39
 msgid "Checkout"
 msgstr "پرداخت"
+
+#: views.py:47
+msgid "Your card got cleared!"
+msgstr "سبد خرید شما خالی شد"
+
+#: views.py:50
+#| msgid "Your cart is empty"
+msgid "Your card is not empty!"
+msgstr "سبد خرید شما خالی نیست!"
