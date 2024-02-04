@@ -16,10 +16,14 @@ class Order(models.Model):
     paid = models.BooleanField(_('Is_Paid?'), default=False)
     order_notes = models.CharField(_('Order Notes'), max_length=700, blank=True)
 
+
+    zarinpal_data = models.TextField(blank=True)
     datetime_created = models.DateTimeField(_('Created at'), auto_now_add=True)
     datetime_modified = models.DateTimeField(_('Modified at'), auto_now=True)
 
     authority = models.CharField(max_length=255, blank=True)
+    ref_id = models.CharField(max_length=150, blank=True)
+
 
     def __str__(self):
         return f"Order {self.id}"
