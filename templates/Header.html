@@ -1,17 +1,24 @@
 {% load i18n %}
 <div class="breadcrumb-area bg-color ptb--90" data-bg-color="#f6f6f6">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center flex-sm-row flex-column">
-                        {% if header_name == cart_head %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-sm-row flex-column">
+                    {% if header_name == cart_head %}
                         <h1 class="page-title"> {{ header_name }}</h1>
-                            {% else %}
-                            <h1 class="page-title"> {% trans 'Detail of ' %} {{ header_name }}</h1>
 
-                        {% endif %}
-                    </div>
+
+                    {% endif %}
+                    {% if header_name == product.title %}
+                        <h1 class="page-title"> {% trans 'Detail of ' %} {{ header_name }}</h1>
+                    {% endif %}
+                {% if header_name == order %}
+                    <h1 class="page-title">{{ header_name }}</h1>
+
+                {% endif %}
+
                 </div>
             </div>
         </div>
     </div>
+</div>

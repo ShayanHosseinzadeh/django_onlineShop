@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-04 12:41+0330\n"
+"PO-Revision-Date: 2024-02-04 12:42+0330\n"
+"Last-Translator:   <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Translated-Using: django-rosetta 0.10.0\n"
+
+#: forms.py:11
+msgid "If you have any Notes please enter otherwise leave it empty"
+msgstr "در صورت نیاز، توضیحات سفارش را وارد کنید"
+
+#: models.py:10
+msgid "User"
+msgstr "کاربر"
+
+#: models.py:11
+msgid "Firstname"
+msgstr "نام"
+
+#: models.py:12
+msgid "Lastname"
+msgstr "نام خانوادگی"
+
+#: models.py:13
+msgid "Email"
+msgstr "ایمیل"
+
+#: models.py:14
+msgid "Phone Number"
+msgstr "شماره همراه"
+
+#: models.py:15
+msgid "Address"
+msgstr "آدرس"
+
+#: models.py:16
+msgid "Is_Paid?"
+msgstr "پرداخت شده ؟"
+
+#: models.py:17
+msgid "Order Notes"
+msgstr "توضیحات سفارش"
+
+#: models.py:19
+msgid "Created at"
+msgstr "ساخته شده در"
+
+#: models.py:20
+msgid "Modified at"
+msgstr "ویرایش شده در"
+
+#: templates/orders/order_create.html:7 templates/orders/order_create.html:10
+msgid "Order"
+msgstr "ثبت سفارش"
+
+#: templates/orders/order_create.html:80
+msgid "Submit"
+msgstr "ثبت سفارش"
+
+#: templates/orders/order_create.html:105
+#: templates/orders/order_create.html:112
+msgid "$"
+msgstr "تومان"
+
+#: views.py:17
+msgid "You cannot proceed to checkout page with an empty cart!"
+msgstr "شما نمی توانید با سبد خرید خالی سفارشی را ثبت کنید!"
+
+#: views.py:38
+msgid "Your order has been submitted."
+msgstr "سفارش شما با موفقیت ثبت شد"
+
+#: views.py:40
+msgid "Please Review the errors and solve them!"
+msgstr "لطفا خطاها را بررسی و رفع کنید"
