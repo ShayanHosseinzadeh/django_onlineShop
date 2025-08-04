@@ -1,0 +1,66 @@
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+{% load persian_numbers %}
+
+<div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for product in products %}
+        <div class="product-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full">
+            <a href="{{ product.get_absolute_url }}">
+                <div class="h-48 bg-gray-100 flex items-center justify-center">
+                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}" alt="{{ product.title }}" class="h-full w-full ">
+                </div>
+            </a>
+            <div class="p-4 flex flex-col flex-grow">
+                <h3 class="font-semibold text-gray-800 mb-2 h-12 flex items-center">
+                    <a href="{{ product.get_absolute_url }}" class="hover:text-orange-600 transition-colors">
+                        {{ product.title }}
+                    </a>
+                </h3>
+                <div class="flex items-center justify-between mb-3 h-8">
+                    <span class="text-lg font-bold text-orange-600 persian-numbers">{{ product.price|intcomma:False }} {% trans 'تومان' %}</span>
+                </div>
+                <form action="{% url 'cart_add' product.id %}" method="post" class="mt-auto">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        افزودن به سبد خرید
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-span-full text-center py-10 text-gray-500">
+            <p class="h5">هیچ محصولی یافت نشد.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<nav class="flex justify-center mt-8">
+    <ul class="flex items-center -space-x-px h-10 text-base">
+        {% if page_obj.has_previous %}
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}"
+                   class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+                   hx-get="?page={{ page_obj.previous_page_number }}"
+                   hx-target="#product-grid-container"
+                   hx-swap="innerHTML">قبلی</a>
+            </li>
+        {% endif %}
+        <li>
+            <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-orange-600 bg-orange-50 border border-gray-300 hover:bg-orange-100 hover:text-orange-700">
+                {{ page_obj.number|translate_number }}
+            </a>
+        </li>
+        {% if page_obj.has_next %}
+            <li>
+                <a href="?page={{ page_obj.next_page_number }}"
+                   class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+                   hx-get="?page={{ page_obj.next_page_number }}"
+                   hx-target="#product-grid-container"
+                   hx-swap="innerHTML">بعدی</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

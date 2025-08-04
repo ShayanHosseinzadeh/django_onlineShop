@@ -175,9 +175,3 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
 
-from django.contrib.messages import constants as messages
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
-}
-

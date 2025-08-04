@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'vazir';
+    src: url('/static/fonts/Vazir-Medium.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'vazir';
+}
+
+.persian-numbers {
+    font-feature-settings: "ss01" on;
+}
+
+.product-card {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.category-btn {
+    transition: all 0.3s ease;
+}
+
+.category-btn:hover {
+    background-color: #f97316;
+    color: white;
+}
+
+.category-btn.active {
+    background-color: #ea580c;
+    color: white;
+}
+
+.search-input:focus {
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.cart-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
