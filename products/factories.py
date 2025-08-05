@@ -7,8 +7,8 @@ from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from products.models import Product, Comment, Category
 from django.utils.text import slugify
-from django.conf import settings  # <-- Added for file path resolution
-import os  # <-- Added for file path resolution
+from django.conf import settings
+import os
 
 faker = Faker('fa_IR')
 
@@ -19,6 +19,7 @@ PRODUCT_DATA = [
         'title': 'موبایل اپل iPhone 14',
         'short_description': 'آیفون ۱۴ با پردازنده A15 Bionic، دوربین دوگانه پیشرفته و قابلیت تشخیص تصادف.',
         'description': 'گوشی هوشمند آیفون ۱۴ با نمایشگر ۶.۱ اینچی Super Retina XDR OLED، پردازنده قدرتمند A15 Bionic، و سیستم دوربین دوگانه ۱۲ مگاپیکسلی با دیافراگم ƒ/1.5. این گوشی از قابلیت‌های Emergency SOS و Crash Detection بهره می‌برد. باتری با دوام تا ۲۰ ساعت پخش ویدئو و مقاومت در برابر آب و گرد و غبار با استاندارد IP68.',
+        'key_features': '<ul><li>پردازنده A15 Bionic</li><li>دوربین دوگانه ۱۲ مگاپیکسلی</li><li>نمایشگر Super Retina XDR</li><li>تشخیص تصادف</li><li>مقاوم در برابر آب (IP68)</li></ul>',
         'price': 42_000_000,
         'category_name': 'موبایل',
     },
@@ -26,6 +27,7 @@ PRODUCT_DATA = [
         'title': 'موبایل سامسونگ Galaxy S23',
         'short_description': 'گلکسی S23 با پردازنده Snapdragon 8 Gen 2، دوربین ۵۰ مگاپیکسلی و طراحی مدرن.',
         'description': 'سامسونگ گلکسی S23 با نمایشگر Dynamic AMOLED 2X و نرخ تازه‌سازی ۱۲۰ هرتز، تجربه بصری فوق‌العاده‌ای ارائه می‌دهد. پردازنده Snapdragon 8 Gen 2 for Galaxy، عملکردی بی‌نظیر برای بازی و کارهای سنگین فراهم می‌کند. سیستم دوربین سه‌گانه با سنسور اصلی ۵۰ مگاپیکسلی و زوم اپتیکال ۳ برابر، به شما اجازه می‌دهد تصاویری با جزئیات خیره‌کننده ثبت کنید. بدنه مقاوم با محافظ Gorilla Glass Victus 2 و استاندارد IP68.',
+        'key_features': '<ul><li>نمایشگر Dynamic AMOLED 2X</li><li>پردازنده Snapdragon 8 Gen 2</li><li>دوربین اصلی ۵۰ مگاپیکسلی</li><li>باتری ۳۹۰۰ میلی‌آمپر ساعتی</li><li>استاندارد IP68</li></ul>',
         'price': 35_000_000,
         'category_name': 'موبایل',
     },
@@ -33,6 +35,7 @@ PRODUCT_DATA = [
         'title': 'لپ‌تاپ لنوو IdeaPad 5',
         'short_description': 'لپ‌تاپ سبک و قدرتمند با پردازنده Core i7 و صفحه نمایش Full HD مناسب برای کارهای روزمره.',
         'description': 'لپ‌تاپ لنوو IdeaPad 5 با طراحی ظریف و وزن کم، گزینه‌ای عالی برای دانشجویان و کاربران حرفه‌ای است. مجهز به پردازنده نسل دوازدهم Intel Core i7، ۸ گیگابایت رم و ۲۵۶ گیگابایت حافظه SSD، عملکردی روان و سریع را تضمین می‌کند. صفحه نمایش ۱۵.۶ اینچی Full HD با حاشیه‌های باریک و باتری با شارژدهی بالا، کاربری آن را لذت‌بخش می‌کند.',
+        'key_features': '<ul><li>پردازنده Intel Core i7</li><li>۸ گیگابایت رم</li><li>۲۵۶ گیگابایت حافظه SSD</li><li>صفحه نمایش ۱۵.۶ اینچی Full HD</li></ul>',
         'price': 25_000_000,
         'category_name': 'کالای دیجیتال',
     },
@@ -40,6 +43,7 @@ PRODUCT_DATA = [
         'title': 'هدفون سونی WH-1000XM5',
         'short_description': 'هدفون بی‌سیم با قابلیت حذف نویز فعال و کیفیت صدای بی‌نظیر.',
         'description': 'هدفون بی‌سیم سونی WH-1000XM5 جدیدترین نسل از هدفون‌های محبوب سونی است که با قابلیت حذف نویز پیشرفته، به شما اجازه می‌دهد تا در هر محیطی روی موسیقی خود تمرکز کنید. طراحی ارگونومیک، وزن سبک، و باتری با شارژدهی ۳۰ ساعته، آن را برای استفاده طولانی‌مدت ایده‌آل کرده است. کیفیت صدای فوق‌العاده و پشتیبانی از کدک‌های صوتی با کیفیت بالا از دیگر ویژگی‌های برجسته این هدفون است.',
+        'key_features': '<ul><li>حذف نویز فعال پیشرفته</li><li>عمر باتری تا ۳۰ ساعت</li><li>پشتیبانی از Hi-Res Audio</li><li>طراحی ارگونومیک و سبک</li></ul>',
         'price': 15_000_000,
         'category_name': 'کالای دیجیتال',
     },
@@ -48,6 +52,7 @@ PRODUCT_DATA = [
         'title': 'تلویزیون هوشمند ال‌جی ۵۵ اینچ',
         'short_description': 'تلویزیون ۵۵ اینچ با کیفیت تصویر ۴K و سیستم عامل webOS برای سرگرمی نامحدود.',
         'description': 'تلویزیون هوشمند ال‌جی با صفحه نمایش ۵۵ اینچ و رزولوشن ۴K، تصاویری با وضوح و رنگ‌های خیره‌کننده نمایش می‌دهد. با پشتیبانی از HDR و فناوری‌های پیشرفته تصویر، جزئیات را به بهترین شکل ممکن نشان می‌دهد. سیستم صوتی Dolby Atmos و سیستم عامل webOS، تجربه‌ای سینمایی و هوشمند را برای شما به ارمغان می‌آورد. طراحی مینیمال و حاشیه‌های کم، زیبایی خاصی به محیط خانه شما می‌بخشد.',
+        'key_features': '<ul><li>کیفیت تصویر ۴K</li><li>سایز ۵۵ اینچ</li><li>سیستم عامل هوشمند webOS</li><li>پشتیبانی از Dolby Atmos</li></ul>',
         'price': 38_000_000,
         'category_name': 'لوازم خانگی',
     },
@@ -55,6 +60,7 @@ PRODUCT_DATA = [
         'title': 'یخچال ساید بای ساید سامسونگ',
         'short_description': 'یخچال فریزر ساید بای ساید با ظرفیت بالا و سیستم خنک‌کننده Twin Cooling Plus.',
         'description': 'یخچال ساید بای ساید سامسونگ با طراحی مدرن و ظرفیت ۶۰۰ لیتر، فضای کافی برای نگهداری مواد غذایی خانواده‌های پرجمعیت را فراهم می‌کند. فناوری Twin Cooling Plus با ایجاد دو جریان هوای مجزا، از مخلوط شدن بوی مواد غذایی جلوگیری کرده و رطوبت را در سطح بهینه نگه می‌دارد. مجهز به یخساز و آبسردکن اتوماتیک، کمپرسور اینورتر دیجیتال کم‌صدا و کم‌مصرف.',
+        'key_features': '<ul><li>ظرفیت ۶۰۰ لیتر</li><li>سیستم خنک‌کننده Twin Cooling Plus</li><li>یخساز و آبسردکن اتوماتیک</li><li>کمپرسور اینورتر دیجیتال</li></ul>',
         'price': 65_000_000,
         'category_name': 'لوازم خانگی',
     },
@@ -62,6 +68,7 @@ PRODUCT_DATA = [
         'title': 'اسپیکر قابل حمل JBL Flip 6',
         'short_description': 'اسپیکر بلوتوثی ضدآب و گرد و غبار با صدای قدرتمند و باتری طولانی.',
         'description': 'اسپیکر قابل حمل JBL Flip 6 با طراحی جمع‌وجور و صدای استریو، همراه ایده‌آل شما در سفر و مهمانی است. با استاندارد IP67، در برابر آب و گرد و غبار مقاوم بوده و می‌توانید آن را بدون نگرانی در ساحل یا استخر استفاده کنید. باتری داخلی آن تا ۱۲ ساعت پخش موسیقی را پشتیبانی می‌کند. قابلیت اتصال دو اسپیکر JBL به یکدیگر برای صدای قوی‌تر.',
+        'key_features': '<ul><li>صدای قدرتمند JBL Pro Sound</li><li>ضدآب و ضد گرد و غبار (IP67)</li><li>عمر باتری تا ۱۲ ساعت</li><li>طراحی قابل حمل و سبک</li></ul>',
         'price': 4_500_000,
         'category_name': 'کالای دیجیتال',
     },
@@ -69,6 +76,7 @@ PRODUCT_DATA = [
         'title': 'کتاب هنر ظریف بی‌خیالی',
         'short_description': 'کتابی پرطرفدار از مارک منسن درباره پیدا کردن معنای واقعی خوشبختی.',
         'description': 'کتاب هنر ظریف بی‌خیالی، با رویکردی متفاوت به مبحث موفقیت و خودیاری می‌پردازد. نویسنده در این کتاب به شما نشان می‌دهد که کلید خوشبختی، مثبت اندیشی بی‌حد و حصر نیست، بلکه پذیرش محدودیت‌ها و انتخاب‌های درست در زندگی است. زبانی صریح و طنزآمیز دارد و دیدگاه شما را نسبت به مسائل زندگی تغییر می‌دهد.',
+        'key_features': '<ul><li>رویکردی جدید به موفقیت</li><li>ترجمه روان و صریح</li><li>کتابی پرفروش در سطح جهانی</li><li>موضوع روانشناسی و خودیاری</li></ul>',
         'price': 120_000,
         'category_name': 'کتاب',
     },
@@ -76,6 +84,7 @@ PRODUCT_DATA = [
         'title': 'شلوار جین مردانه زارا',
         'short_description': 'شلوار جین جذب با طراحی کلاسیک و پارچه کشی برای راحتی بیشتر.',
         'description': 'شلوار جین مردانه از برند زارا، با برش اسلیم فیت و رنگ آبی تیره، یک انتخاب عالی برای استایل روزمره و غیررسمی است. پارچه کشی با کیفیت بالا، راحتی فوق‌العاده‌ای را در طول روز فراهم می‌کند. این شلوار به راحتی با انواع تی‌شرت و پیراهن ست می‌شود.',
+        'key_features': '<ul><li>برند زارا (Zara)</li><li>جنس جین کشی باکیفیت</li><li>طراحی اسلیم فیت</li><li>رنگ آبی تیره</li></ul>',
         'price': 1_800_000,
         'category_name': 'لباس',
     },
@@ -146,7 +155,6 @@ class CategoryFactory(DjangoModelFactory):
 class ProductFactory(DjangoModelFactory):
     class Meta:
         model = Product
-        # Create unique products from the predefined list
         django_get_or_create = ('title',)
 
     _product_data = factory.Iterator(PRODUCT_DATA)
@@ -154,6 +162,7 @@ class ProductFactory(DjangoModelFactory):
     title = factory.LazyAttribute(lambda o: o._product_data['title'])
     description = factory.LazyAttribute(lambda o: o._product_data['description'])
     short_description = factory.LazyAttribute(lambda o: o._product_data['short_description'])
+    key_features = factory.LazyAttribute(lambda o: o._product_data['key_features'])
     price = factory.LazyAttribute(lambda o: o._product_data['price'])
     category = factory.LazyAttribute(
         lambda o: Category.objects.get_or_create(
@@ -167,13 +176,15 @@ class ProductFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def image(self):
-        # Corrected file path
         placeholder_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'placeholder.jpg')
         try:
             with open(placeholder_path, 'rb') as f:
                 return ContentFile(f.read(), name=faker.file_name(extension='jpg'))
         except FileNotFoundError:
             return None
+
+    # New discount field with a random value
+    discount_percent = factory.LazyFunction(lambda: random.choice([0, 0, 0, 10, 15, 20, 25, 30]))
 
 
 class UserFactory(DjangoModelFactory):

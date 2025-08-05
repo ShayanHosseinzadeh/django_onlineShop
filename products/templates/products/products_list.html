@@ -9,10 +9,10 @@
 {% block content %}
 <div class="flex flex-col md:flex-row gap-8">
     <!-- Sidebar -->
-    <aside class="w-full md:w-80 bg-white rounded-xl shadow-md p-6  top-24 h-fit">
+    <aside class="w-full md:w-80 bg-white rounded-xl shadow-md p-6 h-fit">
         <!-- Categories -->
         <div class="mb-8">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">دسته‌بندی‌ها</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">دسته‌بندی‌ها</h3>
             <ul class="space-y-2">
                 <li>
                     <a href="{% url 'product_list' %}"
@@ -65,4 +65,20 @@
         </div>
     </section>
 </div>
+    <script>
+document.addEventListener('htmx:beforeRequest', function(event) {
+    const clickedCategory = event.target;
+
+    // Remove active class from all category links
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('bg-orange-50', 'text-orange-600');
+        btn.classList.add('text-gray-700');
+    });
+
+    // Add active class to the clicked one
+    clickedCategory.classList.add('bg-orange-50', 'text-orange-600');
+    clickedCategory.classList.remove('text-gray-700');
+});
+</script>
+
 {% endblock %}

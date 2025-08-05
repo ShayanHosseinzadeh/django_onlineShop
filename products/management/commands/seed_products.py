@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from products.models import Product, Comment, Category
 from products.factories import PRODUCT_DATA, COMMENT_REVIEWS, UserFactory, ProductFactory, CommentFactory
-from django.utils.text import slugify  # <-- Corrected: Import slugify from Django
+from django.utils.text import slugify
 import random
 import factory
 
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         for category_name in sorted(list(set(item['category_name'] for item in PRODUCT_DATA))):
             Category.objects.get_or_create(
                 name=category_name,
-                slug=slugify(category_name, allow_unicode=True)  # <-- Corrected: Used slugify from Django
+                slug=slugify(category_name, allow_unicode=True)
             )
 
         # Create products using the factory.
@@ -56,8 +56,10 @@ class Command(BaseCommand):
                 title=item['title'],
                 short_description=item['short_description'],
                 description=item['description'],
+                key_features=item.get('key_features', ''),
                 price=item['price'],
                 category=category,
+                discount_percent=random.choice([0, 0, 0, 10, 15, 20, 25, 30]),
                 status='avl',
                 stock_quantity=random.randint(1, 50)
             )
@@ -88,4 +90,3 @@ class Command(BaseCommand):
                 CommentFactory(product=product, user=random.choice(users))
 
         self.stdout.write(self.style.SUCCESS("Comments created."))
-

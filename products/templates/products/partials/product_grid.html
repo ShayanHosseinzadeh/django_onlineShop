@@ -7,8 +7,17 @@
     {% for product in products %}
         <div class="product-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full">
             <a href="{{ product.get_absolute_url }}">
-                <div class="h-48 bg-gray-100 flex items-center justify-center">
-                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}" alt="{{ product.title }}" class="h-full w-full ">
+                <div class="h-48 bg-gray-100 flex items-center justify-center relative">
+                    {% if product.discount_percent > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full persian-numbers">
+                            ٪{{ product.discount_percent|translate_number }} تخفیف
+                        </span>
+                    {% endif %}
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-full w-full">
+                    {% else %}
+                        <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.title }}" class="h-full w-full">
+                    {% endif %}
                 </div>
             </a>
             <div class="p-4 flex flex-col flex-grow">
@@ -18,7 +27,14 @@
                     </a>
                 </h3>
                 <div class="flex items-center justify-between mb-3 h-8">
-                    <span class="text-lg font-bold text-orange-600 persian-numbers">{{ product.price|intcomma:False }} {% trans 'تومان' %}</span>
+                    {% if product.discount_percent > 0 %}
+                        <div class="flex flex-col items-start">
+                            <span class="text-lg font-bold text-orange-600 persian-numbers">{{ product.get_discounted_price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+                            <span class="text-sm text-gray-500 line-through persian-numbers">{{ product.price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+                        </div>
+                    {% else %}
+                        <span class="text-lg font-bold text-orange-600 persian-numbers">{{ product.price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+                    {% endif %}
                 </div>
                 <form action="{% url 'cart_add' product.id %}" method="post" class="mt-auto">
                     {% csrf_token %}

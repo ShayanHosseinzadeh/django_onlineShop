@@ -3,178 +3,266 @@
 {% load i18n %}
 {% load humanize %}
 {% load persian_numbers %}
+{% load product_filters %}
 
 {% block title %}جزئیات محصول - {{ product.title }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <!-- Breadcrumb -->
-    <div class="bg-white border-b-2 border-gray-100 rounded-xl px-4 py-3 mb-8">
-        <nav class="flex items-center space-x-reverse space-x-2 text-sm">
-            <a href="{% url 'product_list' %}" class="text-gray-500 hover:text-orange-600">خانه</a>
-            <svg class="h-4 w-4 text-gray-400 rotate-180" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            {% if product.category %}
-                <a href="{% url 'product_list_by_category' category_slug=product.category.slug %}" class="text-gray-500 hover:text-orange-600">{{ product.category.name }}</a>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <div class="bg-white border-b-2 border-gray-100 rounded-xl px-4 py-3 mb-8">
+            <nav class="flex items-center space-x-reverse space-x-2 text-sm">
+                <a href="{% url 'product_list' %}" class="text-gray-500 hover:text-orange-600">خانه</a>
                 <svg class="h-4 w-4 text-gray-400 rotate-180" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    <path fill-rule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clip-rule="evenodd"></path>
                 </svg>
-            {% endif %}
-            <span class="text-gray-800">{{ product.title }}</span>
-        </nav>
-    </div>
+                {% if product.category %}
+                    <a href="{% url 'product_list_by_category' category_slug=product.category.slug %}"
+                       class="text-gray-500 hover:text-orange-600">{{ product.category.name }}</a>
+                    <svg class="h-4 w-4 text-gray-400 rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                {% endif %}
+                <span class="text-gray-800">{{ product.title }}</span>
+            </nav>
+        </div>
 
-    <!-- Product Details Section -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-            <!-- Product Image -->
-            <div class="order-2 lg:order-1">
-                <div class="bg-gray-100 rounded-xl p-8 mb-4 overflow-hidden">
-                    <div class="product-image-container relative flex items-center justify-center h-96 cursor-zoom-in" onclick="toggleZoom()">
-                        {% if product.image %}
-                            <img id="product-main-image" src="{{ product.image.url }}" alt="{{ product.title }}" class="h-full w-full rounded-lg transition-transform duration-300">
+        <!-- Product Details Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+                <!-- Product Image -->
+                <div class="order-2 lg:order-1">
+                    <div class="bg-gray-100 rounded-xl p-8 mb-4 overflow-hidden">
+                        <div class="product-image-container relative flex items-center justify-center h-96 cursor-zoom-in"
+                             onclick="toggleZoom()">
+                            {% if product.image %}
+                                <img id="product-main-image" src="{{ product.image.url }}" alt="{{ product.title }}"
+                                     class="h-full w-full rounded-lg transition-transform duration-300">
+                            {% else %}
+                                <img id="product-main-image" src="{% static 'images/placeholder.jpg' %}"
+                                     alt="{{ product.title }}"
+                                     class="h-full w-full rounded-lg transition-transform duration-300">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="order-1 lg:order-2">
+                    <!-- Category Tags -->
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="category-tag px-3 py-1 bg-orange-50 text-orange-600 text-sm rounded-full cursor-pointer">{{ product.category.name }}</span>
+                        <!-- Other tags here -->
+                    </div>
+
+                    <!-- Product Title -->
+                    <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ product.title }}</h1>
+
+                    <!-- Short Description -->
+                    <p class="text-gray-500 mb-6 leading-relaxed">{{ product.short_description }}</p>
+
+                    <!-- Average Rating Display -->
+                    {% with average_rating=product.get_average_rating %}
+                        {% if average_rating > 0 %}
+                            <div class="flex items-center text-yellow-400 mb-2">
+                                {% for i in '12345' %}
+                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                        {% if forloop.counter <= average_rating %}
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.388 2.463a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.388-2.463a1 1 0 00-1.176 0l-3.388 2.463c-.785.57-1.84-.197-1.54-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.01 9.384c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.957z"/>
+                                        {% else %}
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.388 2.463a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.388-2.463a1 1 0 00-1.176 0l-3.388 2.463c-.785.57-1.84-.197-1.54-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.01 9.384c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.957z"
+                                                  fill="currentColor" class="text-gray-300"/>
+                                        {% endif %}
+                                    </svg>
+                                {% endfor %}
+                                <span class="text-sm text-gray-500 mr-2 persian-numbers">
+                            ({{ average_rating|translate_number }} از ۵)
+                        </span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Price and Discount -->
+                    <div class="mb-6 flex items-center space-x-reverse space-x-4">
+                        {% if product.discount_percent > 0 %}
+                            <span class="text-3xl font-bold text-orange-600 persian-numbers">
+                            {{ product.get_discounted_price|intcomma:False|translate_number }} تومان
+                        </span>
+                            <span class="text-xl font-normal text-gray-500 line-through persian-numbers">
+                            {{ product.price|intcomma:False|translate_number }} تومان
+                        </span>
+                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full persian-numbers">
+                            ٪{{ product.discount_percent|translate_number }} تخفیف
+                        </span>
                         {% else %}
-                            <img id="product-main-image" src="{% static 'images/placeholder.jpg' %}" alt="{{ product.title }}" class="h-full w-full rounded-lg transition-transform duration-300">
+                            <span class="text-3xl font-bold text-orange-600 persian-numbers">{{ product.price|intcomma:False|translate_number }} تومان</span>
                         {% endif %}
                     </div>
-                </div>
-            </div>
 
-            <!-- Product Info -->
-            <div class="order-1 lg:order-2">
-                <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="category-tag px-3 py-1 bg-orange-50 text-orange-600 text-sm rounded-full cursor-pointer">{{ product.category.name }}</span>
-                    <!-- Other tags here -->
-                </div>
-
-                <!-- Product Title -->
-                <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ product.title }}</h1>
-
-                <!-- Short Description -->
-                <p class="text-gray-500 mb-6 leading-relaxed">{{ product.short_description }}</p>
-
-                <!-- Price -->
-                <div class="mb-6">
-                    <span class="text-3xl font-bold text-orange-600 persian-numbers">{{ product.price|intcomma:False|translate_number }} تومان</span>
-                </div>
-
-                <!-- Quantity and Add to Cart -->
-                <div class="flex items-center space-x-reverse space-x-4 mb-6">
-                    <form action="#" method="post" class="flex items-center space-x-reverse space-x-4 flex-1">
-                        {% csrf_token %}
-                        <div class="flex items-center border border-gray-300 rounded-lg">
-                            <button type="button" class="quantity-btn px-3 py-2 text-gray-600 hover:bg-gray-100" onclick="decreaseQuantity()">-</button>
-                            <input type="text" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" class="w-16 text-center border-none focus:outline-none" readonly>
-                            <button type="button" class="quantity-btn px-3 py-2 text-gray-600 hover:bg-gray-100" onclick="increaseQuantity()">+</button>
-                        </div>
-                        <button type="submit" class="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-600 text-white py-3 px-6 rounded-lg font-medium transition-colors">
-                            افزودن به سبد خرید
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Product Description and Comments Tab Section -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
-        <h2 class="text-2xl font-bold text-gray-700 mb-6">توضیحات محصول</h2>
-        <div class="prose max-w-none text-gray-700">
-            {{ product.description|safe }}
-        </div>
-
-        <div class="mt-10">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6">نظرات کاربران ({{ comments|length|translate_number }} نظر)</h2>
-
-            <!-- Comment Submission Form -->
-            <div class="bg-gray-50 rounded-lg p-6 mb-8">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">نظر خود را بنویسید</h3>
-                {% if user.is_authenticated %}
-                <form action="{% url 'product_detail' pk=product.id %}" method="post">
-                    {% csrf_token %}
-                    <textarea name="text"
-                              placeholder="نظر خود را در مورد این محصول بنویسید..."
-                              class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 resize-none h-32"
-                              required></textarea>
-                    <button type="submit" class="mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg font-medium transition-colors">
-                        ارسال نظر
-                    </button>
-                </form>
-                {% else %}
-                <p class="text-center text-gray-500">
-                    برای ثبت نظر، لطفاً <a href="#" class="text-orange-500 hover:underline">وارد شوید</a>.
-                </p>
-                {% endif %}
-            </div>
-
-            <!-- Comments List -->
-            <div class="space-y-6">
-                {% for comment in comments %}
-                <div class="comment-card border border-gray-200 rounded-lg p-6">
-                    <div class="flex items-start space-x-reverse space-x-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                            {{ comment.user.username|slice:":2"|upper }}
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-gray-800">
-                                    {{ comment.user.username }}
-                                    <span class="text-xs font-normal text-gray-500 mr-2">(
-                                        {% with user_comment_count=comment.user.comments.count %}
-                                            {{ user_comment_count|translate_number }} نظر
-                                        {% endwith %}
-                                    )</span>
-                                </h4>
-                                <span class="text-sm text-gray-500 persian-numbers">{{ comment.datetime_created|date:"Y/m/d" }}</span>
+                    <!-- Quantity and Add to Cart -->
+                    <div class="flex items-center space-x-reverse space-x-4 mb-6">
+                        <form action="#" method="post" class="flex items-center space-x-reverse space-x-4 flex-1">
+                            {% csrf_token %}
+                            <div class="flex items-center border border-gray-300 rounded-lg">
+                                <button type="button" class="quantity-btn px-3 py-2 text-gray-600 hover:bg-gray-100"
+                                        onclick="decreaseQuantity()">-
+                                </button>
+                                <span id="quantity-display"
+                                      class="w-16 text-center border-none focus:outline-none persian-numbers">۱</span>
+                                <input type="hidden" id="quantity-input" name="quantity" value="1" min="1"
+                                       max="{{ product.stock_quantity }}">
+                                <button type="button" class="quantity-btn px-3 py-2 text-gray-600 hover:bg-gray-100"
+                                        onclick="increaseQuantity()">+
+                                </button>
                             </div>
-                            <p class="text-gray-700 leading-relaxed">{{ comment.text }}</p>
-                        </div>
+                            <button type="submit"
+                                    class="bg-orange-500 hover:bg-orange-600 active:bg-orange-600 text-white py-3 px-6 rounded-lg font-medium transition-colors">
+                                افزودن به سبد خرید
+                            </button>
+
+                        </form>
                     </div>
+
+                    <!-- Key Features Section -->
+                    {% if product.key_features %}
+                        <div class="mt-8">
+                            <h2 class="text-2xl font-bold text-gray-700 mb-4">ویژگی‌های کلیدی</h2>
+                            <div class="prose text-gray-700">
+                                <ul class="space-y-2">
+                                    {% for feature in product.key_features|safe|split:"<li>" %}
+                                        {% if forloop.counter > 1 %}
+                                            <li class="flex items-center">
+                                                <svg class="h-5 w-5 text-green-500 ml-2" fill="currentColor"
+                                                     viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span>{{ feature|striptags }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
                 </div>
-                {% empty %}
-                <p class="text-center text-gray-500">
-                    هنوز هیچ نظری ثبت نشده است. اولین نفری باشید که نظر خود را به اشتراک می‌گذارد!
-                </p>
-                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Product Description and Comments Tab Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6">توضیحات محصول</h2>
+            <div class="prose max-w-none text-gray-700">
+                {{ product.description|safe }}
+            </div>
+
+            <div class="mt-10">
+                <h2 class="text-2xl font-bold text-gray-700 mb-6">نظرات کاربران ({{ comments|length|translate_number }}
+                    نظر)</h2>
+
+                <!-- Comment Submission Form -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">نظر خود را بنویسید</h3>
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'product_detail' pk=product.id %}" method="post">
+                            {% csrf_token %}
+                            <textarea name="text"
+                                      placeholder="نظر خود را در مورد این محصول بنویسید..."
+                                      class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 resize-none h-32"
+                                      required></textarea>
+                            <button type="submit"
+                                    class="mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg font-medium transition-colors">
+                                ارسال نظر
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-center text-gray-500">
+                            برای ثبت نظر، لطفاً <a href="#" class="text-orange-500 hover:underline">وارد شوید</a>.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <!-- Comments List -->
+                <div class="space-y-6">
+                    {% for comment in comments %}
+                        <div class="comment-card border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-start space-x-reverse space-x-4">
+                                <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-semibold">
+                                    {{ comment.user.username|slice:":2"|upper }}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-gray-800">
+                                            {{ comment.user.username }}
+                                            <span class="text-xs font-normal text-gray-500 mr-2">(
+                                                {% with user_comment_count=comment.user.comments.count %}
+                                                    {{ user_comment_count|translate_number }} نظر
+                                                {% endwith %}
+                                                )</span>
+                                        </h4>
+                                        <span class="text-sm text-gray-500 persian-numbers">{{ comment.datetime_created|date:"Y/m/d" }}</span>
+                                    </div>
+                                    <p class="text-gray-700 leading-relaxed">{{ comment.text }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-gray-500">
+                            هنوز هیچ نظری ثبت نشده است. اولین نفری باشید که نظر خود را به اشتراک می‌گذارد!
+                        </p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Quantity controls
-    let quantityInput = document.getElementById('quantity');
+    <script>
+        // Quantity controls
+        let quantityDisplay = document.getElementById('quantity-display');
+        let quantityInput = document.getElementById('quantity-input');
 
-    function increaseQuantity() {
-        let currentQuantity = parseInt(quantityInput.value);
-        if (currentQuantity < quantityInput.max) {
-            quantityInput.value = currentQuantity + 1;
+        function updateQuantity(value) {
+            quantityInput.value = value;
+            quantityDisplay.textContent = new Intl.NumberFormat('fa-IR').format(value);
         }
-    }
 
-    function decreaseQuantity() {
-        let currentQuantity = parseInt(quantityInput.value);
-        if (currentQuantity > 1) {
-            quantityInput.value = currentQuantity - 1;
+        function increaseQuantity() {
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity < parseInt(quantityInput.max)) {
+                updateQuantity(currentQuantity + 1);
+            }
         }
-    }
 
-    // Image zoom functionality
-    const mainImage = document.getElementById('product-main-image');
-    let isZoomed = false;
-
-    function toggleZoom() {
-        if (isZoomed) {
-            mainImage.classList.remove('scale-[1.5]', 'cursor-zoom-out');
-            mainImage.classList.add('cursor-zoom-in');
-            isZoomed = false;
-        } else {
-            mainImage.classList.add('scale-[1.5]', 'cursor-zoom-out');
-            mainImage.classList.remove('cursor-zoom-in');
-            isZoomed = true;
+        function decreaseQuantity() {
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+                updateQuantity(currentQuantity - 1);
+            }
         }
-    }
-</script>
+
+        // Initial quantity display
+        updateQuantity(parseInt(quantityInput.value));
+
+        // Image zoom functionality
+        const mainImage = document.getElementById('product-main-image');
+        let isZoomed = false;
+
+        function toggleZoom() {
+            if (isZoomed) {
+                mainImage.classList.remove('scale-[1.5]', 'cursor-zoom-out');
+                mainImage.classList.add('cursor-zoom-in');
+                isZoomed = false;
+            } else {
+                mainImage.classList.add('scale-[1.5]', 'cursor-zoom-out');
+                mainImage.classList.remove('cursor-zoom-in');
+                isZoomed = true;
+            }
+        }
+    </script>
 {% endblock %}

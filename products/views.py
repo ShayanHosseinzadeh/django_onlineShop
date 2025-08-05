@@ -16,7 +16,7 @@ from .models import Product, Comment, Category
 class ProductListView(generic.ListView):
     template_name = 'products/products_list.html'
     context_object_name = 'products'
-    paginate_by = 4
+    paginate_by = 8
 
     def get_queryset(self):
         queryset = Product.available.all()
