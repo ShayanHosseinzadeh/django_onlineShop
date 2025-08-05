@@ -16,7 +16,8 @@
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-full w-full">
                     {% else %}
-                        <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.title }}" class="h-full w-full">
+                        <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.title }}"
+                             class="h-full w-full">
                     {% endif %}
                 </div>
             </a>
@@ -39,7 +40,9 @@
                 <form action="{% url 'cart_add' product.id %}" method="post" class="mt-auto">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                    <input type="hidden" name="inplace" value="False">
+                    <button type="submit"
+                            class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                         افزودن به سبد خرید
                     </button>
                 </form>
@@ -65,7 +68,8 @@
             </li>
         {% endif %}
         <li>
-            <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-orange-600 bg-orange-50 border border-gray-300 hover:bg-orange-100 hover:text-orange-700">
+            <a href="#"
+               class="flex items-center justify-center px-4 h-10 leading-tight text-orange-600 bg-orange-50 border border-gray-300 hover:bg-orange-100 hover:text-orange-700">
                 {{ page_obj.number|translate_number }}
             </a>
         </li>

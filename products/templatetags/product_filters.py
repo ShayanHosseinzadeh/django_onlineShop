@@ -38,3 +38,22 @@ def timesince_persian(value):
         return _('%(minutes)s دقیقه پیش') % {'minutes': minutes}
     else:
         return _('لحظاتی پیش')
+
+import hashlib
+
+
+# Predefined Tailwind CSS background colors
+COLOR_CLASSES = [
+    'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500',
+    'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
+    'bg-cyan-500', 'bg-blue-500', 'bg-indigo-500', 'bg-violet-500',
+    'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500', 'bg-rose-500'
+]
+
+@register.filter
+def avatar_color(username):
+    if not username:
+        return 'bg-gray-400'
+    # Create a stable hash based on the username
+    index = int(hashlib.md5(username.encode()).hexdigest(), 16) % len(COLOR_CLASSES)
+    return COLOR_CLASSES[index]

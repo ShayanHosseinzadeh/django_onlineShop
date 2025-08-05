@@ -1,135 +1,130 @@
 {% extends '_base.html' %}
-{% block page_title %} {{ product.title }} {% endblock page_title %}
-{% load  static %}
-{% load crispy_forms_tags %}
+{% load static %}
 {% load i18n %}
 {% load humanize %}
 {% load persian_numbers %}
+{% load product_filters %}
+
+{% block title %}سبد خرید{% endblock %}
+
 {% block content %}
-    <!-- Breadcrumb area Start -->
-    {% trans 'Cart' as cart_head %}
-       {% include 'Header.html' with header_name=cart_head  %}
-
-    <!-- Breadcrumb area End -->
-
-    <!-- Main Content Wrapper Start -->
-    <div class="main-content-wrapper">
-        <div class="page-content-inner ptb--80">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 mb-md--50">
-                            <div class="row no-gutters">
-                                <div class="col-12">
-                                {% if cart %}
-                                    <div class="table-content table-responsive">
-                                        <table class="table text-center">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>{% trans 'Product Image' %}</th>
-                                                <th class="text-left"> {% trans 'Product Title' %}</th>
-                                                <th>{% trans 'price' %}</th>
-                                                <th>{% trans 'quantity' %}</th>
-                                                <th>{% trans 'total' %}</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for item in cart %}
-                                            <tr>
-                                                <td class="product-remove text-left"><a href="{% url 'cart_remove' item.product_obj.id %}"><i
-                                                        class="flaticon flaticon-cross"></i></a></td>
-                                                <td class="product-thumbnail text-left">
-                                                    {% if item.product_obj.image %}
-                                                    	 <img src="{{ item.product_obj.image.url }}"
-                                                         alt="Product Thumnail">
-                                                        {% else %}
-                                                          <img src=" https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6RfMQtEVkHOTiPU3n9w13H_fe89clopRAPFFwyA77FA&s"
-                                                         alt="Product Thumnail">
-                                                    {% endif %}
-
-                                                </td>
-                                                <td class="product-name">
-                                                    <h3>
-                                                        <a href="product-details.html">{{ item.product_obj.title }}</a>
-                                                    </h3>
-                                                </td>
-                                                <td class="product-price">
-                                                            <span class="product-price-wrapper">
-                                                                <span class="money">{{item.product_obj.price|intcomma:False|translate_number}} {% trans '$' %}</span>
-                                                            </span>
-                                                </td>
-                                                <td class="product-quantity">
-                                                    <form class="d-flex" action="{% url 'cart_add' item.product_obj.id %}" method="post">
-                                                        {% csrf_token %}
-                                                    <div class="quantity ">
-                                                        <input type="number" class="quantity-input" name="quantity"
-                                                               id="qty-1" value="{{ item.quantity }}" min="1">
-                                                        {{ item.product_quantity_update_form.inplace }}
-                                                    </div>
-                                                        <button class="small" type="submit" >{% trans 'Update' %}</button>
-
-                                                    </form>
-                                                </td>
-                                                <td class="product-total-price">
-                                                            <span class="product-price-wrapper">
-                                                                <span class="money">{{ item.total_price|intcomma:False|translate_number}} {% trans '$' %}</span>
-                                                            </span>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
+    <div class="container mx-auto px-4 py-8">
 
 
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                            <div class="row no-gutters border-top pt--20 mt--20">
-                                <div class="col-sm-6 text-sm-right">
-                                    <a href="{% url 'cart_clear' %}">
-                                    <button class="cart-form__btn">{% trans 'Clear your cart' %}</button>
-                                    </a>
-                                </div>
-                            </div>
-                                	{% else %}
-                                    <p>{% trans 'Your cart is empty' %}</p>
-                                    <a href="{% url 'product_list' %}">{% trans 'Go shopping' %}</a>
-                                {% endif %}
-                                </div>
-                            </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="cart-collaterals">
-                            <div class="cart-totals">
-                                <h5 class="font-size-14 font-bold mb--15">{% trans 'total' %}</h5>
-                                <div class="cart-calculator">
-{#                                    <div class="cart-calculator__item">#}
-{#                                        <div class="cart-calculator__item--head">#}
-{#                                            <span>مجموع</span>#}
-{#                                        </div>#}
-{#                                        <div class="cart-calculator__item--value">#}
-{#                                            <span>۳۴۶,۰۰۰ تومان</span>#}
-{#                                        </div>#}
-{#                                    </div>#}
-                                    <div class="cart-calculator__item order-total">
-                                        <div class="cart-calculator__item--head">
-                                            <span>{% trans 'Total price' %}</span>
-                                        </div>
-                                        <div class="cart-calculator__item--value">
-                                                <span class="product-price-wrapper">
-                                                    <span class="money">{{cart.get_total|intcomma:False|translate_number}} {% trans '$' %}</span>
-                                                </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{% url 'order_create' %}" class="btn btn-fullwidth btn-bg-red btn-color-white btn-hover-2">
-                                {% trans 'Submit' %}
-                            </a>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8">
+            {% if cart %}
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <main class="container mx-auto px-4 py-8">
+                        <div class="flex items-center justify-between mb-8">
+                            <h1 class="text-3xl font-bold text-gray-800">سبد خرید شما</h1>
+                            <span id="items-count"
+                                  class="text-gray-600 persian-numbers">{{ cart|length|translate_number }} کالا</span>
                         </div>
-                    </div>
+
+                        <!-- Cart Content -->
+                        <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Cart Items Section -->
+                            <div class="lg:col-span-2">
+                                <div id="cart-items" class="space-y-4">
+                                {% include 'partials/cart_item.html' %}
+
+                            <!-- Order Summary Sidebar -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                                    <h2 class="text-xl font-bold text-gray-800 mb-6">خلاصه سفارش</h2>
+
+                                    <!-- Order Details -->
+                                    <div class="space-y-4 mb-6">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-600">مجموع کالاها:</span>
+                                            <span id="subtotal" class="font-semibold text-gray-800 persian-numbers">۶۱,۵۰۰,۰۰۰ تومان</span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-600">تخفیف:</span>
+                                            <span id="discount" class="font-semibold text-green-600 persian-numbers">-۱,۲۵۰,۰۰۰ تومان</span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-600">هزینه ارسال:</span>
+                                            <span id="shipping" class="font-semibold text-gray-800 persian-numbers">۵۰,۰۰۰ تومان</span>
+                                        </div>
+
+                                        <hr class="border-gray-200">
+
+                                        <div class="flex justify-between items-center text-lg">
+                                            <span class="font-bold text-gray-800">مبلغ نهایی:</span>
+                                            <span id="total" class="font-bold text-orange-600 persian-numbers">۶۰,۳۰۰,۰۰۰ تومان</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Coupon Code -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">کد تخفیف
+                                            (اختیاری)</label>
+                                        <div class="flex space-x-reverse space-x-2">
+                                            <input type="text" id="coupon-input" placeholder="کد تخفیف را وارد کنید"
+                                                   class="coupon-input flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                                            <button onclick="applyCoupon()"
+                                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                                اعمال
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-3">
+                                        <button class="checkout-btn w-full py-3 px-4 text-white rounded-lg font-semibold text-lg">
+                                            تسویه حساب
+                                        </button>
+                                        <button class="continue-btn w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                            ادامه خرید
+                                        </button>
+                                    </div>
+
+                                    <!-- Security Badge -->
+                                    <div class="mt-6 flex items-center justify-center text-sm text-gray-500">
+                                        <svg class="h-4 w-4 text-green-500 ml-2" fill="currentColor"
+                                             viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                                  clip-rule="evenodd"></path>
+                                        </svg>
+                                        پرداخت امن و محفوظ
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty Cart State (Hidden by default) -->
+                        <div id="empty-cart" class="empty-cart text-center py-16 hidden">
+                            <div class="max-w-md mx-auto">
+                                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg class="h-16 w-16 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5H19M7 13v8a2 2 0 002 2h6a2 2 0 002-2v-8m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v4.01"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">سبد خرید شما خالی است</h2>
+                                <p class="text-gray-600 mb-8">هنوز هیچ محصولی به سبد خرید خود اضافه نکرده‌اید. برای
+                                    مشاهده محصولات به فروشگاه بروید.</p>
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-8 rounded-lg font-semibold transition-colors">
+                                    مشاهده محصولات
+                                </button>
+                            </div>
+                        </div>
+                    </main>
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-20">
+                    <p class="text-xl text-gray-600 mb-4">سبد خرید شما خالی است.</p>
+                    <a href="{% url 'product_list' %}"
+                       class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        مشاهده محصولات
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
-    <!-- Main Content Wrapper Start -->
-{% endblock content %}
+{% endblock %}

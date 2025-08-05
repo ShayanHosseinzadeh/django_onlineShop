@@ -1,0 +1,88 @@
+{% load humanize %}
+{% load persian_numbers %}
+{% load static %}
+{% load i18n %}
+
+{% for item in cart %}
+    <!-- Cart Item 1 -->
+    <div class="cart-item bg-white rounded-xl shadow-md p-6" data-item-id="1">
+        <div class="flex items-center space-x-reverse space-x-4">
+            <!-- Product Image -->
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <img src="{% if item.product_obj.image_url %} {% else %} {% static 'images/placeholder.jpg' %} {% endif %} "
+                     alt="">
+            </div>
+
+            <!-- Product Details -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1"> {{ item.product_obj.title }} </h3>
+                        <p class="text-sm text-gray-500 mb-2">{{ item.product_obj.short_description|truncatewords:10 }}</p>
+                        <div class="flex items-center space-x-reverse space-x-2 mb-3">
+                            {% if item.product_obj.discount_percent > 0 %}
+                                <div class="flex flex-col items-start">
+                                    <span class="text-lg font-bold text-orange-600 persian-numbers">{{ item.product_obj.get_discounted_price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+                                    <span class="text-sm text-gray-500 line-through persian-numbers">{{ item.product_obj.price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+
+                                </div>
+                                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full persian-numbers">
+                                                                                     ٪{{ item.product_obj.discount_percent|translate_number }} تخفیف
+                                                                               </span>
+                            {% else %}
+                                <span class="text-lg font-bold text-orange-600 persian-numbers">{{ item.product_obj.price|intcomma:False|translate_number }} {% trans 'تومان' %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <button class="remove-btn p-2 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                            onclick="removeItem(1)">
+                        <a href="{% url 'cart_remove' item.product_obj.id %}">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </a>
+                    </button>
+                </div>
+
+                <!-- Quantity and Total -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center border border-gray-300 rounded-lg">
+                        <button
+                                class="quantity-btn px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg"
+                                hx-post="{% url 'update_quantity_htmx' %}"
+                                hx-vals='{"product_id": "{{ item.product_obj.id }}", "action": "decrease"}'
+                                hx-target="#cart-item-{{ item.product_obj.id }}"
+                                hx-swap="outerHTML">
+                            -
+                        </button>
+                        <span class="quantity-display px-4 py-1 text-gray-800 persian-numbers">
+        {{ item.quantity }}
+    </span>
+
+                        <button
+                                hx-post="{% url 'update_quantity_htmx' %}"
+                                hx-vals='{"product_id": "{{ item.product_obj.id }}", "action": "increase"}'
+                                hx-target="#cart-item-{{ item.product_obj.id }}"
+                                hx-swap="outerHTML"
+                                class="px-3 py-1">+
+                        </button>
+                    </div>
+                    <div class="text-left">
+                        <span class="text-sm text-gray-500">مجموع:</span>
+                        <span class="item-total text-lg font-bold text-gray-800 persian-numbers mr-2">۲۵,۰۰۰,۰۰۰ تومان</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
+
+</div>
+</div>
