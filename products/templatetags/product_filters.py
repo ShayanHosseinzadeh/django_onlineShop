@@ -1,5 +1,7 @@
 # products/templatetags/product_filters.py
-
+from django.utils import timezone
+from datetime import timedelta
+from django.utils.translation import gettext as _
 from django import template
 from django.template.defaultfilters import stringfilter
 
@@ -13,3 +15,26 @@ def split(value, key):
     Usage: {{ value|split:" " }}
     """
     return value.split(key)
+
+
+@register.filter(name='timesince_persian')
+def timesince_persian(value):
+    now = timezone.now()
+    diff = now - value
+
+    if diff.days > 365:
+        years = diff.days // 365
+        return _('%(years)s سال پیش') % {'years': years}
+    elif diff.days > 30:
+        months = diff.days // 30
+        return _('%(months)s ماه پیش') % {'months': months}
+    elif diff.days > 0:
+        return _('%(days)s روز پیش') % {'days': diff.days}
+    elif diff.seconds > 3600:
+        hours = diff.seconds // 3600
+        return _('%(hours)s ساعت پیش') % {'hours': hours}
+    elif diff.seconds > 60:
+        minutes = diff.seconds // 60
+        return _('%(minutes)s دقیقه پیش') % {'minutes': minutes}
+    else:
+        return _('لحظاتی پیش')
