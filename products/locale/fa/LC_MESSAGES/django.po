@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-04 13:16+0330\n"
+"POT-Creation-Date: 2025-08-06 21:25+0330\n"
 "PO-Revision-Date: 2024-02-04 13:16+0330\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,162 +19,206 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.10.0\n"
 
-#: models.py:19
+#: products/models.py:17
+msgid "Category Name"
+msgstr ""
+
+#: products/models.py:18
+msgid "Category Slug"
+msgstr ""
+
+#: products/models.py:22
+msgid "category"
+msgstr ""
+
+#: products/models.py:23
+msgid "categories"
+msgstr ""
+
+#: products/models.py:41
 msgid "Available"
 msgstr "موجود"
 
-#: models.py:20
+#: products/models.py:42
 msgid "Unavailable"
 msgstr "ناموجود"
 
-#: models.py:23
+#: products/models.py:47
+msgid "Category"
+msgstr ""
+
+#: products/models.py:49
 msgid "Title"
 msgstr "عنوان"
 
-#: models.py:24
+#: products/models.py:50
 msgid "Description"
 msgstr "توضیحات محصول"
 
-#: models.py:25
-#| msgid "Description"
+#: products/models.py:51
 msgid "Short Description"
 msgstr "توضیحات محصول"
 
-#: models.py:26
+#: products/models.py:54
+#, fuzzy
+#| msgid "Features"
+msgid "Key Features"
+msgstr "ویژگی ها"
+
+#: products/models.py:60
+msgid "Discount Percentage"
+msgstr ""
+
+#: products/models.py:63
 msgid "Date of Creation"
 msgstr "تاریخ ایجاد"
 
-#: models.py:27
+#: products/models.py:64
 msgid "Last modifed"
 msgstr "اخرین ویرایش"
 
-#: models.py:28
+#: products/models.py:65
 msgid "Price"
 msgstr "قیمت"
 
-#: models.py:29
+#: products/models.py:66
 msgid "Status"
 msgstr "وضعیت"
 
-#: models.py:30
+#: products/models.py:67
 msgid "In stock"
 msgstr "موجودی"
 
-#: models.py:31
+#: products/models.py:68
 msgid "Product Image"
 msgstr "جزئیات محصول"
 
-#: models.py:50
+#: products/models.py:104
 msgid "Very Bad"
 msgstr "خیلی بد"
 
-#: models.py:51
+#: products/models.py:105
 msgid " Bad"
 msgstr "بد"
 
-#: models.py:52
+#: products/models.py:106
 msgid " Normal"
 msgstr "معمولی"
 
-#: models.py:53
+#: products/models.py:107
 msgid " Good"
 msgstr "خوب"
 
-#: models.py:54
+#: products/models.py:108
 msgid "Very Good"
 msgstr "خیلی خوب"
 
-#: models.py:56
+#: products/models.py:110
 msgid "product"
 msgstr "محصول"
 
-#: models.py:57
+#: products/models.py:112
 msgid "Comment Author"
 msgstr "نظر دهنده  "
 
-#: models.py:58
+#: products/models.py:113
 msgid "Text"
 msgstr "متن"
 
-#: models.py:59
+#: products/models.py:114
 msgid "Verifed?"
 msgstr "تایید شده؟"
 
-#: models.py:60
+#: products/models.py:115
 msgid "Created at"
 msgstr "زمان ساخته شدن"
 
-#: models.py:61
+#: products/models.py:116
 msgid "Modified at"
 msgstr "آخرین ویرایش"
 
-#: models.py:62
+#: products/models.py:117
 msgid "Rate"
 msgstr "امتیاز"
 
-#: templates/products/product_detail.html:32
-#: templates/products/products_list.html:72
-msgid "$"
-msgstr "تومان"
+#: products/templates/products/partials/product_grid.html:33
+#: products/templates/products/partials/product_grid.html:34
+#: products/templates/products/partials/product_grid.html:37
+msgid "تومان"
+msgstr ""
 
-#: templates/products/product_detail.html:40
-#: templates/products/products_list.html:79
-msgid "Add to cart"
-msgstr "اضافه به سبد خرید"
+#: products/templatetags/product_filters.py:27
+#, python-format
+msgid "%(years)s سال پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:60
-msgid "Product Description"
-msgstr "توضیحات محصول"
+#: products/templatetags/product_filters.py:30
+#, python-format
+msgid "%(months)s ماه پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:64
-msgid "Features"
-msgstr "ویژگی ها"
+#: products/templatetags/product_filters.py:32
+#, python-format
+msgid "%(days)s روز پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:68
-msgid "Comments"
-msgstr "نظرات"
+#: products/templatetags/product_filters.py:35
+#, python-format
+msgid "%(hours)s ساعت پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:85
-msgid "weight"
-msgstr "ورزن"
+#: products/templatetags/product_filters.py:38
+#, python-format
+msgid "%(minutes)s دقیقه پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:89
-msgid "size"
-msgstr "اندازه"
+#: products/templatetags/product_filters.py:40
+msgid "لحظاتی پیش"
+msgstr ""
 
-#: templates/products/product_detail.html:93
-msgid "color"
-msgstr "رنگ"
-
-#: templates/products/product_detail.html:109
-msgid "comments for"
-msgstr "نظرات درباره "
-
-#: templates/products/product_detail.html:145
-msgid "Write your comment: "
-msgstr "نظر خود را ارسال کنید"
-
-#: templates/products/product_detail.html:151
-msgid "Send"
-msgstr "ارسال"
-
-#: templates/products/product_detail.html:159
-msgid "You have to "
-msgstr "شما باید "
-
-#: templates/products/product_detail.html:160
-msgid "Login"
-msgstr "لاگین "
-
-#: templates/products/product_detail.html:161
-msgid "to send a comment "
-msgstr " کنید تا نظر خود را ارسال کنید"
-
-#: templates/products/products_list.html:6
-#| msgid "Product Description"
-msgid "Product List"
-msgstr "لیست محصولات"
-
-#: views.py:39
+#: products/views.py:77
 msgid "Your comment has been submited and would be shown after verification."
 msgstr "نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد."
+
+#~ msgid "$"
+#~ msgstr "تومان"
+
+#~ msgid "Add to cart"
+#~ msgstr "اضافه به سبد خرید"
+
+#~ msgid "Product Description"
+#~ msgstr "توضیحات محصول"
+
+#~ msgid "Comments"
+#~ msgstr "نظرات"
+
+#~ msgid "weight"
+#~ msgstr "ورزن"
+
+#~ msgid "size"
+#~ msgstr "اندازه"
+
+#~ msgid "color"
+#~ msgstr "رنگ"
+
+#~ msgid "comments for"
+#~ msgstr "نظرات درباره "
+
+#~ msgid "Write your comment: "
+#~ msgstr "نظر خود را ارسال کنید"
+
+#~ msgid "Send"
+#~ msgstr "ارسال"
+
+#~ msgid "You have to "
+#~ msgstr "شما باید "
+
+#~ msgid "Login"
+#~ msgstr "لاگین "
+
+#~ msgid "to send a comment "
+#~ msgstr " کنید تا نظر خود را ارسال کنید"
+
+#~| msgid "Product Description"
+#~ msgid "Product List"
+#~ msgstr "لیست محصولات"

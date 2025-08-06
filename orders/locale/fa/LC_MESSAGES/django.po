@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-04 12:41+0330\n"
+"POT-Creation-Date: 2025-08-06 21:25+0330\n"
 "PO-Revision-Date: 2024-02-04 12:42+0330\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,67 +23,89 @@ msgstr ""
 msgid "If you have any Notes please enter otherwise leave it empty"
 msgstr "در صورت نیاز، توضیحات سفارش را وارد کنید"
 
-#: models.py:10
+#: models.py:13
+msgid "Pending"
+msgstr "در حال پردازش"
+
+#: models.py:14
+msgid "Processing"
+msgstr ""
+
+#: models.py:15
+msgid "Shipped"
+msgstr ""
+
+#: models.py:16
+msgid "Completed"
+msgstr ""
+
+#: models.py:17
+msgid "Cancelled"
+msgstr ""
+
+#: models.py:19
 msgid "User"
 msgstr "کاربر"
 
-#: models.py:11
+#: models.py:20
 msgid "Firstname"
 msgstr "نام"
 
-#: models.py:12
+#: models.py:21
 msgid "Lastname"
 msgstr "نام خانوادگی"
 
-#: models.py:13
+#: models.py:22
 msgid "Email"
 msgstr "ایمیل"
 
-#: models.py:14
+#: models.py:23
 msgid "Phone Number"
 msgstr "شماره همراه"
 
-#: models.py:15
+#: models.py:24
 msgid "Address"
 msgstr "آدرس"
 
-#: models.py:16
-msgid "Is_Paid?"
+#: models.py:25
+#, fuzzy
+#| msgid "Is_Paid?"
+msgid "Is Paid?"
 msgstr "پرداخت شده ؟"
 
-#: models.py:17
+#: models.py:26
+msgid "Status"
+msgstr ""
+
+#: models.py:27
 msgid "Order Notes"
 msgstr "توضیحات سفارش"
 
-#: models.py:19
+#: models.py:30
 msgid "Created at"
 msgstr "ساخته شده در"
 
-#: models.py:20
+#: models.py:31
 msgid "Modified at"
 msgstr "ویرایش شده در"
 
-#: templates/orders/order_create.html:7 templates/orders/order_create.html:10
+#: templates/orders/order_create.html:7
 msgid "Order"
 msgstr "ثبت سفارش"
-
-#: templates/orders/order_create.html:80
-msgid "Submit"
-msgstr "ثبت سفارش"
-
-#: templates/orders/order_create.html:105
-#: templates/orders/order_create.html:112
-msgid "$"
-msgstr "تومان"
 
 #: views.py:17
 msgid "You cannot proceed to checkout page with an empty cart!"
 msgstr "شما نمی توانید با سبد خرید خالی سفارشی را ثبت کنید!"
 
-#: views.py:38
-msgid "Your order has been submitted."
-msgstr "سفارش شما با موفقیت ثبت شد"
-
-#: views.py:40
+#: views.py:42
 msgid "Please Review the errors and solve them!"
 msgstr "لطفا خطاها را بررسی و رفع کنید"
+
+#~ msgid "Submit"
+#~ msgstr "ثبت سفارش"
+
+#~ msgid "$"
+#~ msgstr "تومان"
+
+#~ msgid "Your order has been submitted."
+#~ msgstr "سفارش شما با موفقیت ثبت شد"

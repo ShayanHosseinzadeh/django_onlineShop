@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
 from cart.cart import Cart
 from .forms import OrderForm
-from .models import OrderItem
+from .models import OrderItem, Order
 
 
 # Create your views here.
@@ -32,15 +32,31 @@ def order_create_view(request):
                     order=order_obj,
                     product=product,
                     quantity=item['quantity'],
-                    price=product.price,
+                    price=product.get_discounted_price,
                 )
             cart.clear()
             request.session['order_id'] = order_obj.id
-            return redirect('payment_process')
+            return redirect('order_complete')
 
         if order_form.errors:
             messages.error(request, _('Please Review the errors and solve them!'))
 
     return render(request, 'orders/order_create.html', {'order_form': order_form})
 
+
+@login_required
+def order_completion(request):
+    order_id = request.session.get('order_id')
+
+    if not order_id:
+        return redirect('product_list')
+
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    del request.session['order_id']
+
+    context = {
+        'order': order,
+    }
+    return render(request, 'orders/order_complete.html', context)
 
