@@ -9,8 +9,6 @@
 
 {% block content %}
     <div class="container mx-auto px-4 py-8">
-
-
         <div class="bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8">
             {% if cart %}
                 <div class="flex flex-col lg:flex-row gap-8">
@@ -20,14 +18,14 @@
                             <span id="items-count"
                                   class="text-gray-600 persian-numbers">{{ cart|length|translate_number }} کالا</span>
                         </div>
-
                         <!-- Cart Content -->
                         <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <!-- Cart Items Section -->
                             <div class="lg:col-span-2">
-                                <div id="cart-items" class="space-y-4">
-                                {% include 'partials/cart_item.html' %}
-
+                                <div id="cart-items">
+                                    {% include 'cart/partials/cart_item.html' %}
+                                </div>
+                            </div>
                             <!-- Order Summary Sidebar -->
                             <div class="lg:col-span-1">
                                 <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
@@ -37,49 +35,38 @@
                                     <div class="space-y-4 mb-6">
                                         <div class="flex justify-between items-center">
                                             <span class="text-gray-600">مجموع کالاها:</span>
-                                            <span id="subtotal" class="font-semibold text-gray-800 persian-numbers">۶۱,۵۰۰,۰۰۰ تومان</span>
+                                            <span id="subtotal"
+                                                  class="font-semibold text-gray-800 persian-numbers">{{ cart.get_total|intcomma:False|translate_number }} تومان </span>
                                         </div>
 
                                         <div class="flex justify-between items-center">
                                             <span class="text-gray-600">تخفیف:</span>
-                                            <span id="discount" class="font-semibold text-green-600 persian-numbers">-۱,۲۵۰,۰۰۰ تومان</span>
+                                            <span id="discount"
+                                                  class="font-semibold text-green-600 persian-numbers">    {{ cart.get_total_discount|intcomma:False|translate_number }} تومان </span>
                                         </div>
 
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-gray-600">هزینه ارسال:</span>
-                                            <span id="shipping" class="font-semibold text-gray-800 persian-numbers">۵۰,۰۰۰ تومان</span>
-                                        </div>
 
                                         <hr class="border-gray-200">
 
                                         <div class="flex justify-between items-center text-lg">
                                             <span class="font-bold text-gray-800">مبلغ نهایی:</span>
-                                            <span id="total" class="font-bold text-orange-600 persian-numbers">۶۰,۳۰۰,۰۰۰ تومان</span>
+                                            <span id="total"
+                                                  class="font-bold text-orange-600 persian-numbers">{{ cart.get_total|intcomma:False|translate_number }} تومان</span>
                                         </div>
                                     </div>
-
-                                    <!-- Coupon Code -->
-                                    <div class="mb-6">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">کد تخفیف
-                                            (اختیاری)</label>
-                                        <div class="flex space-x-reverse space-x-2">
-                                            <input type="text" id="coupon-input" placeholder="کد تخفیف را وارد کنید"
-                                                   class="coupon-input flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                                            <button onclick="applyCoupon()"
-                                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                                                اعمال
-                                            </button>
-                                        </div>
-                                    </div>
-
                                     <!-- Action Buttons -->
                                     <div class="space-y-3">
-                                        <button class="checkout-btn w-full py-3 px-4 text-white rounded-lg font-semibold text-lg">
-                                            تسویه حساب
-                                        </button>
-                                        <button class="continue-btn w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                                            ادامه خرید
-                                        </button>
+                                        <a href="" class="block mb-3">
+                                            <button class="checkout-btn w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                                تسویه حساب
+                                            </button>
+                                        </a>
+
+                                        <a href="{% url 'product_list' %}" class="block">
+                                            <button class="continue-btn w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                                ادامه خرید
+                                            </button>
+                                        </a>
                                     </div>
 
                                     <!-- Security Badge -->
