@@ -60,3 +60,14 @@ def order_completion(request):
     }
     return render(request, 'orders/order_complete.html', context)
 
+
+
+
+@login_required
+def order_invoice(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    if order.user == request.user or request.user.is_staff:
+        return render(request, 'orders/invoice.html', {'order': order})
+    else:
+        return redirect('product_list')

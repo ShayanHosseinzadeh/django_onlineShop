@@ -248,7 +248,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
                             <span class="text-gray-600 font-medium">شماره سفارش:</span>
-                            <span class="font-bold text-gray-800 persian-numbers">{{ order.id }}</span>
+                            <span class="font-bold text-gray-800 persian-numbers">{{ order.id|translate_number }}</span>
                         </div>
 
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
@@ -324,33 +324,52 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in-delay-3">
-                <!-- Track Order -->
-                <button class="button-hover text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all" style="background-color: #EA580B;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#EA580B'">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span>پیگیری سفارش</span>
-                </button>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in-delay-3">
 
-                <!-- Continue Shopping -->
-                <a href="{% url 'product_list' %}">
-                    <button class="button-hover bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M8 11v6h8v-6M8 11h8"></path>
-                    </svg>
-                    <span>ادامه خرید</span>
-                </button>
+    <!-- Track Order -->
+    <div class="flex justify-center items-center">
+        <button class="button-hover text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all"
+                style="background-color: #EA580B;"
+                onmouseover="this.style.backgroundColor='#dc2626'"
+                onmouseout="this.style.backgroundColor='#EA580B'">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                </path>
+            </svg>
+            <span>پیگیری سفارش</span>
+        </button>
+    </div>
 
-                </a>
-                <!-- Download Invoice -->
-                <button class="button-hover bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <span>دانلود فاکتور</span>
-                </button>
-            </div>
+    <!-- Continue Shopping -->
+    <div class="flex justify-center items-center">
+        <a href="{% url 'product_list' %}">
+            <button class="button-hover bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M16 11V7a4 4 0 00-8 0v4M8 11v6h8v-6M8 11h8">
+                    </path>
+                </svg>
+                <span>ادامه خرید</span>
+            </button>
+        </a>
+    </div>
+
+    <!-- Download Invoice -->
+    <div class="flex justify-center items-center">
+        <a href="{% url 'invoice' order.id %}">
+            <button class="button-hover bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-reverse space-x-3 transition-all">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <span>دانلود فاکتور</span>
+            </button>
+        </a>
+    </div>
+</div>
+
 
             <!-- Additional Information -->
             <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
