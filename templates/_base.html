@@ -35,9 +35,11 @@
         <div class="flex items-center justify-between">
             <!-- لوگو و منو کنار هم -->
             <div class="flex items-center space-x-reverse space-x-6">
-                <h1 class="text-2xl font-bold text-orange-600">شایان شاپ</h1>
+                <a href="">
+                    <h1 class="text-2xl font-bold text-orange-600">شایان شاپ</h1>
+                </a>
                 <nav class="hidden md:flex items-center gap-x-6" aria-label="Main Navigation">
-                    <a href="#"
+                    <a href="{% url 'product_list' %}"
                        class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
                         محصولات
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>

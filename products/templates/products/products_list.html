@@ -7,78 +7,96 @@
 {% block title %}محصولات{% endblock %}
 
 {% block content %}
-<div class="flex flex-col md:flex-row gap-8">
-    <!-- Sidebar -->
-    <aside class="w-full md:w-80 bg-white rounded-xl shadow-md p-6 h-fit">
-        <!-- Categories -->
-        <div class="mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">دسته‌بندی‌ها</h3>
-            <ul class="space-y-2">
-                <li>
-                    <a href="{% url 'product_list' %}"
-                       class="category-btn block w-full text-right px-4 py-2 rounded-lg transition-colors
-                               {% if not category %}bg-orange-50 text-orange-600{% else %}text-gray-700 hover:bg-orange-100 hover:text-orange-700{% endif %}"
-                       hx-get="{% url 'product_list' %}"
-                       hx-target="#product-grid-container"
-                       hx-swap="innerHTML">
-                         همه محصولات
-                    </a>
-                </li>
-                {% for c in categories %}
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-80 bg-white rounded-xl shadow-md p-6 h-fit">
+            <!-- Categories -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">دسته‌بندی‌ها</h3>
+                <ul class="space-y-2">
                     <li>
-                        <a href="{% url 'product_list_by_category' category_slug=c.slug %}"
-                           class="category-btn block w-full text-right px-4 py-2 rounded-lg transition-colors
-                                  {% if category and category.slug == c.slug %}bg-orange-50 text-orange-600{% else %}text-gray-700 hover:bg-orange-100 hover:text-orange-700{% endif %}"
-                           hx-get="{% url 'product_list_by_category' category_slug=c.slug %}"
+                        <a href="{% url 'product_list' %}"
+                           class="category-btn flex flex-row-reverse items-center gap-3 w-full text-right px-4 py-2 rounded-lg transition-colors
+               {% if not category %}bg-orange-50 text-orange-600{% else %}text-gray-700 hover:bg-orange-100 hover:text-orange-700{% endif %}"
+                           hx-get="{% url 'product_list' %}"
                            hx-target="#product-grid-container"
                            hx-swap="innerHTML">
-                            {{ c.name }}
+                            <img src="{% static 'images/placeholder.jpg' %}" alt="همه محصولات"
+                                 class="w-8 h-8 object-contain">
+                            <span class="flex-1 text-center">همه محصولات</span>
                         </a>
                     </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </aside>
+                    {% for c in categories %}
+                        <li>
+                            <a href="{% url 'product_list_by_category' category_slug=c.slug %}"
+                               class="category-btn flex flex-row-reverse items-center gap-3 w-full text-right px-4 py-2 rounded-lg transition-colors
+                   {% if category and category.slug == c.slug %}bg-orange-50 text-orange-600{% else %}text-gray-700 hover:bg-orange-100 hover:text-orange-700{% endif %}"
+                               hx-get="{% url 'product_list_by_category' category_slug=c.slug %}"
+                               hx-target="#product-grid-container"
+                               hx-swap="innerHTML">
+                                {% if c.icon and c.icon.url %}
+                                    <img src="{{ c.icon.url }}" alt="{{ c.name }}" class="w-8 h-8 object-contain">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.jpg' %}" alt="{{ c.name }}"
+                                         class="w-8 h-8 object-contain">
+                                {% endif %}
+                                <span class="flex-1 text-center">{{ c.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
 
-    <!-- Products Grid and Sorting -->
-    <section class="flex-1">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">
-                {% if category %}
-                    {{ category.name }}
-                {% else %}
-                    محصولات
-                {% endif %}
-            </h2>
-            <form id="sort-form" hx-get="{% if category %}{% url 'product_list_by_category' category_slug=category.slug %}{% else %}{% url 'product_list' %}{% endif %}" hx-target="#product-grid-container" hx-swap="innerHTML">
-                <select name="sort_by" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500" onchange="this.form.submit()">
-                    <option value="default" {% if not sort_by or sort_by == 'default' %}selected{% endif %}>مرتب‌سازی بر اساس</option>
-                    <option value="-datetime_created" {% if sort_by == '-datetime_created' %}selected{% endif %}>جدیدترین</option>
-                    <option value="price" {% if sort_by == 'price' %}selected{% endif %}>ارزان‌ترین</option>
-                    <option value="-price" {% if sort_by == '-price' %}selected{% endif %}>گران‌ترین</option>
-                </select>
-            </form>
-        </div>
+        <!-- Products Grid and Sorting -->
+        <section class="flex-1">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    {% if category %}
+                        {{ category.name }}
+                    {% else %}
+                        محصولات
+                    {% endif %}
+                </h2>
+                <form id="sort-form" hx-get="
 
-        <div id="product-grid-container">
-            {% include 'products/partials/product_grid.html' %}
-        </div>
-    </section>
-</div>
+
+                        {% if category %}{% url 'product_list_by_category' category_slug=category.slug %}{% else %}{% url 'product_list' %}{% endif %}"
+                      hx-target="#product-grid-container" hx-swap="innerHTML">
+                    <select name="sort_by"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                            onchange="this.form.submit()">
+                        <option value="default" {% if not sort_by or sort_by == 'default' %}selected{% endif %}>
+                            مرتب‌سازی بر اساس
+                        </option>
+                        <option value="-datetime_created" {% if sort_by == '-datetime_created' %}selected{% endif %}>
+                            جدیدترین
+                        </option>
+                        <option value="price" {% if sort_by == 'price' %}selected{% endif %}>ارزان‌ترین</option>
+                        <option value="-price" {% if sort_by == '-price' %}selected{% endif %}>گران‌ترین</option>
+                    </select>
+                </form>
+            </div>
+
+            <div id="product-grid-container">
+                {% include 'products/partials/product_grid.html' %}
+            </div>
+        </section>
+    </div>
     <script>
-document.addEventListener('htmx:beforeRequest', function(event) {
-    const clickedCategory = event.target;
+        document.addEventListener('htmx:beforeRequest', function (event) {
+            const clickedCategory = event.target;
 
-    // Remove active class from all category links
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('bg-orange-50', 'text-orange-600');
-        btn.classList.add('text-gray-700');
-    });
+            // Remove active class from all category links
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-50', 'text-orange-600');
+                btn.classList.add('text-gray-700');
+            });
 
-    // Add active class to the clicked one
-    clickedCategory.classList.add('bg-orange-50', 'text-orange-600');
-    clickedCategory.classList.remove('text-gray-700');
-});
-</script>
+            // Add active class to the clicked one
+            clickedCategory.classList.add('bg-orange-50', 'text-orange-600');
+            clickedCategory.classList.remove('text-gray-700');
+        });
+    </script>
 
 {% endblock %}

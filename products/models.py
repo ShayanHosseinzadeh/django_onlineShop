@@ -16,7 +16,7 @@ from ckeditor.fields import RichTextField
 class Category(models.Model):
     name = models.CharField(max_length=200, db_index=True, verbose_name=_('Category Name'))
     slug = models.SlugField(max_length=200, unique=True, verbose_name=_('Category Slug'))
-
+    icon = models.ImageField(upload_to='categories/', null=True, blank=True, verbose_name=_('Category Icon'))
     class Meta:
         ordering = ('name',)
         verbose_name = _('category')
@@ -42,7 +42,7 @@ class Product(models.Model):
         ('una', _('Unavailable')),
 
     )
-    # ForeignKey for Category
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True, blank=True,
                                  verbose_name=_('Category'))
 
@@ -50,10 +50,8 @@ class Product(models.Model):
     description = RichTextField(verbose_name=_('Description'))
     short_description = models.TextField(verbose_name=_('Short Description'), blank=True)
 
-    # New field for key features
-    key_features = RichTextField(verbose_name=_('Key Features'), blank=True, null=True)
 
-    # New field for discount
+    key_features = RichTextField(verbose_name=_('Key Features'), blank=True, null=True)
     discount_percent = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
