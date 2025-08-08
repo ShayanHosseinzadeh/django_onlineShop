@@ -11,4 +11,6 @@ urlpatterns = [
 
     # Your existing URL for product detail view (using pk)
     path('<int:pk>/', views.ProductDetailView, name='product_detail'),
+    path('search/', views.search_results, name='search_results'),
+
 ]

@@ -4,17 +4,17 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}شایان شاپ - فروشگاه آنلاین شما{% endblock %}</title>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  integrity="sha512-...your-integrity-key..."
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-/>
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            integrity="sha512-...your-integrity-key..."
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -33,134 +33,162 @@
 <header class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-reverse space-x-4">
+            <!-- لوگو و منو کنار هم -->
+            <div class="flex items-center space-x-reverse space-x-6">
                 <h1 class="text-2xl font-bold text-orange-600">شایان شاپ</h1>
+                <nav class="hidden md:flex items-center gap-x-6" aria-label="Main Navigation">
+                    <a href="#"
+                       class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+                        محصولات
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#"
+                       class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+                        درباره ما
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#"
+                       class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+                        تماس با ما
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </nav>
             </div>
 
-            <nav class="hidden md:flex items-center space-x-reverse space-x-8">
-                <a href="#" class="text-gray-700 hover:text-orange-600 transition-colors font-medium">محصولات</a>
-                <a href="#" class="text-gray-700 hover:text-orange-600 transition-colors font-medium">درباره ما</a>
-                <a href="#" class="text-gray-700 hover:text-orange-600 transition-colors font-medium">تماس با ما</a>
-            </nav>
-
+            <!-- بخش جستجو و آیکون‌ها -->
             <div class="flex items-center space-x-reverse space-x-4">
                 <div class="relative hidden sm:block">
-                    <input
-                        type="text"
-                        placeholder="جستجو..."
-                        class="search-input w-64 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                    />
-                    <svg
-                        class="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        ></path>
-                    </svg>
+                    <form method="get" action="{% url 'search_results' %}" class="relative hidden sm:block">
+                        <input
+                                type="text"
+                                name="q"
+                                placeholder="جستجو..."
+                                class="search-input w-64 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                                value="{{ request.GET.q|default:'' }}"
+                        />
+                        <button
+                                type="submit"
+                                class="absolute right-1 top-1.5 text-gray-400 hover:text-orange-600 flex items-center justify-center w-8 h-8"
+                        >
+                            <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                            >
+                                <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
                 <div class="relative flex items-center space-x-reverse space-x-4">
                     <a href="#" class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
                         <svg
-                            class="h-6 w-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                         >
                             <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                             ></path>
                         </svg>
                     </a>
                     <div class="relative">
-                      <a href="{% url 'cart_detail' %}" class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
-  <i class="fa-solid fa-cart-shopping text-xl"></i>
-</a>
-
-                        <span
-                            class="cart-badge absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                            >{{ cart|length|translate_number }}</span
-                        >
+                        <a href="{% url 'cart_detail' %}"
+                           class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
+                            <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        </a>
+                        <span class="cart-badge absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {{ cart|length|translate_number }}
+                        </span>
                     </div>
                 </div>
 
                 <button class="md:hidden p-2 text-gray-700">
                     <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                            class="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                     >
                         <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"
                         ></path>
                     </svg>
                 </button>
             </div>
         </div>
 
+        <!-- سرچ موبایلی -->
         <div class="sm:hidden mt-4">
             <div class="relative">
-                <input
-                    type="text"
-                    placeholder="جستجو..."
-                    class="search-input w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                />
-                <svg
-                    class="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                </svg>
+                <form method="get" action="{% url 'search_results' %}" class="sm:hidden mt-4 relative">
+    <input
+        type="text"
+        name="q"
+        placeholder="جستجو..."
+        class="search-input w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+        value="{{ request.GET.q|default:'' }}"
+    />
+    <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600">
+        <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+        </svg>
+    </button>
+</form>
             </div>
         </div>
     </div>
 </header>
 
 <main class="container mx-auto px-4 py-8 flex-grow">
-  {% if messages %}
-<div
-    id="messages-container"
-    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
+    {% if messages %}
+        <div
+                id="messages-container"
+                class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
            max-w-lg w-[90vw] sm:w-96 px-4
            space-y-2
            transition-opacity duration-500 ease-in-out"
->
-    {% for message in messages %}
-    <div
-        class="p-4 rounded-md shadow-lg opacity-90 text-center break-words
+        >
+            {% for message in messages %}
+                <div
+                        class="p-4 rounded-md shadow-lg opacity-90 text-center break-words
             {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-200{% endif %}
             {% if message.tags == 'warning' %}bg-yellow-100 text-yellow-800 border border-yellow-200{% endif %}
             {% if message.tags == 'error' %}bg-red-100 text-red-800 border border-red-200{% endif %}
             {% if message.tags == 'info' %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}"
-        role="alert"
-    >
-        <div class="flex items-center justify-center space-x-reverse space-x-3">
-            <span class="text-sm font-medium">{{ message }}</span>
+                        role="alert"
+                >
+                    <div class="flex items-center justify-center space-x-reverse space-x-3">
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+    {% endif %}
 
 
     {% block content %}{% endblock %}
@@ -195,13 +223,27 @@
             </div>
 
             <div>
-                <h4 class="text-lg font-semibold mb-4">دسته‌بندی‌ها</h4>
+                <h4 class="text-lg font-semibold mb-4">راهنمای خرید</h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">موبایل</a>
+                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                            نحوه ثبت سفارش
+                        </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">لپ‌تاپ</a>
+                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                            شیوه ارسال کالا
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                            روش‌های پرداخت
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                            پیگیری سفارشات
+                        </a>
                     </li>
                 </ul>
             </div>

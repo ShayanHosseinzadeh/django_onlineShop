@@ -1,4 +1,6 @@
 # products/views.py
+from django.core.paginator import Paginator
+from django.db.models.aggregates import Count
 from django.shortcuts import render
 from django.views import generic
 from django.shortcuts import get_object_or_404
@@ -38,8 +40,6 @@ class ProductListView(generic.ListView):
         elif sort_by == '-datetime_created':
             queryset = queryset.order_by('-datetime_created')
         elif sort_by == 'popularity':
-            # This is a placeholder for a 'popularity' field. Let's assume you have a 'sales_count' or similar
-            # For now, we'll order by the number of comments as a proxy for popularity
             queryset = queryset.annotate(comment_count=Count('comments')).order_by('-comment_count')
 
         return queryset
@@ -49,7 +49,6 @@ class ProductListView(generic.ListView):
         context['categories'] = Category.objects.all()
         context['category'] = self.category
 
-        # Add sorting parameter to context so template knows which option is selected
         context['sort_by'] = self.request.GET.get('sort_by', 'default')
         return context
 
@@ -83,3 +82,31 @@ def ProductDetailView(request, pk):
                    'comment_form': comment_form,
                    'add_to_cart_form': add_to_cart_form}
                   )
+
+
+def search_results(request):
+    query = request.GET.get('q', '')
+    results = []
+    if query:
+        results = Product.objects.filter(title__icontains=query)
+    else:
+        results = Product.objects.none()
+
+
+    paginator = Paginator(results, 12)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    start_index = (page_obj.number - 1) * paginator.per_page + 1 if page_obj else 0
+    end_index = start_index + len(page_obj.object_list) - 1 if page_obj else 0
+    total_products = paginator.count
+
+    context = {
+        'query': query,
+        'page_obj': page_obj,
+        'start_index': start_index,
+        'end_index': end_index,
+        'total_products': total_products,
+        'results':results,
+    }
+    return render(request, 'products/search_results.html', context)

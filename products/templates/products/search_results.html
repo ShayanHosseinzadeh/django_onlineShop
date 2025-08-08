@@ -1,0 +1,393 @@
+{% extends '_base.html' %}
+{% load humanize %}
+{% load persian_numbers %}
+{% load static %}
+{% block title %}
+    نتایج جستجو
+{% endblock %}
+
+{% block content %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        'persian': {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#F87315',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12'
+                        },
+                        'gold': {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f'
+                        },
+                        'coral': {
+                            50: '#fff5f5',
+                            100: '#fed7d7',
+                            200: '#feb2b2',
+                            300: '#fc8181',
+                            400: '#f56565',
+                            500: '#e53e3e',
+                            600: '#c53030',
+                            700: '#9b2c2c',
+                            800: '#822727',
+                            900: '#63171b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+
+        .product-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #0ea5e9;
+        }
+
+        .persian-pattern {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23F87315' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .discount-badge {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            animation: pulse 2s infinite;
+        }
+
+        .new-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .popular-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .star-rating {
+            color: #f59e0b;
+            font-size: 1.1em;
+        }
+
+        .price-original {
+            position: relative;
+        }
+
+        .price-original::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 2px;
+            background: #ef4444;
+            transform: rotate(-5deg);
+        }
+
+        .filter-section {
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            border-right: 4px solid #F87315;
+        }
+
+        .search-highlight {
+            background: linear-gradient(120deg, #fef3c7, #fde68a);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .persian-border {
+            border-image: linear-gradient(45deg, #0ea5e9, #f59e0b) 1;
+        }
+
+        .review-card {
+            background: linear-gradient(135deg, #ffffff, #fff7ed);
+            border-right: 3px solid #F87315;
+        }
+
+        .cultural-pattern {
+            background-image: radial-gradient(circle at 25% 25%, #F87315 2px, transparent 2px),
+            radial-gradient(circle at 75% 75%, #f59e0b 2px, transparent 2px);
+            background-size: 40px 40px;
+        }
+
+        .notification {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: '◄';
+            margin: 0 8px;
+            color: #64748b;
+        }
+
+        .filter-checkbox:checked + .filter-label {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .price-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to left, #F87315, #f59e0b);
+            outline: none;
+        }
+
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #F87315;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .related-products {
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+        }
+    </style>
+
+
+   <!-- Main Content -->
+<main class="container mx-auto px-4 py-8">
+
+    <!-- Search Results Header -->
+    <div class="mb-8 text-center">
+        {% if query %}
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">
+                نتایج جستجو برای "<span class="text-persian-500"> {{ query }}</span>"
+            </h2>
+            {% if results %}
+                <p class="text-lg text-gray-600">
+                    <span class="font-semibold text-persian-600">{{ results|length|translate_number }} محصول</span> با کیفیت
+                    عالی برای شما یافت شد
+                </p>
+            {% else %}
+                <p class="text-lg text-gray-600">
+                    هیچ محصولی برای "<span class="text-persian-500">{{ query }}</span>" یافت نشد.
+                </p>
+            {% endif %}
+        {% else %}
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">
+                جستجو انجام نشده است
+            </h2>
+            <p class="text-lg text-gray-600">
+                لطفاً کلمه‌ای برای جستجو وارد کنید.
+            </p>
+        {% endif %}
+        <div class="mt-4 flex justify-center">
+            <div class="bg-gradient-to-r from-persian-500 to-gold-500 h-1 w-24 rounded-full"></div>
+        </div>
+    </div>
+
+    {% if query and results %}
+        <div>
+            <!-- Results Info Bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 bg-white rounded-xl p-6 shadow-lg">
+                <div class="text-gray-600">
+                    نمایش
+                    <span class="font-bold text-persian-600">{{ start_index|translate_number }}-{{ end_index|translate_number }}</span>
+                    از
+                    <span class="font-bold text-persian-600">{{ total_products|translate_number }}</span>
+                    محصول
+                </div>
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    {% if page_obj.has_previous %}
+                        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}"
+                           class="px-3 py-1 bg-persian-500 text-white rounded-lg shadow hover:bg-persian-600 transition">
+                            قبلی
+                        </a>
+                    {% else %}
+                        <button disabled
+                                class="px-3 py-1 bg-gray-300 rounded-lg cursor-not-allowed">
+                            قبلی
+                        </button>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <button class="px-3 py-1 bg-persian-500 text-white rounded-lg shadow">{{ num|translate_number }}</button>
+                        {% else %}
+                            <a href="?q={{ query }}&page={{ num }}"
+                               class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition">{{ num|translate_number }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}"
+                           class="px-3 py-1 bg-persian-500 text-white rounded-lg shadow hover:bg-persian-600 transition">
+                            بعدی
+                        </a>
+                    {% else %}
+                        <button disabled
+                                class="px-3 py-1 bg-gray-300 rounded-lg cursor-not-allowed">
+                            بعدی
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                {% for product in page_obj %}
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden group">
+                        <div class="relative">
+                            <img src="
+                                {% if product.image %}{{ product.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                 alt="{{ product.title }}"
+                                 class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"/>
+
+                            {% if product.discount_percent > 0 %}
+                                <div class="absolute top-4 right-4">
+                                    <span class="discount-badge text-white text-sm px-3 py-1 rounded-full font-bold shadow-lg">
+                                        {{ product.discount_percent }}٪ تخفیف
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-lg text-gray-800 mb-3 hover:text-persian-500 cursor-pointer text-right leading-relaxed">
+                                {{ product.title }}
+                            </h3>
+                            <p class="text-gray-600 mb-4 text-right leading-relaxed">
+                                {{ product.short_description|default:"توضیح کوتاه موجود نیست." }}
+                            </p>
+                            <div class="flex items-center mb-4 justify-end">
+                                <span class="text-sm text-gray-500 mx-2">({{ product.comments.count|translate_number }}) نظر </span>
+                                <div class="flex star-rating">
+                                    {% for i in "12345" %}
+                                        {% if product.get_average_rating|default:0 >= i|add:"0" %}
+                                            <span class="text-yellow-400">★</span>
+                                        {% else %}
+                                            <span class="text-gray-300">★</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <a href="{% url 'product_detail' product.id %}">
+                                    <button class="bg-gradient-to-r from-persian-500 to-persian-600 hover:from-persian-600 hover:to-persian-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl">
+                                        مشاهده محصول
+                                    </button>
+                                </a>
+                                <div class="text-left">
+                                    {% if product.discount_percent > 0 %}
+                                        <div class="price-original text-sm text-gray-500 mb-1">{{ product.price|intcomma:False|translate_number }}
+                                            تومان
+                                        </div>
+                                        <div class="text-2xl font-bold text-gray-800">{{ product.get_discounted_price|intcomma:False|translate_number }}
+                                            تومان
+                                        </div>
+                                    {% else %}
+                                        <div class="text-2xl font-bold text-gray-800">{{ product.price|intcomma:False|translate_number }}
+                                            تومان
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+</main>
+
+
+
+    <script>(function () {
+        function c() {
+            var b = a.contentDocument || a.contentWindow.document;
+            if (b) {
+                var d = b.createElement('script');
+                d.innerHTML = "window.__CF$cv$params={r:'96bea83c956090e7',t:'MTc1NDY1MjM2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                b.getElementsByTagName('head')[0].appendChild(d)
+            }
+        }
+
+        if (document.body) {
+            var a = document.createElement('iframe');
+            a.height = 1;
+            a.width = 1;
+            a.style.position = 'absolute';
+            a.style.top = 0;
+            a.style.left = 0;
+            a.style.border = 'none';
+            a.style.visibility = 'hidden';
+            document.body.appendChild(a);
+            if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else {
+                var e = document.onreadystatechange || function () {
+                };
+                document.onreadystatechange = function (b) {
+                    e(b);
+                    'loading' !== document.readyState && (document.onreadystatechange = e, c())
+                }
+            }
+        }
+    })();</script>
+
+{% endblock %}
