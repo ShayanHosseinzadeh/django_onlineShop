@@ -1,0 +1,491 @@
+{% extends '_base.html' %}
+{% load persian_numbers %}
+{% load static %}
+{% load humanize %}
+{% block titie %}
+    Shayan Shop
+{% endblock %}
+{% block content %}
+    <head>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'vazir': ['Vazirmatn', 'sans-serif']
+                        },
+                        colors: {
+                            'persian': {
+                                50: '#fff7ed',
+                                100: '#ffedd5',
+                                200: '#fed7aa',
+                                300: '#fdba74',
+                                400: '#fb923c',
+                                500: '#f97316',
+                                600: '#ea580c',
+                                700: '#c2410c',
+                                800: '#9a3412',
+                                900: '#7c2d12'
+                            },
+                            'emerald': {
+                                50: '#ecfdf5',
+                                100: '#d1fae5',
+                                200: '#a7f3d0',
+                                300: '#6ee7b7',
+                                400: '#34d399',
+                                500: '#10b981',
+                                600: '#059669',
+                                700: '#047857',
+                                800: '#065f46',
+                                900: '#064e3b'
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+        <style>
+
+            .hero-gradient {
+                background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+            }
+
+            .category-card {
+                transition: all 0.3s ease;
+                background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            }
+
+            .category-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
+            }
+
+            .product-card {
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+                border-color: #f97316;
+            }
+
+            .product-card:hover .product-overlay {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .product-overlay {
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .discount-badge {
+                background: linear-gradient(135deg, #dc2626, #b91c1c);
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
+            .star-rating {
+                color: #fbbf24;
+            }
+
+            .price-original {
+                position: relative;
+            }
+
+            .price-original::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                width: 100%;
+                height: 2px;
+                background: #ef4444;
+                transform: rotate(-3deg);
+            }
+
+            .promotional-banner {
+                background: linear-gradient(135deg, #10b981, #059669);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .promotional-banner::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                animation: shimmer 3s ease-in-out infinite;
+            }
+
+            @keyframes shimmer {
+                0%, 100% {
+                    transform: rotate(0deg);
+                }
+                50% {
+                    transform: rotate(180deg);
+                }
+            }
+
+            .hero-pattern {
+                background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            }
+
+            .section-divider {
+                background: linear-gradient(90deg, transparent, #f97316, transparent);
+                height: 2px;
+                margin: 4rem 0;
+            }
+
+            .floating-elements {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .floating-elements::before,
+            .floating-elements::after {
+                content: '';
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-elements::before {
+                top: 20%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .floating-elements::after {
+                bottom: 20%;
+                right: 10%;
+                animation-delay: 3s;
+            }
+
+            @keyframes float {
+                0%, 100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-20px);
+                }
+            }
+
+            .notification {
+                animation: slideInRight 0.5s ease-out;
+            }
+
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 font-vazir">
+    <!-- Main Content Area -->
+    <main>
+        <!-- Hero Banner Section -->
+        <section class="relative overflow-hidden"
+                 style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=800&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed;">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="floating-elements"></div>
+            <div class="container mx-auto px-4 py-20 relative z-10">
+                <div class="flex flex-col lg:flex-row items-center justify-between">
+                    <div class="lg:w-1/2 text-right mb-12 lg:mb-0">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                            جدیدترین و بهترین
+                            <span class="block text-yellow-300">محصولات در یکجا</span>
+                        </h1>
+                        <p class="text-xl text-white/90 mb-8 leading-relaxed">
+                            با کیفیت‌ترین کالاها و بهترین قیمت‌ها، تجربه خرید بی‌نظیری را برای خود رقم بزنید
+                        </p>
+                        <button class="bg-white text-persian-600 hover:bg-gray-100 px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105">
+                            همین حالا خرید کنید
+                            <svg class="inline-block w-6 h-6 mr-2" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="lg:w-1/2 flex justify-center">
+                        <div class="relative">
+                            <!-- Shopping Person Image -->
+                            <div class="w-96 h-96 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
+                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=600&fit=crop"
+                                     alt="خانم جوان در حال خرید با کیف های رنگارنگ" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                            </div>
+
+                            <!-- Floating Shopping Elements -->
+                            <div class="absolute -top-6 -right-6 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center animate-bounce shadow-2xl">
+                                <span class="text-2xl">🛍️</span>
+                            </div>
+
+                            <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center animate-pulse shadow-2xl">
+                                <span class="text-3xl">💳</span>
+                            </div>
+
+                            <div class="absolute top-20 -left-6 w-14 h-14 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center animate-bounce shadow-xl"
+                                 style="animation-delay: 1s;">
+                                <span class="text-xl">✨</span>
+                            </div>
+
+                            <div class="absolute bottom-24 -right-4 w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center animate-pulse shadow-xl"
+                                 style="animation-delay: 2s;">
+                                <span class="text-lg">🎁</span>
+                            </div>
+
+                            <!-- Floating Particles -->
+                            <div class="absolute top-8 right-12 w-3 h-3 bg-yellow-300 rounded-full animate-ping"></div>
+                            <div class="absolute bottom-12 left-8 w-2 h-2 bg-emerald-300 rounded-full animate-ping"
+                                 style="animation-delay: 1.5s;"></div>
+                            <div class="absolute top-32 left-16 w-4 h-4 bg-pink-300 rounded-full animate-ping"
+                                 style="animation-delay: 0.5s;"></div>
+
+                            <!-- Shopping Badge -->
+                            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
+                                <span class="text-persian-600 font-bold text-sm">تجربه خرید لذت‌بخش</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Highlights -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">دسته‌بندی‌های محبوب</h2>
+                    <p class="text-lg text-gray-600">انتخاب کنید و خرید کنید</p>
+                    <div class="section-divider w-24 mx-auto mt-6"></div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-6">
+                    {% for c in categories %}
+                        <div class="category-card p-6 rounded-2xl text-center cursor-pointer group w-40"><a
+                                href="{% url 'product_list_by_category' category_slug=c.slug %}" class="block">
+                            <div class="w-16 h-16 mx-auto mb-4 {{ c.color_class }} rounded-2xl flex items-center justify-center group-hover:{{ c.hover_color }} transition-colors">
+                                {% if c.icon %}
+                                    <img src="{{ c.icon.url }}" alt="{{ c.name }}" class="w-8 h-8 object-contain">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.jpg' %}" alt="{{ c.name }}"
+                                         class="w-8 h-8 object-contain">
+                                {% endif %}
+                            </div>
+                            <h3 class="font-bold text-gray-800 group-hover:text-current transition-colors">{{ c.name }}</h3>
+                        </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">محصولات ویژه</h2>
+            <p class="text-lg text-gray-600">بهترین پیشنهادات ما برای شما</p>
+            <div class="section-divider w-24 mx-auto mt-6"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for product in discounted_products %}
+                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden relative group">
+                    <div class="relative">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-64 object-cover">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.jpg' %}" alt="تصویر موجود نیست" class="w-full h-64 object-cover">
+                        {% endif %}
+
+                        {% if product.discount_percent > 0 %}
+                            <div class="absolute top-4 right-4">
+                                <span class="discount-badge text-white text-sm px-3 py-1 rounded-full font-bold shadow-lg">
+                                    {{ product.discount_percent|intcomma|translate_number }}٪ تخفیف
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <div class="product-overlay absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <a href="{{ product.get_absolute_url }}" class="bg-white text-persian-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+                                مشاهده محصول
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-lg text-gray-800 mb-3 text-right leading-relaxed">
+                            {{ product.title }}
+                        </h3>
+                        <div class="flex items-center mb-4 justify-end">
+                            <span class="text-sm text-gray-500 mr-2">({{ product.comments.count|intcomma|translate_number }} نظر)</span>
+                            <div class="flex star-rating">
+                                ★★★★★
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <a href="{{ product.get_absolute_url }}" class="bg-persian-500 hover:bg-persian-600 text-white px-4 py-2 rounded-lg font-bold transition-colors">
+                                مشاهده محصول
+                            </a>
+                            <div class="text-left">
+                                {% if product.discount_percent > 0 %}
+                                    <div class="price-original text-sm text-gray-500 mb-1 line-through">
+                                        {{ product.price|intcomma|translate_number }} تومان
+                                    </div>
+                                    <div class="text-xl font-bold text-gray-800">
+                                        {{ product.get_discounted_price|intcomma|translate_number }} تومان
+                                    </div>
+                                {% else %}
+                                    <div class="text-xl font-bold text-gray-800">
+                                        {{ product.price|intcomma|translate_number }} تومان
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500">هیچ محصولی برای نمایش وجود ندارد.</p>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-12">
+            <a href="{% url 'product_list' %}" class="bg-persian-500 hover:bg-persian-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-colors shadow-lg hover:shadow-xl inline-flex items-center justify-center mx-auto">
+                مشاهده همه محصولات
+                <svg class="inline-block w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+        <!-- Promotional Banner -->
+        <section class="promotional-banner py-16 relative">
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        فروش ویژه پاییز
+                        <span class="block text-yellow-300">تا ۵۰٪ تخفیف</span>
+                    </h2>
+                    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+                        فرصت طلایی برای خرید محصولات مورد علاقه‌تان با بهترین قیمت‌ها
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button class="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl transition-all transform hover:scale-105">
+                            همین الان خرید کنید
+                        </button>
+                        <div class="text-white font-bold text-lg">
+                            ⏰ تا پایان فروش: ۱۲ روز ۵ ساعت
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Featured Section -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-persian-50 to-persian-100 hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-persian-500 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">ارسال رایگان</h3>
+                        <p class="text-gray-600 leading-relaxed">برای خریدهای بالای ۵۰۰ هزار تومان، ارسال کاملاً
+                            رایگان</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-emerald-500 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">ضمانت کیفیت</h3>
+                        <p class="text-gray-600 leading-relaxed">تمام محصولات دارای ضمانت اصالت و کیفیت هستند</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 mx-auto mb-6 bg-blue-500 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">پشتیبانی ۲۴/۷</h3>
+                        <p class="text-gray-600 leading-relaxed">تیم پشتیبانی ما همیشه آماده کمک به شما هستند</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="fixed top-4 left-4 z-50 space-y-2"></div>
+
+    <script>
+        // Initialize accessibility features
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add keyboard navigation for interactive elements
+            document.querySelectorAll('.category-card, .product-card').forEach(card => {
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        this.click();
+                    }
+                });
+            });
+
+            // Smooth scrolling for better UX
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+        </body>
+
+{% endblock %}
