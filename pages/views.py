@@ -1,5 +1,9 @@
 from django.shortcuts import render
+from django.urls.base import reverse_lazy
 from django.views import generic
+from django.contrib import messages
+
+from pages.forms import ContactForm
 from products.models import Product, Category
 
 
@@ -33,3 +37,18 @@ class HomePageView(generic.TemplateView):
 
 class AboutUsPageView(generic.TemplateView):
     template_name = 'pages/aboutus.html'
+
+
+class ContactUsPageView(generic.FormView):
+    template_name = 'pages/contactus.html'
+    form_class = ContactForm
+    success_url = reverse_lazy('contact')
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "پیام شما با موفقیت ارسال شد.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "لطفاً خطاهای فرم را اصلاح کنید.")
+        return super().form_invalid(form)

@@ -1,0 +1,682 @@
+{% extends '_base.html' %}
+{% load humanize %}
+{% load persian_numbers %}
+{% block title %}
+    تماس با ما
+{% endblock %}
+
+{% block content %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        'primary': '#f97316',
+                        'primary-dark': '#ea580c',
+                        'black-light': 'rgba(0, 0, 0, 0.1)',
+                        'black-lighter': 'rgba(0, 0, 0, 0.04)',
+                        'orange-light': 'rgba(249, 115, 22, 0.1)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .contact-form {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+        }
+
+        .input-field:focus {
+            border-color: #f97316;
+            background: rgba(249, 115, 22, 0.1);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+            outline: none;
+        }
+
+        .input-field:hover {
+            border-color: #ea580c;
+        }
+
+        .btn-primary {
+            background: #f97316;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #ea580c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+        }
+
+        .contact-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-wrapper {
+            background: rgba(249, 115, 22, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover .icon-wrapper {
+            background: #f97316;
+        }
+
+        .contact-card:hover .icon-wrapper svg {
+            color: #ffffff;
+        }
+
+        .map-container {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            bottom: 30%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-divider {
+            background: linear-gradient(90deg, transparent, #f97316, transparent);
+            height: 2px;
+            margin: 2rem 0;
+        }
+    </style>
+
+    <!-- Hero Section -->
+    <section class="hero-section relative overflow-hidden py-20">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 fade-in">
+                    تماس با ما
+                </h1>
+                <p class="text-xl text-white/90 mb-8 leading-relaxed fade-in">
+                    ما همیشه آماده پاسخگویی به سوالات و نیازهای شما هستیم
+                </p>
+                <div class="section-divider w-24 mx-auto"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Information Cards -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <!-- Phone Card -->
+                <div class="contact-card p-8 rounded-2xl text-center">
+                    <div class="icon-wrapper w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">تلفن تماس</h3>
+                    <p class="text-gray-600">۰۹۳۸-۷۰۳۴۹۴۲</p>
+                </div>
+
+                <!-- Email Card -->
+                <div class="contact-card p-8 rounded-2xl text-center">
+                    <div class="icon-wrapper w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">ایمیل</h3>
+                    <p class="text-gray-600 mb-4">info@shop.com</p>
+                    <p class="text-gray-600">shayanhosseinzadeh1@gmail.com</p>
+                </div>
+
+                <!-- Address Card -->
+                <div class="contact-card p-8 rounded-2xl text-center">
+                    <div class="icon-wrapper w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">آدرس</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        تهران، خیابان ولیعصر، پلاک ۱۲۳، طبقه ۵
+                    </p>
+                </div>
+
+                <!-- Working Hours Card -->
+                <div class="contact-card p-8 rounded-2xl text-center">
+                    <div class="icon-wrapper w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">ساعات کاری</h3>
+                    <p class="text-gray-600 mb-2">شنبه تا چهارشنبه</p>
+                    <p class="text-gray-600 mb-4">۹:۰۰ - ۱۸:۰۰</p>
+                    <p class="text-gray-600">پنج‌شنبه: ۹:۰۰ - ۱۴:۰۰</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form and Map Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="contact-form p-8 rounded-2xl shadow-lg">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">پیام خود را ارسال کنید</h2>
+                        <p class="text-gray-600">ما در اسرع وقت با شما تماس خواهیم گرفت</p>
+                        <div class="section-divider w-16 mx-auto"></div>
+                    </div>
+
+                    <form id="contactForm" method="post" class="space-y-6" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                                <ul class="list-disc list-inside">
+                                    {% for error in form.non_field_errors %}
+                                        <li class="font-semibold">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <!-- Name and Email Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.name.id_for_label }}"
+                                       class="block text-sm font-medium text-gray-700 mb-2">نام و نام خانوادگی *</label>
+                                <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.html_name }}"
+                                       required
+                                       class="input-field w-full px-4 py-3 rounded-xl text-right {% if form.name.errors %}border-red-500{% endif %}"
+                                       placeholder="نام خود را وارد کنید"
+                                       value="{{ form.name.value|default:'' }}">
+                                {% if form.name.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form.name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.email.id_for_label }}"
+                                       class="block text-sm font-medium text-gray-700 mb-2">ایمیل *</label>
+                                <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.html_name }}"
+                                       required
+                                       class="input-field w-full px-4 py-3 rounded-xl text-right {% if form.email.errors %}border-red-500{% endif %}"
+                                       placeholder="example@email.com"
+                                       value="{{ form.email.value|default:'' }}">
+                                {% if form.email.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Phone and Subject Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.phone.id_for_label }}"
+                                       class="block text-sm font-medium text-gray-700 mb-2">شماره تلفن</label>
+                                <input type="tel" id="{{ form.phone.id_for_label }}" name="{{ form.phone.html_name }}"
+                                       class="input-field w-full px-4 py-3 rounded-xl text-right {% if form.phone.errors %}border-red-500{% endif %}"
+                                       placeholder="۰۹۱۲-۳۴۵۶۷۸۹"
+                                       value="{{ form.phone.value|default:'' }}">
+                                {% if form.phone.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.subject.id_for_label }}"
+                                       class="block text-sm font-medium text-gray-700 mb-2">موضوع *</label>
+                                <select id="{{ form.subject.id_for_label }}" name="{{ form.subject.html_name }}"
+                                        required
+                                        class="input-field w-full px-4 py-3 rounded-xl text-right {% if form.subject.errors %}border-red-500{% endif %}">
+                                    <option value="">انتخاب کنید</option>
+                                    {% for val, label in form.subject.field.choices %}
+                                        <option value="{{ val }}"
+                                                {% if form.subject.value == val %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.subject.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form.subject.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Message -->
+                        <div>
+                            <label for="{{ form.message.id_for_label }}"
+                                   class="block text-sm font-medium text-gray-700 mb-2">پیام شما *</label>
+                            <textarea id="{{ form.message.id_for_label }}" name="{{ form.message.html_name }}" rows="6"
+                                      required
+                                      class="input-field w-full px-4 py-3 rounded-xl text-right resize-none {% if form.message.errors %}border-red-500{% endif %}"
+                                      placeholder="پیام خود را اینجا بنویسید...">{{ form.message.value|default:'' }}</textarea>
+                            {% if form.message.errors %}
+                                <p class="text-red-600 text-sm mt-1">{{ form.message.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Privacy Checkbox -->
+                        <div class="flex items-start">
+                            <input type="checkbox" id="{{ form.privacy_accepted.id_for_label }}"
+                                   name="{{ form.privacy_accepted.html_name }}" required
+                                   class="mt-1 ml-3 w-4 h-4 text-primary border-2 border-black-light rounded focus:ring-orange-light {% if form.privacy_accepted.errors %}border-red-500{% endif %}"
+                                   {% if form.privacy_accepted.value %}checked{% endif %}>
+                            <label for="{{ form.privacy_accepted.id_for_label }}"
+                                   class="text-sm text-gray-600 leading-relaxed">
+                                با <a href="#" class="text-primary hover:text-primary-dark font-medium">قوانین و
+                                مقررات</a> و
+                                <a href="#" class="text-primary hover:text-primary-dark font-medium">حریم خصوصی</a>
+                                موافقم
+                            </label>
+                        </div>
+                        {% if form.privacy_accepted.errors %}
+                            <p class="text-red-700 font-semibold text-lg mt-2 ml-7">
+                                {{ form.privacy_accepted.errors.0 }}
+                            </p>
+                        {% endif %}
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                class="btn-primary w-full py-4 px-8 rounded-xl font-bold text-lg">
+                            ارسال پیام
+                            <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Map and Additional Info -->
+                <div class="space-y-8">
+                    <!-- Office Information -->
+                    <div class="contact-form p-8 rounded-2xl">
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">اطلاعات دفتر مرکزی</h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center ml-3 mt-1">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 mb-1">آدرس کامل</h4>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        تهران، خیابان ولیعصر، نرسیده به میدان ونک، پلاک ۱۲۳، طبقه ۵، واحد ۱۰
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center ml-3 mt-1">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 mb-1">ساعات کاری تفصیلی</h4>
+                                    <div class="text-gray-600 space-y-1">
+                                        <p>شنبه تا چهارشنبه: ۹:۰۰ - ۱۸:۰۰</p>
+                                        <p>پنج‌شنبه: ۹:۰۰ - ۱۴:۰۰</p>
+                                        <p>جمعه: تعطیل</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center ml-3 mt-1">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 mb-1">راهنمای دسترسی</h4>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        نزدیک‌ترین ایستگاه مترو: ونک (خط ۱)
+                                        <br>
+                                        پارکینگ رایگان در اختیار مراجعین
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Contact -->
+                    <div class="contact-form p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">تماس سریع</h3>
+                        <div class="space-y-4">
+                            <a href="tel:02112345678"
+                               class="flex items-center justify-between p-4 bg-white rounded-xl hover:bg-orange-light transition-colors">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center ml-3">
+                                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-800">تماس تلفنی</div>
+                                        <div class="text-sm text-gray-600">۰۲۱-۱۲۳۴۵۶۷۸</div>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </a>
+
+                            <a href="mailto:info@shop.com"
+                               class="flex items-center justify-between p-4 bg-white rounded-xl hover:bg-orange-light transition-colors">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center ml-3">
+                                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-800">ارسال ایمیل</div>
+                                        <div class="text-sm text-gray-600">info@shop.com</div>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="contact-form p-6 rounded-2xl text-center">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">ما را در شبکه‌های اجتماعی دنبال کنید</h3>
+                        <div class="flex justify-center space-x-4 space-x-reverse">
+                            <a href="#"
+                               class="w-12 h-12 bg-primary/10 hover:bg-primary rounded-xl flex items-center justify-center transition-colors group">
+                                <svg class="w-6 h-6 text-primary group-hover:text-white" fill="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                                </svg>
+                            </a>
+                            <a href="#"
+                               class="w-12 h-12 bg-primary/10 hover:bg-primary rounded-xl flex items-center justify-center transition-colors group">
+                                <svg class="w-6 h-6 text-primary group-hover:text-white" fill="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                                </svg>
+                            </a>
+                            <a href="#"
+                               class="w-12 h-12 bg-primary/10 hover:bg-primary rounded-xl flex items-center justify-center transition-colors group">
+                                <svg class="w-6 h-6 text-primary group-hover:text-white" fill="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                                </svg>
+                            </a>
+                            <a href="#"
+                               class="w-12 h-12 bg-primary/10 hover:bg-primary rounded-xl flex items-center justify-center transition-colors group">
+                                <svg class="w-6 h-6 text-primary group-hover:text-white" fill="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">سوالات متداول</h2>
+                <p class="text-lg text-gray-600">پاسخ سوالات رایج در اینجا موجود است</p>
+                <div class="section-divider w-24 mx-auto"></div>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                        <span class="font-bold text-gray-800">چگونه می‌توانم سفارش خود را پیگیری کنم؟</span>
+                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                        پس از ثبت سفارش، کد پیگیری برای شما ارسال می‌شود. با این کد می‌توانید وضعیت سفارش خود را در بخش
+                        "پیگیری سفارش" مشاهده کنید.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                        <span class="font-bold text-gray-800">آیا امکان مرجوع کردن کالا وجود دارد؟</span>
+                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                        بله، شما می‌توانید تا ۷ روز پس از دریافت کالا، در صورت عدم رضایت، محصول را مرجوع کنید. کالا باید
+                        در شرایط اولیه باشد.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                        <span class="font-bold text-gray-800">روش‌های پرداخت چیست؟</span>
+                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                        شما می‌توانید از طریق کارت‌های بانکی، کیف پول الکترونیک، یا پرداخت در محل (برای شهر تهران) سفارش
+                        خود را پرداخت کنید.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                        <span class="font-bold text-gray-800">زمان ارسال کالا چقدر است؟</span>
+                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                        برای شهر تهران ۱-۲ روز کاری و برای سایر شهرها ۳-۵ روز کاری زمان نیاز است. ارسال فوری نیز در
+                        تهران امکان‌پذیر است.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <script>
+
+
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.closest('.faq-item');
+                const answer = faqItem.querySelector('.faq-answer');
+                const icon = this.querySelector('svg');
+
+                // Close all other FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    if (item !== faqItem) {
+                        item.querySelector('.faq-answer').classList.add('hidden');
+                        item.querySelector('svg').classList.remove('rotate-180');
+                    }
+                });
+
+                // Toggle current FAQ item
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+
+
+        // Form Input Enhancements
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.querySelector('label').style.color = '#f97316';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.querySelector('label').style.color = '#374151';
+            });
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add keyboard navigation for interactive elements
+            document.querySelectorAll('.contact-card, .faq-question').forEach(element => {
+                element.setAttribute('tabindex', '0');
+                element.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        this.click();
+                    }
+                });
+            });
+
+
+        });
+
+        // Smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
