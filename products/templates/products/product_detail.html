@@ -218,7 +218,7 @@
                                         <h4 class="font-semibold text-gray-800">
                                             {{ comment.user.username }}
                                         </h4>
-                                        <span class="text-sm text-gray-500 persian-numbers">{{ comment.datetime_created|timesince_persian }}</span>
+                                        <span class="text-sm text-gray-500 persian-numbers">{{ comment.datetime_created|timesince_persian|translate_number }}</span>
                                     </div>
                                     <div class="flex items-center text-yellow-400 mt-2">
                                         {% for i in '12345' %}
