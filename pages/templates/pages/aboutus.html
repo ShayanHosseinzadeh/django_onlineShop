@@ -1,8 +1,199 @@
 {% extends '_base.html' %}
 {% block page_title %}
-    About us  page
+درباره ما
 {% endblock page_title %}
 
 {% block content %}
-<h1>About us  page</h1>
-{% endblock content %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        'primary': '#F97316',
+                        'primary-dark': '#C2410C',
+                        'text-gray': '#6B7280',
+                        'text-dark': '#1F2937',
+                        'bg-light': '#F9FAFB',
+                        'border-light': '#D1D5DB'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #F97316, #C2410C);
+            border-radius: 2px;
+        }
+
+        .main-image:hover {
+            transform: translateY(-5px);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="font-vazir bg-bg-light text-text-gray leading-relaxed">
+    <div class="max-w-6xl mx-auto px-5 py-16">
+        <!-- Header Section -->
+        <div class="text-right mb-16">
+            <h1 class="text-5xl md:text-6xl font-bold text-primary mb-5 tracking-tight">درباره ما</h1>
+            <p class="text-xl md:text-2xl text-text-gray font-normal max-w-2xl">
+                فروشگاه آنلاین پیشرو در ارائه محصولات با کیفیت و خدمات مطلوب به مشتریان سراسر کشور
+            </p>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start mb-20">
+            <!-- Image -->
+            <div class="lg:col-span-5">
+                <svg class="w-full h-96 lg:h-[500px] rounded-3xl shadow-2xl transition-transform duration-300 main-image" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#F97316;stop-opacity:0.1" />
+                            <stop offset="100%" style="stop-color:#C2410C;stop-opacity:0.2" />
+                        </linearGradient>
+                        <linearGradient id="shapeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#F97316" />
+                            <stop offset="100%" style="stop-color:#C2410C" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Background -->
+                    <rect width="400" height="500" fill="url(#bgGradient)" rx="20"/>
+
+                    <!-- Abstract shapes representing teamwork and innovation -->
+                    <circle cx="120" cy="150" r="40" fill="url(#shapeGradient)" opacity="0.8"/>
+                    <circle cx="280" cy="120" r="35" fill="url(#shapeGradient)" opacity="0.6"/>
+                    <circle cx="200" cy="200" r="45" fill="url(#shapeGradient)" opacity="0.7"/>
+
+                    <!-- Connecting lines -->
+                    <line x1="120" y1="150" x2="200" y2="200" stroke="#F97316" stroke-width="3" opacity="0.5"/>
+                    <line x1="280" y1="120" x2="200" y2="200" stroke="#F97316" stroke-width="3" opacity="0.5"/>
+                    <line x1="120" y1="150" x2="280" y2="120" stroke="#F97316" stroke-width="3" opacity="0.5"/>
+
+                    <!-- Building/Growth representation -->
+                    <rect x="80" y="350" width="60" height="100" fill="url(#shapeGradient)" opacity="0.7" rx="5"/>
+                    <rect x="160" y="320" width="60" height="130" fill="url(#shapeGradient)" opacity="0.8" rx="5"/>
+                    <rect x="240" y="300" width="60" height="150" fill="url(#shapeGradient)" opacity="0.9" rx="5"/>
+
+                    <!-- Decorative elements -->
+                    <circle cx="350" cy="400" r="20" fill="#F97316" opacity="0.3"/>
+                    <circle cx="50" cy="300" r="25" fill="#C2410C" opacity="0.3"/>
+
+                    <!-- Text overlay -->
+                    <text x="200" y="480" text-anchor="middle" fill="#1F2937" font-family="Vazirmatn" font-size="16" font-weight="600">تیم ما</text>
+                </svg>
+            </div>
+
+            <!-- Text Content -->
+            <div class="lg:col-span-7 py-5">
+                <h2 class="text-3xl md:text-4xl font-semibold text-text-dark mb-8 relative section-title">داستان فروشگاه ما</h2>
+                <div class="space-y-6">
+                    <p class="text-lg text-text-gray text-justify leading-8">
+                        فروشگاه آنلاین ما در سال ۱۳۹۸ با هدف <span class="text-primary font-semibold">تسهیل خرید آنلاین و ارائه محصولات اصل</span> راه‌اندازی شد. از همان ابتدا، ما بر این باور بوده‌ایم که خرید آنلاین باید تجربه‌ای آسان، امن و لذت‌بخش برای مشتریان باشد.
+                    </p>
+                    <p class="text-lg text-text-gray text-justify leading-8">
+                        طی این سال‌ها، ما توانسته‌ایم با <a href="#" class="text-primary font-medium hover:text-primary-dark hover:underline transition-all duration-300">گردآوری بهترین برندها و تولیدکنندگان</a> و ایجاد سیستم ارسال سریع و مطمئن، اعتماد هزاران مشتری را جلب کنیم. هدف ما همواره این بوده که بهترین تجربه خرید آنلاین را برای مشتریان فراهم کنیم.
+                    </p>
+                    <p class="text-lg text-text-gray text-justify leading-8">
+                        امروز، ما افتخار داریم که به عنوان یکی از <span class="text-primary font-semibold">معتبرترین فروشگاه‌های آنلاین</span> شناخته شویم و همچنان در مسیر گسترش محصولات و بهبود خدمات قدم برمی‌داریم. ماموریت ما ساده است: تأمین نیازهای روزانه مردم با بهترین کیفیت و قیمت.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 my-16 p-10 bg-white rounded-2xl border border-border-light shadow-lg">
+            <div class="text-center p-5">
+                <span class="block text-4xl font-bold text-primary mb-3">۱۰,۰۰۰+</span>
+                <span class="text-base text-text-dark font-medium">محصول متنوع</span>
+            </div>
+            <div class="text-center p-5">
+                <span class="block text-4xl font-bold text-primary mb-3">۲۵,۰۰۰+</span>
+                <span class="text-base text-text-dark font-medium">مشتری راضی</span>
+            </div>
+            <div class="text-center p-5">
+                <span class="block text-4xl font-bold text-primary mb-3">۵</span>
+                <span class="text-base text-text-dark font-medium">سال تجربه</span>
+            </div>
+        </div>
+
+        <!-- Values Section -->
+        <div class="bg-white p-12 rounded-3xl border border-border-light my-16 shadow-xl">
+            <h2 class="text-3xl text-text-dark font-semibold mb-10 text-center">ارزش‌های ما</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl text-text-dark font-semibold mb-3">کیفیت محصولات</h3>
+                        <p class="text-text-gray leading-7">تمام محصولات ما از برندهای معتبر و تولیدکنندگان مطمئن تهیه می‌شود. ما کیفیت را در اولویت قرار داده‌ایم.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl text-text-dark font-semibold mb-3">خرید امن</h3>
+                        <p class="text-text-gray leading-7">امنیت اطلاعات و پرداخت مشتریان برای ما بسیار مهم است. تمام تراکنش‌ها با بالاترین استانداردهای امنیتی انجام می‌شود.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl text-text-dark font-semibold mb-3">ارسال سریع</h3>
+                        <p class="text-text-gray leading-7">ما متعهد به ارسال سریع و مطمئن محصولات هستیم. سیستم لجستیک پیشرفته ما تضمین تحویل به موقع را فراهم می‌کند.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-6h11v6zm0-7H4V9h11v2zm5 7h-4V9h4v9z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl text-text-dark font-semibold mb-3">پشتیبانی ۲۴/۷</h3>
+                        <p class="text-text-gray leading-7">تیم پشتیبانی ما همیشه آماده پاسخگویی به سوالات و حل مشکلات مشتریان است. رضایت شما اولویت اصلی ماست.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="text-center mt-20 px-10 py-16 bg-gradient-to-br from-primary to-primary-dark rounded-3xl text-white">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-5">آماده خرید از فروشگاه ما هستید؟</h2>
+            <p class="text-xl mb-10 opacity-90">
+                هزاران محصول با کیفیت و قیمت مناسب در انتظار شما هستند
+            </p>
+            <a href="{% url 'product_list' %}" class="inline-block bg-white text-primary px-10 py-5 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl cta-button">
+                شروع خرید
+            </a>
+        </div>
+    </div>
+
+
+{% endblock %}

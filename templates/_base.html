@@ -44,12 +44,12 @@
                         محصولات
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                     </a>
-                    <a href="#"
+                    <a href="{% url 'aboutus' %}"
                        class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
                         درباره ما
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                     </a>
-                    <a href="#"
+                    <a href="{% url 'contact' %}"
                        class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
                         تماس با ما
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
@@ -210,13 +210,13 @@
                 <h4 class="text-lg font-semibold mb-4">دسترسی سریع</h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">درباره ما</a>
+                        <a href="{% url 'aboutus' %}" class="text-gray-300 hover:text-orange-400 transition-colors">درباره ما</a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">تماس با ما</a>
+                        <a href="[{% url 'contact' %}" class="text-gray-300 hover:text-orange-400 transition-colors">تماس با ما</a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">سوالات متداول</a>
+                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">سوالات متداول</a>
                     </li>
                     <li>
                         <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">شرایط و قوانین</a>
@@ -228,22 +228,22 @@
                 <h4 class="text-lg font-semibold mb-4">راهنمای خرید</h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
                             نحوه ثبت سفارش
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
                             شیوه ارسال کالا
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
                             روش‌های پرداخت
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">
+                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
                             پیگیری سفارشات
                         </a>
                     </li>

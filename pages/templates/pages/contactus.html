@@ -535,82 +535,108 @@
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">سوالات متداول</h2>
-                <p class="text-lg text-gray-600">پاسخ سوالات رایج در اینجا موجود است</p>
-                <div class="section-divider w-24 mx-auto"></div>
+ <!-- FAQ Section -->
+<section class="py-16 bg-white" id="faq">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">سوالات متداول</h2>
+            <p class="text-lg text-gray-600">پاسخ سوالات رایج در اینجا موجود است</p>
+            <div class="section-divider w-24 mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-4">
+
+            <!-- نحوه ثبت سفارش -->
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">نحوه ثبت سفارش چگونه است؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    برای ثبت سفارش، ابتدا محصول مورد نظر را انتخاب کرده و به سبد خرید اضافه کنید. سپس اطلاعات خود را وارد کرده و روش پرداخت را انتخاب نمایید.
+                </div>
             </div>
 
-            <div class="max-w-4xl mx-auto space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
-                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
-                        <span class="font-bold text-gray-800">چگونه می‌توانم سفارش خود را پیگیری کنم؟</span>
-                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
-                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
-                        پس از ثبت سفارش، کد پیگیری برای شما ارسال می‌شود. با این کد می‌توانید وضعیت سفارش خود را در بخش
-                        "پیگیری سفارش" مشاهده کنید.
-                    </div>
+            <!-- شیوه ارسال کالا -->
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">شیوه ارسال کالا چگونه است؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    ارسال کالا از طریق پست پیشتاز یا شرکت‌های باربری معتبر انجام می‌شود. هزینه ارسال بر اساس وزن و مسافت محاسبه می‌شود.
                 </div>
+            </div>
 
-                <!-- FAQ Item 2 -->
-                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
-                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
-                        <span class="font-bold text-gray-800">آیا امکان مرجوع کردن کالا وجود دارد؟</span>
-                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
-                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
-                        بله، شما می‌توانید تا ۷ روز پس از دریافت کالا، در صورت عدم رضایت، محصول را مرجوع کنید. کالا باید
-                        در شرایط اولیه باشد.
-                    </div>
+            <!-- پیگیری سفارشات -->
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">چگونه می‌توانم سفارش خود را پیگیری کنم؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    پس از ثبت سفارش، کد پیگیری برای شما ارسال می‌شود. با این کد می‌توانید وضعیت سفارش خود را در بخش "پیگیری سفارش" مشاهده کنید.
                 </div>
+            </div>
 
-                <!-- FAQ Item 3 -->
-                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
-                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
-                        <span class="font-bold text-gray-800">روش‌های پرداخت چیست؟</span>
-                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
-                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
-                        شما می‌توانید از طریق کارت‌های بانکی، کیف پول الکترونیک، یا پرداخت در محل (برای شهر تهران) سفارش
-                        خود را پرداخت کنید.
-                    </div>
+            <!-- روش‌های پرداخت -->
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">روش‌های پرداخت چیست؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    شما می‌توانید از طریق کارت‌های بانکی، کیف پول الکترونیک، یا پرداخت در محل (برای شهر تهران) سفارش خود را پرداخت کنید.
                 </div>
+            </div>
 
-                <!-- FAQ Item 4 -->
-                <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
-                    <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
-                        <span class="font-bold text-gray-800">زمان ارسال کالا چقدر است؟</span>
-                        <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
-                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
-                        برای شهر تهران ۱-۲ روز کاری و برای سایر شهرها ۳-۵ روز کاری زمان نیاز است. ارسال فوری نیز در
-                        تهران امکان‌پذیر است.
-                    </div>
+            <!-- سوالات قبلی در صورت نیاز -->
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">آیا امکان مرجوع کردن کالا وجود دارد؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    بله، شما می‌توانید تا ۷ روز پس از دریافت کالا، در صورت عدم رضایت، محصول را مرجوع کنید. کالا باید در شرایط اولیه باشد.
+                </div>
+            </div>
+
+            <div class="faq-item bg-gray-50 rounded-2xl overflow-hidden">
+                <button class="faq-question w-full p-6 text-right flex items-center justify-between hover:bg-orange-light transition-colors">
+                    <span class="font-bold text-gray-800">زمان ارسال کالا چقدر است؟</span>
+                    <svg class="w-5 h-5 text-gray-600 transform transition-transform" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden p-6 pt-0 text-gray-600 leading-relaxed">
+                    برای شهر تهران ۱-۲ روز کاری و برای سایر شهرها ۳-۵ روز کاری زمان نیاز است. ارسال فوری نیز در تهران امکان‌پذیر است.
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
   <script>
 

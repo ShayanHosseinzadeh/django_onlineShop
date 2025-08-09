@@ -57,7 +57,7 @@
                         <a href="{% url 'cart_add' item.product_obj.id %}?action=decrease"
                            class="px-3 py-1 text-gray-600 hover:bg-gray-100">−</a>
                         <span class="px-4 py-1 text-gray-800 persian-numbers">
-                            {{ item.quantity }}
+                            {{ item.quantity|translate_number }}
                         </span>
                         <a href="{% url 'cart_add' item.product_obj.id %}?action=increase"
                            class="px-3 py-1 text-gray-600 hover:bg-gray-100">+</a>
