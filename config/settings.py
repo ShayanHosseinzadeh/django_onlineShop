@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'persian_translate.apps.PersianTranslateConfig',
     'orders.apps.OrdersConfig',
+    'adminpanel.apps.AdminpanelConfig'
     # 'payment.apps.PaymentConfig', # DISABLED
 ]
 

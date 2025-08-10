@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -10,7 +11,7 @@ from .forms import CartAddForm
 from products.models import Product
 from .cart import Cart
 
-
+@login_required
 def CartDetailView(request):
     cart = Cart(request)
     for item in cart:
