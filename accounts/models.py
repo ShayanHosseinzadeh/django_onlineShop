@@ -9,8 +9,12 @@ class CustomUser(AbstractUser):
 
 
 class UserProfile(models.Model):
+    ROLE_CHOICES = (
+        ('admin', 'مدیر'),
+        ('customer', 'مشتری'),
+    )
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
-
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer', verbose_name='نقش کاربر')
     phone_regex = RegexValidator(
         regex=r'^(?:\+98|0)?9\d{9}$',
         message="شماره تلفن باید به صورت شماره موبایل ایرانی معتبر وارد شود. مثلاً 09123456789 یا +989123456789."
