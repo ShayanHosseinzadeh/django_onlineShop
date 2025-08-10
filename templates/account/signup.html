@@ -64,100 +64,95 @@
                 <p class="text-gray-600">به ما بپیوندید و سفر خود را آغاز کنید</p>
             </div>
 
-            <!-- Login Form -->
-            <form class="space-y-6" id="signupForm">
-                <!-- Full Name Field -->
-                <div class="relative">
-                    <input
-                            type="text"
-                            id="fullName"
-                            name="fullName"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
-                            placeholder="نام و نام خانوادگی"
-                            required
-                    >
-                    <label
-                            for="fullName"
-                            class="absolute right-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-orange-light peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1"
-                    >
-                        نام و نام خانوادگی
-                    </label>
-                    <div class="text-red-500 text-sm mt-1 hidden" id="fullNameError">لطفاً نام و نام خانوادگی خود را
-                        وارد کنید
-                    </div>
-                </div>
+            <!-- Signup Form -->
+           <form class="space-y-6" id="signupForm" method="post">
+               {% csrf_token %}
+    <!-- Full Name Field -->
+    <div class="relative">
+        <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            placeholder="نام و نام خانوادگی"
+            required
+        >
+        <label
+            for="fullName"
+            class="absolute right-4 -top-2 text-sm text-gray-500 pointer-events-none bg-white px-1"
+        >
+            نام و نام خانوادگی
+        </label>
+        <div class="text-red-500 text-sm mt-1 hidden" id="fullNameError">لطفاً نام و نام خانوادگی خود را وارد کنید</div>
+    </div>
 
-                <!-- Email Field -->
-                <div class="relative">
-                    <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
-                            placeholder="آدرس ایمیل"
-                            required
-                    >
-                    <label
-                            for="email"
-                            class="absolute right-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-orange-light peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1"
-                    >
-                        آدرس ایمیل
-                    </label>
-                    <div class="text-red-500 text-sm mt-1 hidden" id="emailError">لطفاً یک آدرس ایمیل معتبر وارد کنید
-                    </div>
-                </div>
+    <!-- Email Field -->
+    <div class="relative">
+        <input
+            type="email"
+            id="email"
+            name="email"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            placeholder="آدرس ایمیل"
+            required
+        >
+        <label
+            for="email"
+            class="absolute right-4 -top-2 text-sm text-gray-500 pointer-events-none bg-white px-1"
+        >
+            آدرس ایمیل
+        </label>
+        <div class="text-red-500 text-sm mt-1 hidden" id="emailError">لطفاً یک آدرس ایمیل معتبر وارد کنید</div>
+    </div>
 
-                <!-- Password Field -->
-                <div class="relative">
-                    <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
-                            placeholder="رمز عبور"
-                            required
-                    >
-                    <label
-                            for="password"
-                            class="absolute right-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-orange-light peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1"
-                    >
-                        رمز عبور
-                    </label>
-                 
-                    <div class="text-red-500 text-sm mt-1 hidden" id="passwordError">رمز عبور باید حداقل ۸ کاراکتر
-                        باشد
-                    </div>
-                </div>
+    <!-- Password Field -->
+    <div class="relative">
+        <input
+            type="password"
+            id="password"
+            name="password1"
+            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            placeholder="رمز عبور"
+            required
+        >
+        <label
+            for="password"
+            class="absolute right-4 -top-2 text-sm text-gray-500 pointer-events-none bg-white px-1"
+        >
+            رمز عبور
+        </label>
+        <div class="text-red-500 text-sm mt-1 hidden" id="passwordError">رمز عبور باید حداقل ۸ کاراکتر باشد</div>
+    </div>
 
-                <!-- Confirm Password Field -->
-                <div class="relative">
-                    <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
-                            placeholder="تکرار رمز عبور"
-                            required
-                    >
-                    <label
-                            for="confirmPassword"
-                            class="absolute right-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-orange-light peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1"
-                    >
-                        تکرار رمز عبور
-                    </label>
+    <!-- Confirm Password Field -->
+    <div class="relative">
+        <input
+            type="password"
+            id="confirmPassword"
+            name="password2"
+            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            placeholder="تکرار رمز عبور"
+            required
+        >
+        <label
+            for="password2"
+            class="absolute right-4 -top-2 text-sm text-gray-500 pointer-events-none bg-white px-1"
+        >
+            تکرار رمز عبور
+        </label>
+        <div class="text-red-500 text-sm mt-1 hidden" id="confirmPasswordError">رمزهای عبور مطابقت ندارند</div>
+    </div>
 
-                    <div class="text-red-500 text-sm mt-1 hidden" id="confirmPasswordError">رمزهای عبور مطابقت ندارند
-                    </div>
-                </div>
+    <!-- Submit Button -->
+    <button
+        type="submit"
+        class="w-full bg-orange-light text-white py-3 px-4 rounded-xl font-semibold hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-orange-light focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+    >
+        ایجاد حساب کاربری
+    </button>
+</form>
 
-                <!-- Submit Button -->
-                <button
-                        type="submit"
-                        class="w-full bg-orange-light text-white py-3 px-4 rounded-xl font-semibold hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-orange-light focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                    ایجاد حساب کاربری
-                </button>
-            </form>
+
 
             <!-- Register Link -->
             <div class="mt-8 text-center">
