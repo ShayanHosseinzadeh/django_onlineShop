@@ -78,12 +78,24 @@
                 <div class="flex items-center space-x-4 space-x-reverse text-gray-700 font-medium">
                     <span>خوش آمدید، {{ user.first_name|default:user.username }}</span>
                     <a href="" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
+
                     <form method="post" action="{% url 'account_logout' %}" class="inline">
                         {% csrf_token %}
                         <button type="submit"
                                 class="text-orange-600 hover:text-orange-800 transition-colors font-semibold">خروج
                         </button>
                     </form>
+
+                </div>
+                    <div class="relative">
+                        <a href="{% url 'cart_detail' %}"
+                           class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
+                            <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        </a>
+                        <span class="cart-badge absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            {{ cart|length|translate_number }}
+          </span>
+                    </div>
                 </div>
             {% else %}
                 <div class="relative flex items-center space-x-reverse space-x-4">
@@ -175,7 +187,7 @@
     {% endif %}
     {% block content %}{% endblock %}
 </main>
-<footer class="bg-gray-800 text-white mt-16">
+<footer class="bg-gray-800 text-white mt-16 z-20">
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>

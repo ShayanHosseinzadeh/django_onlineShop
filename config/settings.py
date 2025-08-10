@@ -176,3 +176,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
 
+ACCOUNT_FORMS = {
+    'reset_password': 'accounts.forms.CustomResetPasswordForm',
+}
