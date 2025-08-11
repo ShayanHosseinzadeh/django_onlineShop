@@ -1,0 +1,304 @@
+{% load persian_numbers %}
+{% load jalali_filter %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            {% csrf_token %}
+            <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <input type="checkbox" id="selectAll"
+                           class="rounded border-gray-300 text-orange-light focus:ring-orange-light">
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    کاربر
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ایمیل
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    شماره تلفن
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    نقش
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    وضعیت
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    تاریخ عضویت
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    آخرین فعالیت
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    عملیات
+                </th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="usersTableBody">
+            {% for user in users %}
+                <tr class="hover:bg-gray-50" data-user-id="{{ user.id }}"
+                    data-user-status="{% if user.is_active %}active{% else %}inactive{% endif %}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox"
+                               class="user-checkbox rounded border-gray-300 text-orange-light focus:ring-orange-light">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center ml-3">
+                                <span class="text-blue-600 font-semibold">{{ user.get_full_name|default:user.username|slice:":1" }}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</div>
+                                <div class="text-sm text-gray-500">ID: #{{ user.id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.profile.phone_number|default:"-" }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if user.profile.role == 'admin' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">مدیر</span>
+                        {% elif user.profile.role == 'customer' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">کاربر عادی</span>
+                        {% else %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if user.is_active %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">فعال</span>
+                        {% else %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">مسدود</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.date_joined|to_jalali|translate_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ user.last_login|timesince }} پیش
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <button class="text-blue-600 hover:text-blue-900" title="مشاهده جزئیات">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" title="ویرایش">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            {% if user.is_active %}
+                                <button class="text-red-600 hover:text-red-900" title="مسدود کردن">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            {% else %}
+                                <button class="text-green-600 hover:text-green-900" title="رفع مسدودیت">
+                                    <i class="fas fa-unlock"></i>
+                                </button>
+                            {% endif %}
+                            <button class="text-gray-600 hover:text-gray-900" title="بیشتر">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        هیچ کاربری یافت نشد.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-700">
+            نمایش {{ page_obj.start_index|translate_number }} تا {{ page_obj.end_index|translate_number }}
+            از {{ paginator.count|translate_number }} کاربر
+        </div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}"
+                   class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50">
+                    قبلی
+                </a>
+            {% else %}
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50"
+                        disabled>
+                    قبلی
+                </button>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <button class="px-3 py-1 bg-orange-light text-white rounded-md text-sm hover:bg-orange-dark">
+                        {{ i|translate_number }}
+                    </button>
+                {% else %}
+                    <a href="?page={{ i }}"
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        {{ i|translate_number }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}"
+                   class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                    بعدی
+                </a>
+            {% else %}
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 disabled:opacity-50"
+                        disabled>
+                    بعدی
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions Bar (Hidden by default) -->
+<div id="bulkActionsBar"
+     class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 px-6 py-3 hidden">
+    <div class="flex items-center space-x-4 space-x-reverse">
+                    <span class="text-sm text-gray-700">
+                        <span id="selectedCount">0</span> کاربر انتخاب شده
+                    </span>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <button id="activateBulk"
+                    class="px-3 py-1 bg-green-100 text-green-700 rounded-md text-sm hover:bg-green-200">
+                فعال کردن
+            </button>
+            <button id="blockBulk"
+                    class="px-3 py-1 bg-red-100 text-red-700 rounded-md text-sm hover:bg-red-200">
+                مسدود کردن
+            </button>
+            <button id="deleteBulk"
+                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                حذف
+            </button>
+            <button id="closeBulkActions"
+                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const userCheckboxes = document.querySelectorAll('.user-checkbox');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const closeBulkActions = document.getElementById('closeBulkActions');
+
+        const activateButton = document.getElementById('activateBulk');
+        const blockButton = document.getElementById('blockBulk');
+        const deleteButton = document.getElementById('deleteBulk');
+
+        function updateBulkActionsBar() {
+            const checkedBoxes = document.querySelectorAll('.user-checkbox:checked');
+            const count = checkedBoxes.length;
+
+            if (count > 0) {
+                bulkActionsBar.classList.remove('hidden');
+                selectedCountSpan.textContent = count;
+            } else {
+                bulkActionsBar.classList.add('hidden');
+            }
+
+            // Get the status of all selected users
+            const selectedUsers = Array.from(checkedBoxes).map(checkbox => checkbox.closest('tr').dataset.userStatus);
+            const allActive = selectedUsers.every(status => status === 'active');
+            const allInactive = selectedUsers.every(status => status === 'inactive');
+
+            // Show/hide buttons based on user status
+            if (allActive) {
+                activateButton.classList.add('hidden');
+                blockButton.classList.remove('hidden');
+            } else if (allInactive) {
+                activateButton.classList.remove('hidden');
+                blockButton.classList.add('hidden');
+            } else {
+                activateButton.classList.remove('hidden');
+                blockButton.classList.remove('hidden');
+            }
+
+            // Update select all checkbox state
+            const allUsersCount = userCheckboxes.length;
+            if (count === allUsersCount && allUsersCount > 0) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else if (count > 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        selectAllCheckbox.addEventListener('change', function () {
+            userCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkActionsBar();
+        });
+
+        userCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkActionsBar);
+        });
+
+        closeBulkActions.addEventListener('click', () => {
+            userCheckboxes.forEach(checkbox => checkbox.checked = false);
+            updateBulkActionsBar();
+        });
+
+        activateButton.addEventListener('click', () => submitBulkAction('activate'));
+        blockButton.addEventListener('click', () => submitBulkAction('block'));
+        deleteButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete the selected users? This action cannot be undone.')) {
+                submitBulkAction('delete');
+            }
+        });
+
+        function submitBulkAction(action) {
+            const selectedUserIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                .map(checkbox => checkbox.closest('tr').dataset.userId);
+
+            if (selectedUserIds.length === 0) {
+                alert('لطفا حداقل یک کاربر را انتخاب کنید.');
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{% url 'bulk_user_action' %}";
+            form.style.display = 'none';
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = action;
+            form.appendChild(actionInput);
+
+            selectedUserIds.forEach(userId => {
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'user_ids[]';
+                idInput.value = userId;
+                form.appendChild(idInput);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+</script>

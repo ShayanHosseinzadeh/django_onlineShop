@@ -6,10 +6,13 @@ import random
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from products.models import Product, Comment, Category
+from accounts.models import UserProfile
 from django.utils.text import slugify
 from django.conf import settings
 import os
+from datetime import date, timedelta
 
+# Create a Faker instance for Persian locale
 faker = Faker('fa_IR')
 
 # Expanded real-world product data in Persian
@@ -170,9 +173,9 @@ class ProductFactory(DjangoModelFactory):
             defaults={'slug': slugify(o._product_data['category_name'], allow_unicode=True)}
         )[0]
     )
-
     status = 'avl'
     stock_quantity = factory.LazyFunction(lambda: random.randint(1, 50))
+    discount_percent = factory.LazyFunction(lambda: random.choice([0, 0, 0, 10, 15, 20, 25, 30]))
 
     @factory.lazy_attribute
     def image(self):
@@ -183,9 +186,11 @@ class ProductFactory(DjangoModelFactory):
         except FileNotFoundError:
             return None
 
-    # New discount field with a random value
-    discount_percent = factory.LazyFunction(lambda: random.choice([0, 0, 0, 10, 15, 20, 25, 30]))
-
+    @classmethod
+    def _get_or_create(cls, model_class, *args, **kwargs):
+        # A workaround to prevent the private field from being passed to Django
+        _product_data = kwargs.pop('_product_data', None)
+        return super()._get_or_create(model_class, *args, **kwargs)
 
 class UserFactory(DjangoModelFactory):
     class Meta:
@@ -202,6 +207,29 @@ class UserFactory(DjangoModelFactory):
         self.set_password('password123')
         if create:
             self.save()
+
+
+def generate_iranian_phone_number():
+    """Generates a valid 11-digit Iranian phone number starting with 09."""
+    first_digit = str(random.randint(1, 9))
+    rest_of_number = ''.join(random.choices('0123456789', k=8))
+    return f'09{first_digit}{rest_of_number}'
+
+
+class UserProfileFactory(DjangoModelFactory):
+    """
+    Factory for generating random UserProfile instances.
+    """
+    class Meta:
+        model = UserProfile
+
+    user = factory.SubFactory(UserFactory)
+    role = factory.LazyFunction(lambda: random.choice(['admin', 'customer']))
+    phone_number = factory.LazyFunction(generate_iranian_phone_number)
+    address = factory.LazyFunction(lambda: faker.address())
+    city = factory.LazyFunction(lambda: faker.city())
+    postal_code = factory.LazyFunction(lambda: faker.postcode())
+    birth_date = factory.LazyFunction(lambda: faker.date_of_birth(minimum_age=18, maximum_age=65))
 
 
 class CommentFactory(DjangoModelFactory):
