@@ -339,7 +339,7 @@
                                 {% if product.discount_percent > 0 %}
                                     <div class="absolute top-4 right-4">
                         <span class="discount-badge text-white text-sm px-3 py-1 rounded-full font-bold shadow-lg">
-                            {{ product.discount_percent|intcomma|translate_number }}٪ تخفیف
+                            {{ product.discount_percent|intcomma:False|translate_number }}٪ تخفیف
                         </span>
                                     </div>
                                 {% endif %}
@@ -392,14 +392,14 @@
                                     <div class="text-left">
                                         {% if product.discount_percent > 0 %}
                                             <div class="price-original text-sm text-gray-500 mb-1 line-through">
-                                                {{ product.price|intcomma|translate_number }} تومان
+                                                {{ product.price|intcomma:False|translate_number }} تومان
                                             </div>
                                             <div class="text-xl font-bold text-gray-800">
-                                                {{ product.get_discounted_price|intcomma|translate_number }} تومان
+                                                {{ product.get_discounted_price|intcomma:False|translate_number }} تومان
                                             </div>
                                         {% else %}
                                             <div class="text-xl font-bold text-gray-800">
-                                                {{ product.price|intcomma|translate_number }} تومان
+                                                {{ product.price|intcomma:False|translate_number }} تومان
                                             </div>
                                         {% endif %}
                                     </div>
