@@ -1,10 +1,14 @@
+from allauth.account.views import SignupView
 from django.urls import reverse_lazy
-from django.views import generic
 
-from .forms import CustomCreationForm
+from accounts.forms import CustomSignupForm
+from accounts.models import UserProfile
 
 
-class SignUpView(generic.CreateView):
-    form_class = CustomCreationForm
-    template_name = 'accounts/signup.html'
+class CustomSignupView(SignupView):
+    template_name = 'account/signup.html'
+    form_class = CustomSignupForm
     success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        return super().form_valid(form)

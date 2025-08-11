@@ -14,6 +14,7 @@ class UserProfile(models.Model):
         ('customer', 'مشتری'),
     )
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
+    full_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="نام کامل")
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer', verbose_name='نقش کاربر')
     phone_regex = RegexValidator(
         regex=r'^(?:\+98|0)?9\d{9}$',
@@ -34,6 +35,7 @@ class UserProfile(models.Model):
     birth_date = models.DateField(blank=True, null=True, verbose_name='تاریخ تولد')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد پروفایل')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین به‌روزرسانی')
+
 
     def __str__(self):
         return f"{self.user.username} - پروفایل کاربر"

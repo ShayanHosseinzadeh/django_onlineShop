@@ -47,16 +47,16 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center ml-3">
-                                <span class="text-blue-600 font-semibold">{{ user.get_full_name|default:user.username|slice:":1" }}</span>
+                                <span class="text-blue-600 font-semibold">{{ user.profile.full_name|default:user.username|slice:":1" }}</span>
                             </div>
                             <div>
-                                <div class="text-sm font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ user.profile.full_name|default:user.username }}</div>
                                 <div class="text-sm text-gray-500">ID: #{{ user.id }}</div>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.profile.phone_number|default:"-" }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.profile.phone_number|default:"-"|translate_number }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {% if user.profile.role == 'admin' %}
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">مدیر</span>
@@ -75,7 +75,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.date_joined|to_jalali|translate_number }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ user.last_login|timesince }} پیش
+                        {{ user.last_login|timesince|translate_number }} پیش
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-2 space-x-reverse">
@@ -94,9 +94,7 @@
                                     <i class="fas fa-unlock"></i>
                                 </button>
                             {% endif %}
-                            <button class="text-gray-600 hover:text-gray-900" title="بیشتر">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
+
                         </div>
                     </td>
                 </tr>

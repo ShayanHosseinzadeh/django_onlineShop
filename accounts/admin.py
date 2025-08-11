@@ -16,7 +16,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone_number', 'address', 'city', 'created_at')  # فیلدهای قابل نمایش در لیست ادمین
+    list_display = ('user', 'phone_number', 'address', 'city', 'created_at','full_name')  # فیلدهای قابل نمایش در لیست ادمین
     search_fields = ('user__username', 'phone_number', 'city')  # فیلدهایی که می‌توان بر اساس آن‌ها جستجو کرد
     list_filter = ('city', 'created_at')  # فیلدهای فیلتر در سمت راست ادمین
     readonly_fields = ('created_at', 'updated_at')  # فیلدهایی که فقط خواندنی باشند
