@@ -64,16 +64,23 @@
                 <p class="text-gray-600">به ما بپیوندید و سفر خود را آغاز کنید</p>
             </div>
 
-            <!-- Signup Form -->
-           <form class="space-y-6" id="signupForm" method="post">
-               {% csrf_token %}
-    <!-- Full Name Field -->
+         <form class="space-y-6" id="signupForm" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            {% for error in form.non_field_errors %}
+                <p class="text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="relative">
         <input
             type="text"
             id="fullName"
             name="fullName"
-            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            class="w-full px-4 py-3 border rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer {% if form.fullName.errors %}border-red-500{% else %}border-gray-300{% endif %}"
             placeholder="نام و نام خانوادگی"
             required
         >
@@ -83,16 +90,17 @@
         >
             نام و نام خانوادگی
         </label>
-        <div class="text-red-500 text-sm mt-1 hidden" id="fullNameError">لطفاً نام و نام خانوادگی خود را وارد کنید</div>
+        {% for error in form.fullName.errors %}
+            <div class="text-red-500 text-sm mt-1" id="fullNameError">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <!-- Email Field -->
     <div class="relative">
         <input
             type="email"
             id="email"
             name="email"
-            class="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            class="w-full px-4 py-3 border rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer {% if form.email.errors %}border-red-500{% else %}border-gray-300{% endif %}"
             placeholder="آدرس ایمیل"
             required
         >
@@ -102,16 +110,17 @@
         >
             آدرس ایمیل
         </label>
-        <div class="text-red-500 text-sm mt-1 hidden" id="emailError">لطفاً یک آدرس ایمیل معتبر وارد کنید</div>
+        {% for error in form.email.errors %}
+            <div class="text-red-500 text-sm mt-1" id="emailError">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <!-- Password Field -->
     <div class="relative">
         <input
             type="password"
             id="password"
             name="password1"
-            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            class="w-full px-4 py-3 pl-12 border rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer {% if form.password1.errors %}border-red-500{% else %}border-gray-300{% endif %}"
             placeholder="رمز عبور"
             required
         >
@@ -121,16 +130,17 @@
         >
             رمز عبور
         </label>
-        <div class="text-red-500 text-sm mt-1 hidden" id="passwordError">رمز عبور باید حداقل ۸ کاراکتر باشد</div>
+        {% for error in form.password1.errors %}
+            <div class="text-red-500 text-sm mt-1" id="passwordError">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <!-- Confirm Password Field -->
     <div class="relative">
         <input
             type="password"
             id="confirmPassword"
             name="password2"
-            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer"
+            class="w-full px-4 py-3 pl-12 border rounded-xl text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-orange-light focus:border-transparent transition-all duration-300 peer {% if form.password2.errors %}border-red-500{% else %}border-gray-300{% endif %}"
             placeholder="تکرار رمز عبور"
             required
         >
@@ -140,10 +150,11 @@
         >
             تکرار رمز عبور
         </label>
-        <div class="text-red-500 text-sm mt-1 hidden" id="confirmPasswordError">رمزهای عبور مطابقت ندارند</div>
+        {% for error in form.password2.errors %}
+            <div class="text-red-500 text-sm mt-1" id="confirmPasswordError">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <!-- Submit Button -->
     <button
         type="submit"
         class="w-full bg-orange-light text-white py-3 px-4 rounded-xl font-semibold hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-orange-light focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
