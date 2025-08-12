@@ -1,6 +1,7 @@
 from datetime import date, timedelta, datetime
 from io import BytesIO
 
+import jdatetime
 import openpyxl
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -12,9 +13,12 @@ from django.db.models.functions.comparison import Cast
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponseForbidden, HttpResponse
 from django.shortcuts import redirect
+from django.urls.base import reverse_lazy
 from django.views import generic
 from openpyxl.styles import Font, Alignment
 
+from accounts.models import UserProfile
+from adminpanel.forms import UserProfileForm
 from orders.models import Order, OrderItem
 from products.models import Product
 
@@ -233,6 +237,43 @@ class ExportUsersToExcelView(AdminRequiredMixin, generic.View):
         response['Content-Disposition'] = 'attachment; filename="users_export.xlsx"'
         return response
 
+
+class UserProfileUpdateView(AdminRequiredMixin, LoginRequiredMixin, generic.UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = 'adminpanel/user/user_edit_profile.html'
+    success_url = reverse_lazy('admin_user_manage')
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST.copy()
+
+        # Convert Persian digits to English
+        def persian_to_english_digits(s):
+            persian_digits = '۰۱۲۳۴۵۶۷۸۹'
+            english_digits = '0123456789'
+            for p, e in zip(persian_digits, english_digits):
+                s = s.replace(p, e)
+            return s
+
+        if data.get('birth_date'):
+            shamsi_str = persian_to_english_digits(data['birth_date'])
+            try:
+                jy, jm, jd = map(int, shamsi_str.split('/'))
+                gregorian_date = jdatetime.date(jy, jm, jd).togregorian()
+                # Replace with YYYY-MM-DD
+                data['birth_date'] = gregorian_date.strftime('%Y-%m-%d')
+            except Exception:
+                pass  # Let the form handle the invalid date
+
+        request.POST = data
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user = self.get_object().user
+        user.email = self.request.POST.get('email')
+        user.save()
+        messages.success(self.request, 'پروفایل کاربر با موفقیت به‌روزرسانی شد.')
+        return super().form_valid(form)
 
 class AdminDashboardView(AdminRequiredMixin, generic.TemplateView):
     template_name = ""

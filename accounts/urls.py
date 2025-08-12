@@ -1,7 +1,7 @@
 # your_project/urls.py
 
 from django.urls import path, include
-from .views import CustomSignupView  # Import your custom view
+from .views import CustomSignupView
 
 urlpatterns = [
     # Override the default Allauth signup URL

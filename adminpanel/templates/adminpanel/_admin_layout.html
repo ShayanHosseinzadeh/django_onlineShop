@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Persian Datepicker -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
 
-    {% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,38 +30,20 @@
             }
         }
     </script>
-<script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script>
-               document.addEventListener('DOMContentLoaded', (event) => {
-        const messagesContainer = document.getElementById('messages-container');
-            console.log()
-        if (messagesContainer) {
-            setTimeout(() => {
-                // This will trigger the fade-out transition
-                messagesContainer.classList.remove('opacity-100');
-                messagesContainer.classList.add('opacity-0');
-            }, 5000); // Wait 5 seconds before starting the fade-out
-
-            setTimeout(() => {
-                // This will remove the element completely after the transition is done
-                messagesContainer.remove();
-            }, 5500); // Wait an additional 500ms for the fade-out to finish
-        }
-    });
-    </script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body class="font-vazir bg-gray-50 min-h-screen">
 {% if messages %}
     <div
-        id="messages-container"
-        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
+            id="messages-container"
+            class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
            max-w-lg w-[90vw] sm:w-96 px-4
            space-y-2
            transition-opacity duration-500 ease-in-out opacity-100"
     >
         {% for message in messages %}
             <div
-                class="rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-800"
+                    class="rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-800"
             >
                 {{ message }}
             </div>
@@ -70,116 +57,116 @@
 {% if user.profile.role == "admin" %}
     <!--  admin Sidebar -->
     <aside id="sidebar"
-       class="fixed top-0 right-0 z-50 w-64 h-screen bg-gray-900 text-white transform translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:fixed lg:right-0">
-    <!-- Sidebar Header -->
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
-        <div class="flex items-center space-x-3 space-x-reverse">
-            <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
-                <i class="fas fa-bolt text-white text-lg"></i>
+           class="fixed top-0 right-0 z-50 w-64 h-screen bg-gray-900 text-white transform translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:fixed lg:right-0">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-700">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
+                    <i class="fas fa-bolt text-white text-lg"></i>
+                </div>
+                <h2 class="text-lg font-bold">پنل مدیریت</h2>
             </div>
-            <h2 class="text-lg font-bold">پنل مدیریت</h2>
+            <!-- Close button for mobile -->
+            <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
-        <!-- Close button for mobile -->
-        <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white">
-            <i class="fas fa-times text-xl"></i>
-        </button>
-    </div>
 
-    <!-- Admin Profile -->
-    <div class="p-4 border-b border-gray-700">
-        <div class="flex items-center space-x-3 space-x-reverse">
-            <div>
-                <p class="font-medium">{{ user.profile.full_name }}</p>
-                <p class="text-sm text-gray-400">{{ user.email }}</p>
+        <!-- Admin Profile -->
+        <div class="p-4 border-b border-gray-700">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div>
+                    <p class="font-medium">{{ user.profile.full_name }}</p>
+                    <p class="text-sm text-gray-400">{{ user.email }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Navigation Menu -->
-    <nav class="mt-4 px-2">
-        <ul class="space-y-1">
-            <!-- Dashboard -->
-            <li>
-                <a href="{% url 'admin_dashboard' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+        <!-- Navigation Menu -->
+        <nav class="mt-4 px-2">
+            <ul class="space-y-1">
+                <!-- Dashboard -->
+                <li>
+                    <a href="{% url 'admin_dashboard' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_dashboard' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-home ml-3"></i>
-                    داشبورد
-                </a>
-            </li>
+                        <i class="fas fa-home ml-3"></i>
+                        داشبورد
+                    </a>
+                </li>
 
-            <!-- User Management -->
-            <li>
-                <a href="{% url 'admin_user_manage' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- User Management -->
+                <li>
+                    <a href="{% url 'admin_user_manage' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_user_manage' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-users ml-3"></i>
-                    مدیریت کاربران
-                </a>
-            </li>
+                        <i class="fas fa-users ml-3"></i>
+                        مدیریت کاربران
+                    </a>
+                </li>
 
-            <!-- Order Management -->
-            <li>
-                <a href="{% url 'admin_order_manage' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- Order Management -->
+                <li>
+                    <a href="{% url 'admin_order_manage' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_order_manage' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-shopping-bag ml-3"></i>
-                    مدیریت سفارش‌ها
-                </a>
-            </li>
+                        <i class="fas fa-shopping-bag ml-3"></i>
+                        مدیریت سفارش‌ها
+                    </a>
+                </li>
 
-            <!-- Product & Inventory Management -->
-            <li>
-                <a href="{% url 'admin_product_manage' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- Product & Inventory Management -->
+                <li>
+                    <a href="{% url 'admin_product_manage' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_product_manage' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-boxes ml-3"></i>
-                    مدیریت محصولات و موجودی
-                </a>
-            </li>
+                        <i class="fas fa-boxes ml-3"></i>
+                        مدیریت محصولات و موجودی
+                    </a>
+                </li>
 
-            <!-- Reports & Sales Analytics -->
-            <li>
-                <a href="{% url 'admin_reports' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- Reports & Sales Analytics -->
+                <li>
+                    <a href="{% url 'admin_reports' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_reports' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-chart-bar ml-3"></i>
-                    گزارش‌ها و آمار فروش
-                </a>
-            </li>
+                        <i class="fas fa-chart-bar ml-3"></i>
+                        گزارش‌ها و آمار فروش
+                    </a>
+                </li>
 
-            <!-- Notifications & Messages -->
-            <li>
-                <a href="{% url 'admin_notifications' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- Notifications & Messages -->
+                <li>
+                    <a href="{% url 'admin_notifications' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_notifications' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-bell ml-3"></i>
-                    اعلان‌ها و پیام‌ها
-                    <span class="mr-auto bg-orange-light text-white text-xs px-2 py-1 rounded-full">۳</span>
-                </a>
-            </li>
+                        <i class="fas fa-bell ml-3"></i>
+                        اعلان‌ها و پیام‌ها
+                        <span class="mr-auto bg-orange-light text-white text-xs px-2 py-1 rounded-full">۳</span>
+                    </a>
+                </li>
 
-            <!-- Site Settings -->
-            <li>
-                <a href="{% url 'admin_settings' %}"
-                   class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+                <!-- Site Settings -->
+                <li>
+                    <a href="{% url 'admin_settings' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_settings' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
-                    <i class="fas fa-cog ml-3"></i>
-                    تنظیمات سایت
-                </a>
-            </li>
-        </ul>
-    </nav>
+                        <i class="fas fa-cog ml-3"></i>
+                        تنظیمات سایت
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-    <!-- Logout Button -->
-    <div class="absolute bottom-4 left-4 right-4">
-        <a href="{% url 'account_logout' %}"
-           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-red-600 hover:text-white transition-colors duration-200">
-            <i class="fas fa-sign-out-alt ml-3"></i>
-            خروج از سیستم
-        </a>
-    </div>
-</aside>
+        <!-- Logout Button -->
+        <div class="absolute bottom-4 left-4 right-4">
+            <a href="{% url 'account_logout' %}"
+               class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-red-600 hover:text-white transition-colors duration-200">
+                <i class="fas fa-sign-out-alt ml-3"></i>
+                خروج از سیستم
+            </a>
+        </div>
+    </aside>
 {% else %}
     <!--  user Sidebar -->
     <aside id="sidebar"
@@ -398,7 +385,8 @@
                             <div class="w-8 h-8 bg-orange-light rounded-full flex items-center justify-center">
                                 <span class="text-white font-semibold text-sm">
                                     {% if user.profile.avatar %}
-                                        <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full object-cover">
+                                        <img src="{{ user.profile.avatar.url }}" alt="avatar"
+                                             class="w-8 h-8 rounded-full object-cover">
                                     {% else %}
                                         {{ user.profile.get_role_display|first }}
                                     {% endif %}
@@ -563,7 +551,8 @@
                             <div class="w-8 h-8 bg-orange-light rounded-full flex items-center justify-center">
                                <span class="text-white font-semibold text-sm">
                                     {% if user.profile.avatar %}
-                                        <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full object-cover">
+                                        <img src="{{ user.profile.avatar.url }}" alt="avatar"
+                                             class="w-8 h-8 rounded-full object-cover">
                                     {% else %}
                                         {{ user.profile.get_role_display|first }}
                                     {% endif %}
@@ -629,6 +618,8 @@
     </main>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
 <script>
     // Mobile menu functionality
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');

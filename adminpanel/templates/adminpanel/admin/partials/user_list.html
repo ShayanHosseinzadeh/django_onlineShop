@@ -1,5 +1,6 @@
 {% load persian_numbers %}
 {% load jalali_filter %}
+
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
@@ -48,9 +49,11 @@
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center ml-3">
                                 {% if user.profile.avatar %}
-                                    <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-10 h-10 rounded-full">
-                                    {% else %}
-                                    <span class="text-blue-600 font-semibold">{{ user.profile.full_name|default:user.username|slice:":1" }}
+                                    <img src="{{ user.profile.avatar.url }}" alt="avatar"
+                                         class="w-10 h-10 rounded-full">
+                                {% else %}
+                                    <span class="text-blue-600 font-semibold">
+                                    {{ user.profile.full_name|default:user.username|slice:":1" }}
                                 {% endif %}
                                 </span>
                             </div>
@@ -94,21 +97,22 @@
                                     data-role="{{ user.profile.get_role_display|default:'کاربر عادی' }}"
                                     data-status="{{ user.is_active }}"
                                     data-initial="{{ user.name|slice:":1" }}"
-                                    data-datejoined ="{{ user.profile.created_at|to_jalali|translate_number|default:user.date_joined|to_jalali |translate_number}}"
-                                    data-lastactivity = "{{ user.last_login|timesince|translate_number }}">
+                                    data-datejoined="{{ user.profile.created_at|to_jalali|translate_number|default:user.date_joined|to_jalali |translate_number }}"
+                                    data-lastactivity="{{ user.last_login|timesince|translate_number }}">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button
-                                    class="text-green-600 hover:text-green-900"
-                                    title="ویرایش"
-                                    onclick="openEditModal(this)"
-                                    data-user-id="{{ user.id }}"
-                                    data-name="{{ user.name }}"
-                                    data-email="{{ user.email }}"
-                                    data-phone="{{ user.phone }}"
-                                    data-role="{{ user.role }}">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                            {% if user.profile %}
+                                <a href="{% url 'edit_user_profile' pk=user.profile.pk %}"
+                                   class="text-green-600 hover:text-green-900"
+                                   title="ویرایش">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            {% else %}
+                                <button class="text-gray-400" title="پروفایل یافت نشد" disabled>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% endif %}
+                            </a>
                             <button
                                     class="text-red-600 hover:text-red-900"
                                     title="حذف کاربر"
@@ -231,57 +235,6 @@
     </div>
 </div>
 
-<!-- Edit User Modal -->
-<div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">ویرایش کاربر</h3>
-                <button id="closeEditModal" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="px-6 py-4">
-            <form id="editUserForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">نام و نام خانوادگی</label>
-                    <input type="text" id="editUserName"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
-                    <input type="email" id="editUserEmail"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">شماره تلفن</label>
-                    <input type="tel" id="editUserPhone"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">نقش</label>
-                    <select id="editUserRole"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
-                        <option value="user">کاربر عادی</option>
-                        <option value="admin">مدیر</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3 space-x-reverse">
-            <button id="cancelEditUser"
-                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                انصراف
-            </button>
-            <button id="saveEditUser" class="px-4 py-2 bg-orange-light text-white rounded-lg hover:bg-orange-dark">
-                ذخیره تغییرات
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Delete User Modal -->
 <div id="deleteUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
         <div class="px-6 py-4 border-b border-gray-200">
@@ -346,7 +299,65 @@
     </div>
 </div>
 <script>
+    // --- Global Helper Function ---
+    // Define helper function in the global scope for accessibility.
+    const getValue = (value, defaultValue) => {
+        return (value && value !== 'None' && value !== '') ? value : defaultValue;
+    };
+
+    // --- Modal Open Functions (Globally Accessible) ---
+    function openViewModal(button) {
+        const name = button.dataset.name;
+        const email = button.dataset.email;
+        const phone = button.dataset.phone;
+        const role = button.dataset.role;
+        const isActive = button.dataset.status === 'True';
+        const initial = button.dataset.initial;
+        const joinDate = button.dataset.datejoined;
+        const lastLogin = button.dataset.lastactivity;
+
+        document.getElementById('viewUserName').textContent = getValue(name, 'نام موجود نیست');
+        document.getElementById('viewUserEmail').textContent = getValue(email, 'ایمیل موجود نیست');
+        document.getElementById('viewUserPhone').textContent = getValue(phone, 'شماره تلفن موجود نیست');
+        document.getElementById('viewUserRole').textContent = getValue(role, 'نقش موجود نیست');
+        document.getElementById('viewUserJoinDate').textContent = getValue(joinDate, 'تاریخ عضویت موجود نیست');
+        document.getElementById('viewUserLastLogin').textContent = getValue(lastLogin, 'آخرین فعالیت موجود نیست');
+        document.getElementById('viewUserStatus').textContent = isActive ? 'فعال' : 'مسدود';
+        document.getElementById('viewUserInitial').textContent = getValue(initial, '؟');
+
+        // Use classList to show the modal (consistent with the closing logic)
+        document.getElementById('viewUserModal').classList.remove('hidden');
+    }
+
+
+    function openDeleteModal(button) {
+        const name = button.dataset.name;
+        const userId = button.dataset.userId;
+
+        document.getElementById('deleteUserName').textContent = name || 'کاربر ناشناس';
+        document.getElementById('deleteUserId').textContent = userId;
+
+        const form = document.getElementById('deleteUserForm');
+        if (form && userId) {
+            form.action = `/users/delete/${userId}/`;
+        }
+        // Use classList to show the modal
+        document.getElementById('deleteUserModal').classList.remove('hidden');
+    }
+
+
+    // --- JavaScript that runs once the page is ready ---
     document.addEventListener('DOMContentLoaded', function () {
+
+        // Add a listener to the 'ذخیره تغییرات' button to submit the form
+        const saveEditUserButton = document.getElementById('saveEditUser');
+        if (saveEditUserButton) {
+            saveEditUserButton.addEventListener('click', () => {
+                document.getElementById('editUserForm').submit();
+            });
+        }
+
+        // --- Bulk Actions Logic ---
         const selectAllCheckbox = document.getElementById('selectAll');
         const userCheckboxes = document.querySelectorAll('.user-checkbox');
         const bulkActionsBar = document.getElementById('bulkActionsBar');
@@ -368,12 +379,10 @@
                 bulkActionsBar.classList.add('hidden');
             }
 
-            // Get the status of all selected users
             const selectedUsers = Array.from(checkedBoxes).map(checkbox => checkbox.closest('tr').dataset.userStatus);
             const allActive = selectedUsers.every(status => status === 'active');
             const allInactive = selectedUsers.every(status => status === 'inactive');
 
-            // Show/hide buttons based on user status
             if (allActive) {
                 activateButton.classList.add('hidden');
                 blockButton.classList.remove('hidden');
@@ -385,7 +394,6 @@
                 blockButton.classList.remove('hidden');
             }
 
-            // Update select all checkbox state
             const allUsersCount = userCheckboxes.length;
             if (count === allUsersCount && allUsersCount > 0) {
                 selectAllCheckbox.checked = true;
@@ -418,7 +426,7 @@
         activateButton.addEventListener('click', () => submitBulkAction('activate'));
         blockButton.addEventListener('click', () => submitBulkAction('block'));
         deleteButton.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete the selected users? This action cannot be undone.')) {
+            if (confirm('آیا مطمئن هستید؟ این عمل قابل بازگشت نیست.')) {
                 submitBulkAction('delete');
             }
         });
@@ -461,93 +469,35 @@
             document.body.appendChild(form);
             form.submit();
         }
-    });
 
-    // --- Modal Functions (to open and populate) ---
-    function openViewModal(button) {
-    const name = button.dataset.name;
-    const email = button.dataset.email;
-    const phone = button.dataset.phone;
-    const role = button.dataset.role;
-    const isActive = button.dataset.status === 'True';
-    const joinDate = button.dataset.datejoined;
-    const lastLogin = button.dataset.lastactivity;
+        // --- Modal Close Listeners ---
+        // This is a robust way to close modals using their buttons and by clicking outside.
+        const closeButtonListeners = [
+            'closeViewModal', 'closeViewModalBtn',
+            'closeEditModal', 'cancelEditUser',
+            'closeDeleteModal', 'cancelDeleteUser'
+        ];
 
-    // Use a helper function to check for empty strings, 'None', or null/undefined
-    const getValue = (value, defaultValue) => {
-        return (value && value !== 'None' && value !== '') ? value : defaultValue;
-    };
-
-    document.getElementById('viewUserName').textContent = getValue(name, 'نام موجود نیست');
-    document.getElementById('viewUserEmail').textContent = getValue(email, 'ایمیل موجود نیست');
-    document.getElementById('viewUserPhone').textContent = getValue(phone, 'شماره تلفن موجود نیست');
-    document.getElementById('viewUserRole').textContent = getValue(role, 'نقش موجود نیست');
-    document.getElementById('viewUserJoinDate').textContent = getValue(joinDate, 'تاریخ عضویت موجود نیست');
-    document.getElementById('viewUserLastLogin').textContent = getValue(lastLogin, 'آخرین فعالیت موجود نیست');
-
-    document.getElementById('viewUserStatus').textContent = isActive ? 'فعال' : 'مسدود';
-
-    document.getElementById('viewUserInitial').textContent = name && name !== 'None' ? name.charAt(0) : '';
-
-    document.getElementById('viewUserModal').classList.remove('hidden');
-}
-    function openEditModal(button) {
-        document.getElementById('editUserName').value = button.dataset.name;
-        document.getElementById('editUserEmail').value = button.dataset.email;
-        document.getElementById('editUserPhone').value = button.dataset.phone;
-        document.getElementById('editUserRole').value = button.dataset.role;
-
-        // Set the form action dynamically for Django to know which user to update
-        const form = document.getElementById('editUserForm');
-        form.action = `/users/edit/${button.dataset.userId}/`; // Example URL
-
-        document.getElementById('editUserModal').classList.remove('hidden');
-    }
-
-    function openDeleteModal(button) {
-        document.getElementById('deleteUserName').textContent = button.dataset.name;
-        document.getElementById('deleteUserId').textContent = button.dataset.userId;
-
-        // Set the form action dynamically for Django
-        const form = document.getElementById('deleteUserForm');
-        form.action = `/users/delete/${button.dataset.userId}/`; // Example URL
-
-        document.getElementById('deleteUserModal').classList.remove('hidden');
-    }
-
-    // --- Modal Close Listeners ---
-    // These remain the same and are essential for closing the modals.
-    // View Modal
-    document.getElementById('closeViewModal').addEventListener('click', () => {
-        document.getElementById('viewUserModal').classList.add('hidden');
-    });
-    document.getElementById('closeViewModalBtn').addEventListener('click', () => {
-        document.getElementById('viewUserModal').classList.add('hidden');
-    });
-
-    // Edit Modal
-    document.getElementById('closeEditModal').addEventListener('click', () => {
-        document.getElementById('editUserModal').classList.add('hidden');
-    });
-    document.getElementById('cancelEditUser').addEventListener('click', () => {
-        document.getElementById('editUserModal').classList.add('hidden');
-    });
-
-    // Delete Modal
-    document.getElementById('closeDeleteModal').addEventListener('click', () => {
-        document.getElementById('deleteUserModal').classList.add('hidden');
-    });
-    document.getElementById('cancelDeleteUser').addEventListener('click', () => {
-        document.getElementById('deleteUserModal').classList.add('hidden');
-    });
-    // Close modals when clicking outside
-    document.addEventListener('click', function (e) {
-        const modals = ['viewUserModal', 'editUserModal', 'deleteUserModal', 'unblockUserModal', 'activateUserModal'];
-        modals.forEach(modalId => {
-            const modal = document.getElementById(modalId);
-            if (e.target === modal) {
-                modal.classList.add('hidden');
+        closeButtonListeners.forEach(id => {
+            const button = document.getElementById(id);
+            if (button) {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.fixed');
+                    if (modal) {
+                        modal.classList.add('hidden');
+                    }
+                });
             }
+        });
+
+        document.addEventListener('click', function (e) {
+            const modals = ['viewUserModal', 'editUserModal', 'deleteUserModal', 'unblockUserModal', 'activateUserModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal && e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
         });
     });
 </script>

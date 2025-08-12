@@ -10,4 +10,7 @@ urlpatterns = [
     path('reports/', views.AdminReportsView.as_view(), name='admin_reports'),
     path('notifications/', views.AdminNotificationsView.as_view(), name='admin_notifications'),
     path('settings/', views.AdminSettingsView.as_view(), name='admin_settings'),
+
+    path('users/edit/<int:pk>/', views.UserProfileUpdateView.as_view(), name='edit_user_profile'),
+
 ]

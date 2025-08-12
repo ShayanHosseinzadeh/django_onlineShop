@@ -1,0 +1,526 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers %}
+{% load jalali_filter %}
+{% block title %}
+    ویرایش حساب کاربری
+{% endblock %}
+{% block header_title %}
+    ویرایش پروفایل
+{% endblock %}
+{% block header_description %}
+    پروفایل خود را ویرایش کنید
+{% endblock %}
+{% block content %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        'primary': '#6366f1',
+                        'primary-light': '#818cf8',
+                        'primary-dark': '#4f46e5',
+                        'secondary': '#f1f5f9',
+                        'accent': '#10b981',
+                        'error': '#ef4444',
+                        'warning': '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .avatar-preview {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>');
+            background-size: 60%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .success-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+    <div class="container mx-auto px-4 max-w-4xl">
+
+        <!-- Main Form Card -->
+<div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <form id="profileForm" class="p-8" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="text-error text-sm mb-4">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="flex flex-col items-center mb-8 pb-8 border-b border-gray-100">
+            <div class="relative">
+                <div id="avatarPreview"
+                     class="w-32 h-32 bg-gray-100 rounded-full border-4 border-white shadow-lg avatar-preview flex items-center justify-center text-gray-400 overflow-hidden">
+                    {% if form.instance.avatar %}
+                        <img src="{{ form.instance.avatar.url }}" alt="آواتار"
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="fas fa-user text-4xl"></i>
+                    {% endif %}
+                </div>
+                <label for="id_avatar"
+                       class="absolute bottom-0 right-0 w-10 h-10 bg-primary hover:bg-primary-dark rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-all duration-200 hover:scale-110">
+                    <i class="fas fa-camera text-white text-sm"></i>
+                </label>
+                <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden">
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mt-4">تصویر پروفایل</h3>
+            <p class="text-sm text-gray-500 text-center mt-1">برای تغییر تصویر کلیک کنید<br>حداکثر حجم: ۲
+                مگابایت</p>
+            {% if form.avatar.errors %}
+                <div class="text-error text-sm mt-2">
+                    {% for error in form.avatar.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="lg:col-span-2">
+                <label for="id_full_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                    نام کامل <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="id_full_name" name="full_name"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           placeholder="نام و نام خانوادگی خود را وارد کنید"
+                           value="{{ form.full_name.value|default_if_none:'' }}">
+                    <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.full_name.errors %}
+                    <div id="fullNameError" class="text-error text-sm mt-1">
+                        {% for error in form.full_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="fullNameError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_email" class="block text-sm font-semibold text-gray-700 mb-2">
+                    ایمیل <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                    <input type="email" id="id_email" name="email"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           placeholder="example@email.com"
+                           value="{{ form.instance.user.email|default_if_none:'' }}">
+                    <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.email.errors %}
+                    <div id="emailError" class="text-error text-sm mt-1">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="emailError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_user_role" class="block text-sm font-semibold text-gray-700 mb-2">
+                    نقش کاربر <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                    <select id="id_user_role" name="role"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200 appearance-none bg-white">
+                        <option value="" {% if not form.role.value %}selected{% endif %}>انتخاب کنید
+                        </option>
+                        <option value="admin" {% if form.role.value == 'admin' %}selected{% endif %}>مدیر
+                        </option>
+                        <option value="customer" {% if form.role.value == 'customer' %}selected{% endif %}>
+                            مشتری
+                        </option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                </div>
+                {% if form.role.errors %}
+                    <div id="userRoleError" class="text-error text-sm mt-1">
+                        {% for error in form.role.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="userRoleError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_phone_number" class="block text-sm font-semibold text-gray-700 mb-2">
+                    شماره تماس <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                    <input type="tel" id="id_phone_number" name="phone_number"
+                           class="w-full text-right px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           placeholder="۰۹۱۲۳۴۵۶۷۸۹" maxlength="11"
+                           value="{{ form.phone_number.value|default_if_none:'' }}">
+                    <i class="fasx fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.phone_number.errors %}
+                    <div id="phoneNumberError" class="text-error text-sm mt-1">
+                        {% for error in form.phone_number.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="phoneNumberError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_birth_date" class="block text-sm font-semibold text-gray-700 mb-2">
+                    تاریخ تولد
+                </label>
+                <div class="relative">
+                    <input type="text" id="id_birth_date" name="birth_date"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           value="{{  form.birth_date.value|date:"Y-m-d"  }}">
+                    <i class="fas fa-calendar absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.birth_date.errors %}
+                    <div id="birthDateError" class="text-error text-sm mt-1">
+                        {% for error in form.birth_date.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="birthDateError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_city" class="block text-sm font-semibold text-gray-700 mb-2">
+                    شهر
+                </label>
+                <div class="relative">
+                    <input type="text" id="id_city" name="city"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           placeholder="نام شهر خود را وارد کنید"
+                           value="{{ form.city.value|default_if_none:'' }}">
+                    <i class="fas fa-city absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.city.errors %}
+                    <div id="cityError" class="text-error text-sm mt-1">
+                        {% for error in form.city.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="cityError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_postal_code" class="block text-sm font-semibold text-gray-700 mb-2">
+                    کد پستی
+                </label>
+                <div class="relative">
+                    <input type="text" id="id_postal_code" name="postal_code"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200"
+                           placeholder="۱۲۳۴۵۶۷۸۹" maxlength="10"
+                           value="{{ form.postal_code.value|translate_number|default_if_none:'' }}">
+                    <i class="fas fa-mail-bulk absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                {% if form.postal_code.errors %}
+                    <div id="postalCodeError" class="text-error text-sm mt-1">
+                        {% for error in form.postal_code.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="postalCodeError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+
+            <div class="lg:col-span-2">
+                <label for="id_address" class="block text-sm font-semibold text-gray-700 mb-2">
+                    آدرس
+                </label>
+                <div class="relative">
+                    <textarea id="id_address" name="address" rows="4"
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none input-focus transition-all duration-200 resize-none"
+                              placeholder="آدرس کامل خود را وارد کنید">{{ form.address.value|default_if_none:'' }}</textarea>
+                    <i class="fas fa-map-marker-alt absolute left-4 top-4 text-gray-400"></i>
+                </div>
+                {% if form.address.errors %}
+                    <div id="addressError" class="text-error text-sm mt-1">
+                        {% for error in form.address.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="addressError" class="text-error text-sm mt-1 hidden"></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t border-gray-100">
+            <button type="submit" id="saveButton"
+                    class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 flex items-center justify-center">
+                <i class="fas fa-save ml-2"></i>
+                ذخیره تغییرات
+            </button>
+            <a href="{{ request.META.HTTP_REFERER }}">
+                <button type="button" id="cancelButton"
+                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg flex items-center justify-center">
+                <i class="fas fa-times ml-2"></i>
+                انصراف
+            </button>
+            </a>
+        </div>
+    </form>
+</div>
+    </div>
+    <script>
+        // ----------------------------------------------------
+        // Persian Date Picker Setup
+        // ----------------------------------------------------
+        const birthDateInput = document.getElementById('id_birth_date');
+        if (birthDateInput) {
+            $(birthDateInput).persianDatepicker({
+                format: 'YYYY/MM/DD',
+                initialValueType: 'gregorian'
+            });
+        }
+
+        // Form elements
+        const form = document.getElementById('profileForm');
+        const avatarInput = document.getElementById('id_avatar'); // Corrected ID to match HTML
+        const avatarPreview = document.getElementById('avatarPreview');
+        const saveButton = document.getElementById('saveButton');
+        const cancelButton = document.getElementById('cancelButton');
+
+        // Validation patterns
+        const patterns = {
+            email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            phone: /^09[0-9]{9}$/,
+            postalCode: /^[0-9]{10}$/
+        };
+
+        // --- Helper Functions ---
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.add('hidden');
+            }
+        }
+
+        function validateField(key) {
+            const field = inputs[key];
+            const value = field.element.value;
+            const isValid = field.validate(value);
+
+            if (isValid) {
+                field.element.classList.remove('border-error');
+                // Optional: Add a class for valid input state
+                // field.element.classList.add('border-green-500');
+                hideError(key + 'Error');
+            } else {
+                // field.element.classList.remove('border-green-500');
+                field.element.classList.add('border-error');
+                showError(key + 'Error', field.message);
+            }
+            return isValid;
+        }
+
+        function validateAllFields() {
+            let isValid = true;
+            // Validate avatar file size on form submission
+            const avatarFile = avatarInput.files[0];
+            if (avatarFile && avatarFile.size > 2 * 1024 * 1024) {
+                showError('avatarError', 'حجم فایل نباید بیشتر از ۲ مگابایت باشد');
+                isValid = false;
+            } else {
+                hideError('avatarError');
+            }
+
+            // Validate all other inputs
+            Object.keys(inputs).forEach(key => {
+                if (!validateField(key)) {
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        // --- Core Logic ---
+
+        // Avatar upload functionality
+        avatarInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file size (2MB max)
+                if (file.size > 2 * 1024 * 1024) {
+                    showError('avatarError', 'حجم فایل نباید بیشتر از ۲ مگابایت باشد');
+                    avatarPreview.innerHTML = '<i class="fas fa-user text-4xl"></i>'; // Reset preview
+                    return;
+                }
+
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showError('avatarError', 'لطفاً یک فایل تصویری انتخاب کنید');
+                    avatarPreview.innerHTML = '<i class="fas fa-user text-4xl"></i>'; // Reset preview
+                    return;
+                }
+
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar" class="w-full h-full object-cover rounded-full">`;
+                    hideError('avatarError');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Configuration for real-time validation
+        const inputs = {
+            fullName: {
+                element: document.getElementById('id_full_name'), // Corrected ID
+                validate: (value) => value.trim().length >= 2,
+                message: 'نام کامل باید حداقل ۲ کاراکتر باشد'
+            },
+            email: {
+                element: document.getElementById('id_email'), // Corrected ID
+                validate: (value) => patterns.email.test(value),
+                message: 'لطفاً یک ایمیل معتبر وارد کنید'
+            },
+            userRole: {
+                element: document.getElementById('id_user_role'), // Corrected ID
+                validate: (value) => value !== '',
+                message: 'لطفاً نقش کاربر را انتخاب کنید'
+            },
+            phoneNumber: {
+                element: document.getElementById('id_phone_number'), // Corrected ID
+                validate: (value) => patterns.phone.test(value),
+                message: 'شماره تلفن باید با ۰۹ شروع شده و ۱۱ رقم باشد'
+            },
+            postalCode: {
+                element: document.getElementById('id_postal_code'), // Corrected ID
+                validate: (value) => value === '' || patterns.postalCode.test(value),
+                message: 'کد پستی باید ۱۰ رقم باشد'
+            }
+        };
+
+        // Add event listeners for real-time validation
+        Object.keys(inputs).forEach(key => {
+            const input = inputs[key];
+            input.element.addEventListener('blur', () => validateField(key));
+            input.element.addEventListener('input', () => {
+                if (input.element.classList.contains('border-error')) {
+                    validateField(key);
+                }
+            });
+        });
+
+        // Phone number formatting
+        document.getElementById('id_phone_number').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            e.target.value = value;
+        });
+
+        // Postal code formatting
+        document.getElementById('id_postal_code').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.slice(0, 10);
+            }
+            e.target.value = value;
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', function (e) {
+            // Run full validation on all fields
+            const isFormValid = validateAllFields();
+
+            if (!isFormValid) {
+                // If validation fails, prevent the form from submitting
+                e.preventDefault();
+                console.log('Form submission prevented due to validation errors.');
+            } else {
+                console.log('Form is valid. Submitting...');
+                // The form will now submit to the server.
+            }
+        });
+
+        // Cancel button
+        cancelButton.addEventListener('click', function () {
+            if (confirm('آیا مطمئن هستید؟ تغییرات ذخیره نشده از بین خواهد رفت.')) {
+                // Form reset and other cleanup
+                form.reset();
+                avatarPreview.innerHTML = '<i class="fas fa-user text-4xl"></i>';
+
+                // Reset all field styles and hide errors
+                Object.keys(inputs).forEach(key => {
+                    const field = inputs[key];
+                    field.element.classList.remove('border-error', 'border-accent');
+                    hideError(key + 'Error');
+                });
+                hideError('avatarError');
+            }
+        });
+
+    </script>
+
+{% endblock %}
