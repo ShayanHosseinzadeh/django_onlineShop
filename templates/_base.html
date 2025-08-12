@@ -77,7 +77,7 @@
             {% if user.is_authenticated %}
                 <div class="flex items-center space-x-4 space-x-reverse text-gray-700 font-medium">
                     <span>خوش آمدید، {{ user.profile.full_name|default:user.username }}</span>
-                    <a href="" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
+                    <a href="{% url 'admin_dashboard' %}" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
 
                     <form method="post" action="{% url 'account_logout' %}" class="inline">
                         {% csrf_token %}

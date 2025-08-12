@@ -37,11 +37,10 @@ class Command(BaseCommand):
         """Creates a batch of fake users with a corresponding user profile."""
         self.stdout.write("Creating users and profiles...")
 
+        # --- FIX: Call UserFactory instead of UserProfileFactory ---
+        # UserFactory's post_generation hook will automatically create a UserProfile
+        UserFactory.create_batch(10)
 
-
-        # Create a batch of users with profiles using the factory
-        # This will automatically create a User and a UserProfile for each
-        UserProfileFactory.create_batch(10)
         self.stdout.write(self.style.SUCCESS("Users and profiles created."))
 
     def create_products(self):

@@ -191,53 +191,9 @@
         </div>
     </div>
 
+
+
     <script>
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const closeSidebar = document.getElementById('closeSidebar');
-
-        function openSidebar() {
-            sidebar.classList.remove('translate-x-full');
-            mobileOverlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeSidebarFunc() {
-            sidebar.classList.add('translate-x-full');
-            mobileOverlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        mobileMenuBtn.addEventListener('click', openSidebar);
-        closeSidebar.addEventListener('click', closeSidebarFunc);
-        mobileOverlay.addEventListener('click', closeSidebarFunc);
-
-        // Add User Modal
-        const addUserBtn = document.getElementById('addUserBtn');
-        const addUserModal = document.getElementById('addUserModal');
-        const closeAddUserModal = document.getElementById('closeAddUserModal');
-        const cancelAddUser = document.getElementById('cancelAddUser');
-
-        addUserBtn.addEventListener('click', () => {
-            addUserModal.classList.remove('hidden');
-        });
-
-        closeAddUserModal.addEventListener('click', () => {
-            addUserModal.classList.add('hidden');
-        });
-
-        cancelAddUser.addEventListener('click', () => {
-            addUserModal.classList.add('hidden');
-        });
-
-        // Close modal when clicking outside
-        addUserModal.addEventListener('click', (e) => {
-            if (e.target === addUserModal) {
-                addUserModal.classList.add('hidden');
-            }
-        });
 
     </script>
 {% endblock %}

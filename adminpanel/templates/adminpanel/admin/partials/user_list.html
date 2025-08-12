@@ -47,7 +47,12 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center ml-3">
-                                <span class="text-blue-600 font-semibold">{{ user.profile.full_name|default:user.username|slice:":1" }}</span>
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-10 h-10 rounded-full">
+                                    {% else %}
+                                    <span class="text-blue-600 font-semibold">{{ user.profile.full_name|default:user.username|slice:":1" }}
+                                {% endif %}
+                                </span>
                             </div>
                             <div>
                                 <div class="text-sm font-medium text-gray-900">{{ user.profile.full_name|default:user.username }}</div>
@@ -79,21 +84,39 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-2 space-x-reverse">
-                            <button class="text-blue-600 hover:text-blue-900" title="مشاهده جزئیات">
+                            <button
+                                    class="text-blue-600 hover:text-blue-900"
+                                    title="مشاهده جزئیات"
+                                    onclick="openViewModal(this)"
+                                    data-name="{{ user.profile.full_name }}"
+                                    data-email="{{ user.email }}"
+                                    data-phone="{{ user.profile.phone_number|translate_number }}"
+                                    data-role="{{ user.profile.get_role_display|default:'کاربر عادی' }}"
+                                    data-status="{{ user.is_active }}"
+                                    data-initial="{{ user.name|slice:":1" }}"
+                                    data-datejoined ="{{ user.profile.created_at|to_jalali|translate_number|default:user.date_joined|to_jalali |translate_number}}"
+                                    data-lastactivity = "{{ user.last_login|timesince|translate_number }}">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="text-green-600 hover:text-green-900" title="ویرایش">
+                            <button
+                                    class="text-green-600 hover:text-green-900"
+                                    title="ویرایش"
+                                    onclick="openEditModal(this)"
+                                    data-user-id="{{ user.id }}"
+                                    data-name="{{ user.name }}"
+                                    data-email="{{ user.email }}"
+                                    data-phone="{{ user.phone }}"
+                                    data-role="{{ user.role }}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            {% if user.is_active %}
-                                <button class="text-red-600 hover:text-red-900" title="مسدود کردن">
-                                    <i class="fas fa-ban"></i>
-                                </button>
-                            {% else %}
-                                <button class="text-green-600 hover:text-green-900" title="رفع مسدودیت">
-                                    <i class="fas fa-unlock"></i>
-                                </button>
-                            {% endif %}
+                            <button
+                                    class="text-red-600 hover:text-red-900"
+                                    title="حذف کاربر"
+                                    onclick="openDeleteModal(this)"
+                                    data-user-id="{{ user.id }}"
+                                    data-name="{{ user.name }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
 
                         </div>
                     </td>
@@ -154,7 +177,147 @@
         </div>
     </div>
 </div>
+<!-- View User Modal -->
+<div id="viewUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">جزئیات کاربر</h3>
+                <button id="closeViewModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-blue-600 font-bold text-xl" id="viewUserInitial">ا</span>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900" id="viewUserName">احمد محمدی</h4>
+                        <p class="text-sm text-gray-500" id="viewUserStatus">فعال</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ایمیل</label>
+                        <p class="mt-1 text-sm text-gray-900" id="viewUserEmail">ahmad@email.com</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">شماره تلفن</label>
+                        <p class="mt-1 text-sm text-gray-900" id="viewUserPhone">۰۹۱۲۳۴۵۶۷۸۹</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">نقش</label>
+                        <p class="mt-1 text-sm text-gray-900" id="viewUserRole">کاربر عادی</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">تاریخ عضویت</label>
+                        <p class="mt-1 text-sm text-gray-900" id="viewUserJoinDate">۱۴۰۲/۰۸/۱۵</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">آخرین فعالیت</label>
+                        <p class="mt-1 text-sm text-gray-900" id="viewUserLastLogin">۲ ساعت پیش</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+            <button id="closeViewModalBtn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                بستن
+            </button>
+        </div>
+    </div>
+</div>
 
+<!-- Edit User Modal -->
+<div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">ویرایش کاربر</h3>
+                <button id="closeEditModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <form id="editUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">نام و نام خانوادگی</label>
+                    <input type="text" id="editUserName"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
+                    <input type="email" id="editUserEmail"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">شماره تلفن</label>
+                    <input type="tel" id="editUserPhone"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">نقش</label>
+                    <select id="editUserRole"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent">
+                        <option value="user">کاربر عادی</option>
+                        <option value="admin">مدیر</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3 space-x-reverse">
+            <button id="cancelEditUser"
+                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                انصراف
+            </button>
+            <button id="saveEditUser" class="px-4 py-2 bg-orange-light text-white rounded-lg hover:bg-orange-dark">
+                ذخیره تغییرات
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div id="deleteUserModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-red-600">حذف کاربر</h3>
+                <button id="closeDeleteModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium text-gray-900">آیا مطمئن هستید؟</h4>
+                    <p class="text-sm text-gray-600">این عمل قابل بازگشت نیست.</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                کاربر <strong id="deleteUserName">احمد محمدی</strong> با شناسه <strong id="deleteUserId">#۱۲۳۴</strong>
+                به طور کامل حذف خواهد شد.
+            </p>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3 space-x-reverse">
+            <button id="cancelDeleteUser"
+                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                انصراف
+            </button>
+            <button id="confirmDeleteUser" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                حذف کاربر
+            </button>
+        </div>
+    </div>
+</div>
 <!-- Bulk Actions Bar (Hidden by default) -->
 <div id="bulkActionsBar"
      class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 px-6 py-3 hidden">
@@ -298,5 +461,93 @@
             document.body.appendChild(form);
             form.submit();
         }
+    });
+
+    // --- Modal Functions (to open and populate) ---
+    function openViewModal(button) {
+    const name = button.dataset.name;
+    const email = button.dataset.email;
+    const phone = button.dataset.phone;
+    const role = button.dataset.role;
+    const isActive = button.dataset.status === 'True';
+    const joinDate = button.dataset.datejoined;
+    const lastLogin = button.dataset.lastactivity;
+
+    // Use a helper function to check for empty strings, 'None', or null/undefined
+    const getValue = (value, defaultValue) => {
+        return (value && value !== 'None' && value !== '') ? value : defaultValue;
+    };
+
+    document.getElementById('viewUserName').textContent = getValue(name, 'نام موجود نیست');
+    document.getElementById('viewUserEmail').textContent = getValue(email, 'ایمیل موجود نیست');
+    document.getElementById('viewUserPhone').textContent = getValue(phone, 'شماره تلفن موجود نیست');
+    document.getElementById('viewUserRole').textContent = getValue(role, 'نقش موجود نیست');
+    document.getElementById('viewUserJoinDate').textContent = getValue(joinDate, 'تاریخ عضویت موجود نیست');
+    document.getElementById('viewUserLastLogin').textContent = getValue(lastLogin, 'آخرین فعالیت موجود نیست');
+
+    document.getElementById('viewUserStatus').textContent = isActive ? 'فعال' : 'مسدود';
+
+    document.getElementById('viewUserInitial').textContent = name && name !== 'None' ? name.charAt(0) : '';
+
+    document.getElementById('viewUserModal').classList.remove('hidden');
+}
+    function openEditModal(button) {
+        document.getElementById('editUserName').value = button.dataset.name;
+        document.getElementById('editUserEmail').value = button.dataset.email;
+        document.getElementById('editUserPhone').value = button.dataset.phone;
+        document.getElementById('editUserRole').value = button.dataset.role;
+
+        // Set the form action dynamically for Django to know which user to update
+        const form = document.getElementById('editUserForm');
+        form.action = `/users/edit/${button.dataset.userId}/`; // Example URL
+
+        document.getElementById('editUserModal').classList.remove('hidden');
+    }
+
+    function openDeleteModal(button) {
+        document.getElementById('deleteUserName').textContent = button.dataset.name;
+        document.getElementById('deleteUserId').textContent = button.dataset.userId;
+
+        // Set the form action dynamically for Django
+        const form = document.getElementById('deleteUserForm');
+        form.action = `/users/delete/${button.dataset.userId}/`; // Example URL
+
+        document.getElementById('deleteUserModal').classList.remove('hidden');
+    }
+
+    // --- Modal Close Listeners ---
+    // These remain the same and are essential for closing the modals.
+    // View Modal
+    document.getElementById('closeViewModal').addEventListener('click', () => {
+        document.getElementById('viewUserModal').classList.add('hidden');
+    });
+    document.getElementById('closeViewModalBtn').addEventListener('click', () => {
+        document.getElementById('viewUserModal').classList.add('hidden');
+    });
+
+    // Edit Modal
+    document.getElementById('closeEditModal').addEventListener('click', () => {
+        document.getElementById('editUserModal').classList.add('hidden');
+    });
+    document.getElementById('cancelEditUser').addEventListener('click', () => {
+        document.getElementById('editUserModal').classList.add('hidden');
+    });
+
+    // Delete Modal
+    document.getElementById('closeDeleteModal').addEventListener('click', () => {
+        document.getElementById('deleteUserModal').classList.add('hidden');
+    });
+    document.getElementById('cancelDeleteUser').addEventListener('click', () => {
+        document.getElementById('deleteUserModal').classList.add('hidden');
+    });
+    // Close modals when clicking outside
+    document.addEventListener('click', function (e) {
+        const modals = ['viewUserModal', 'editUserModal', 'deleteUserModal', 'unblockUserModal', 'activateUserModal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
     });
 </script>
