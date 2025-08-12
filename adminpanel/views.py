@@ -108,13 +108,9 @@ class AdminUserManage(AdminRequiredMixin, generic.ListView):
         return qs.order_by('-date_joined')
 
     def get(self, request, *args, **kwargs):
-        # Check if the request is from HTMX
         if 'HX-Request' in request.headers:
-            # If so, render only the partial template for the table
             self.template_name = 'adminpanel/admin/partials/user_list.html'
             return super().get(request, *args, **kwargs)
-
-        # Otherwise, render the full page with the base template
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -124,6 +120,47 @@ class AdminUserManage(AdminRequiredMixin, generic.ListView):
         context['total_users'] = user_model.objects.count()
         context['users_registered_today'] = user_model.objects.filter(date_joined__date=today).count()
         return context
+
+
+class BulkOrderActionView(AdminRequiredMixin, generic.View):
+    """
+    A view to handle bulk actions (completed, cancelled, delete) on orders.
+    """
+
+    def post(self, request, *args, **kwargs):
+        # Retrieve the list of order IDs from the POST request.
+        # The IDs are sent from the front-end with the name 'order_ids[]'.
+        order_ids = request.POST.getlist('order_ids[]')
+
+        # Get the action to be performed (e.g., 'completed', 'cancelled', 'delete').
+        action = request.POST.get('action')
+
+        # Filter the orders queryset to include only the selected orders.
+        orders_to_update = Order.objects.filter(id__in=order_ids)
+
+        # Check the action and perform the corresponding database operation.
+        if action == 'completed':
+            # Update the status of the selected orders to 'completed'.
+            orders_to_update.update(status='completed')
+            messages.success(request, f"{orders_to_update.count()} سفارش با موفقیت تکمیل شدند.")
+
+        elif action == 'cancelled':
+            # Update the status of the selected orders to 'cancelled'.
+            orders_to_update.update(status='cancelled')
+            messages.success(request, f"{orders_to_update.count()} سفارش لغو شدند.")
+
+        elif action == 'delete':
+            # Delete the selected orders.
+            # Note: This will also cascade delete any related OrderItem objects.
+            orders_to_update.delete()
+            messages.success(request, f"{orders_to_update.count()} سفارش با موفقیت حذف شدند.")
+
+        else:
+            # If the action is not recognized, show an error message.
+            messages.error(request, "عملیات نامعتبر است.")
+
+        # Redirect the user back to the order management page.
+        return redirect('admin_order_manage')
 
 
 class BulkUserActionView(AdminRequiredMixin, generic.View):
@@ -287,27 +324,192 @@ class UserProfileDeleteView(AdminRequiredMixin, generic.DeleteView):
         return HttpResponseRedirect(self.success_url)
 
 
-class AdminDashboardView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+def get_filtered_orders_queryset(request):
+    qs = Order.objects.all()
+
+    search = request.GET.get('search', '')
+    if search:
+        qs = qs.filter(
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(phone_number__icontains=search) |
+            Q(address__icontains=search) |
+            Q(order_notes__icontains=search)
+        )
+
+    status = request.GET.get('status', '')
+    if status in [choice[0] for choice in Order.STATUS_CHOICES]:
+        qs = qs.filter(status=status)
+
+    paid = request.GET.get('paid', '')
+    if paid == 'yes':
+        qs = qs.filter(paid=True)
+    elif paid == 'no':
+        qs = qs.filter(paid=False)
+
+    date_filter = request.GET.get('date', '')
+    now = datetime.now()
+    if date_filter == 'today':
+        qs = qs.filter(datetime_created__date=now.date())
+    elif date_filter == 'week':
+        week_ago = now - timedelta(days=7)
+        qs = qs.filter(datetime_created__gte=week_ago)
+    elif date_filter == 'month':
+        month_ago = now - timedelta(days=30)
+        qs = qs.filter(datetime_created__gte=month_ago)
+    elif date_filter == 'year':
+        year_ago = now - timedelta(days=365)
+        qs = qs.filter(datetime_created__gte=year_ago)
+
+    return qs.order_by('-datetime_created')
+
+
+class ExportOrdersToExcelView(AdminRequiredMixin, generic.View):
+
+    def get(self, request, *args, **kwargs):
+        queryset = get_filtered_orders_queryset(request)
+
+        output = BytesIO()
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = "Order Data"
+
+        # Excel columns
+        columns = [
+            'ID', 'نام مشتری', 'نام خانوادگی', 'ایمیل', 'شماره تماس', 'آدرس',
+            'وضعیت سفارش', 'پرداخت شده', 'مبلغ کل', 'یادداشت مشتری', 'تاریخ ایجاد', 'تاریخ ویرایش'
+        ]
+        worksheet.append(columns)
+
+        # Header styling
+        header_font = Font(bold=True)
+        header_alignment = Alignment(horizontal='center')
+        for cell in worksheet[1]:
+            cell.font = header_font
+            cell.alignment = header_alignment
+
+        # Writing data
+        for order in queryset:
+            # Use .get_status_display() to get the human-readable status, which is more reliable
+            # than manually accessing the dictionary.
+            status_display = order.get_status_display()
+
+            row = [
+                order.id,
+                order.first_name,
+                order.last_name,
+                order.email,
+                order.phone_number,
+                order.address,
+                # Fix: Use the .get_status_display() method
+                status_display,
+                "بله" if order.paid else "خیر",
+                order.get_total_price(),
+                order.order_notes or '-',
+                order.datetime_created.strftime('%Y/%m/%d %H:%M'),
+                order.datetime_modified.strftime('%Y/%m/%d %H:%M'),
+            ]
+            worksheet.append(row)
+
+        workbook.save(output)
+        output.seek(0)
+
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename="orders_export.xlsx"'
+        return response
+
+
+class AdminOrderManageView(AdminRequiredMixin, generic.ListView):
+    template_name = 'adminpanel/admin/admin_orders.html'
+    model = Order
+    context_object_name = 'orders'
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = self.model.objects.select_related('user').all()
+
+        # --- Search Filter ---
+        search = self.request.GET.get('search', '')
+        if search:
+            qs = qs.filter(
+                Q(id__icontains=search) |
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search) |
+                Q(user__email__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        # --- Status Filter ---
+        status = self.request.GET.get('status', '')
+        if status in ['pending', 'processing', 'shipped', 'completed', 'cancelled']:
+            qs = qs.filter(status=status)
+
+        # --- Date Filter ---
+        date_filter = self.request.GET.get('date', '')
+        now = datetime.now()
+        if date_filter == 'today':
+            qs = qs.filter(datetime_created__date=now.date())
+        elif date_filter == 'week':
+            week_ago = now - timedelta(days=7)
+            qs = qs.filter(datetime_created__gte=week_ago)
+        elif date_filter == 'month':
+            month_ago = now - timedelta(days=30)
+            qs = qs.filter(datetime_created__gte=month_ago)
+        elif date_filter == 'year':
+            year_ago = now - timedelta(days=365)
+            qs = qs.filter(datetime_created__gte=year_ago)
+
+        return qs.order_by('-datetime_created')
+
+    def get(self, request, *args, **kwargs):
+        # اگر درخواست از HTMX است فقط partial رندر شود
+        if 'HX-Request' in request.headers:
+            self.template_name = 'adminpanel/admin/partials/orders_list.html'
+            return super().get(request, *args, **kwargs)
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['total_orders'] = self.model.objects.count()
+        context['processing_orders'] = self.model.objects.filter(status='processing').count()
+        context['completed_orders'] = self.model.objects.filter(status='completed').count()
+        context['cancelled_orders'] = self.model.objects.filter(status='cancelled').count()
         return context
 
 
-class AdminUserManageView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+class OrderDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Order
+    template_name = "adminpanel/user/user_order_detail.html"
+    context_object_name = "order"
+
+    def get_queryset(self):
+        """
+        Only allow the logged-in user to see their own orders
+        unless the user is a staff member.
+        """
+        qs = super().get_queryset()
+        if 'admin' not in self.request.user.profile.role:
+            qs = qs.filter(user=self.request.user)
+        return qs
 
     def get_context_data(self, **kwargs):
+        """
+        Add order items and total price to the template context.
+        """
         context = super().get_context_data(**kwargs)
-        return context
+        order = self.object
+        items = order.items.select_related("product")  # Prefetch product for efficiency
+        total_price = order.get_total_price()
 
-
-class AdminOrderManageView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context["items"] = items
+        context["total_price"] = total_price
         return context
 
 

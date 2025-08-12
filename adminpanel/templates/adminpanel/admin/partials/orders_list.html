@@ -1,0 +1,262 @@
+{% load persian_numbers %}
+{% load jalali_filter %}
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            {% csrf_token %}
+            <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <input type="checkbox" id="selectAll"
+                           class="rounded border-gray-300 text-orange-light focus:ring-orange-light">
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    کد سفارش
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    نام مشتری
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ایمیل
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    شماره تلفن
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    وضعیت
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    تاریخ ثبت
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    عملیات
+                </th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="ordersTableBody">
+            {% for order in orders %}
+                <tr class="hover:bg-gray-50" data-order-id="{{ order.id }}" data-order-status="{{ order.status }}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox"
+                               class="order-checkbox rounded border-gray-300 text-orange-light focus:ring-orange-light">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">#{{ order.id|translate_number }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{ order.first_name }} {{ order.last_name }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.phone_number|translate_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if order.status == 'pending' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">در انتظار بررسی</span>
+                        {% elif order.status == 'processing' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">در حال پردازش</span>
+                        {% elif order.status == 'shipped' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">ارسال شده</span>
+                        {% elif order.status == 'completed' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">تکمیل شده</span>
+                        {% elif order.status == 'cancelled' %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">لغو شده</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.datetime_created|to_jalali|translate_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <a href="{% url 'panel_order_detail'  order.id  %}">
+                                 <button
+                                    class="text-blue-600 hover:text-blue-900"
+                                    title="مشاهده جزئیات">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        هیچ سفارشی یافت نشد.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-700">
+            نمایش {{ page_obj.start_index|translate_number }} تا {{ page_obj.end_index|translate_number }}
+            از {{ paginator.count|translate_number }} سفارش
+        </div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}"
+                   class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50">
+                    قبلی
+                </a>
+            {% else %}
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50"
+                        disabled>
+                    قبلی
+                </button>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <button class="px-3 py-1 bg-orange-light text-white rounded-md text-sm hover:bg-orange-dark">
+                        {{ i|translate_number }}
+                    </button>
+                {% else %}
+                    <a href="?page={{ i }}"
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        {{ i|translate_number }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}"
+                   class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                    بعدی
+                </a>
+            {% else %}
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 disabled:opacity-50"
+                        disabled>
+                    بعدی
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="bulkActionsBar"
+     class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 px-6 py-3 hidden">
+    <div class="flex items-center space-x-4 space-x-reverse">
+        <span class="text-sm text-gray-700">
+            <span id="selectedCount">0</span> سفارش انتخاب شده
+        </span>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <button id="completeBulk"
+                    class="px-3 py-1 bg-green-100 text-green-700 rounded-md text-sm hover:bg-green-200">
+                تکمیل شده
+            </button>
+            <button id="cancelBulk"
+                    class="px-3 py-1 bg-red-100 text-red-700 rounded-md text-sm hover:bg-red-200">
+                لغو شده
+            </button>
+            <button id="deleteBulk"
+                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                حذف
+            </button>
+            <button id="closeBulkActions"
+                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Bulk Actions Logic ---
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const orderCheckboxes = document.querySelectorAll('.order-checkbox');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const closeBulkActions = document.getElementById('closeBulkActions');
+
+        const completeButton = document.getElementById('completeBulk');
+        const cancelButton = document.getElementById('cancelBulk');
+        const deleteButton = document.getElementById('deleteBulk');
+
+        function updateBulkActionsBar() {
+            const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+            const count = checkedBoxes.length;
+
+            if (count > 0) {
+                bulkActionsBar.classList.remove('hidden');
+                selectedCountSpan.textContent = count;
+            } else {
+                bulkActionsBar.classList.add('hidden');
+            }
+
+            const allOrdersCount = orderCheckboxes.length;
+            if (count === allOrdersCount && allOrdersCount > 0) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else if (count > 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        selectAllCheckbox.addEventListener('change', function () {
+            orderCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkActionsBar();
+        });
+
+        orderCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkActionsBar);
+        });
+
+        closeBulkActions.addEventListener('click', () => {
+            orderCheckboxes.forEach(checkbox => checkbox.checked = false);
+            updateBulkActionsBar();
+        });
+
+        completeButton.addEventListener('click', () => submitBulkAction('completed'));
+        cancelButton.addEventListener('click', () => submitBulkAction('cancelled'));
+        deleteButton.addEventListener('click', () => {
+            if (confirm('آیا مطمئن هستید؟ این عمل قابل بازگشت نیست.')) {
+                submitBulkAction('delete');
+            }
+        });
+
+        function submitBulkAction(action) {
+            const selectedOrderIds = Array.from(document.querySelectorAll('.order-checkbox:checked'))
+                .map(checkbox => checkbox.closest('tr').dataset.orderId);
+
+            if (selectedOrderIds.length === 0) {
+                alert('لطفا حداقل یک سفارش را انتخاب کنید.');
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{% url 'bulk_order_action' %}"; // You'll need to define this URL
+            form.style.display = 'none';
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = action;
+            form.appendChild(actionInput);
+
+            selectedOrderIds.forEach(orderId => {
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'order_ids[]';
+                idInput.value = orderId;
+                form.appendChild(idInput);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+</script>

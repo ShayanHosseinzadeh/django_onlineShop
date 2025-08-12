@@ -35,7 +35,6 @@ class AvailableProducts(models.Manager):
         return super().get_queryset().filter(status='avl')
 
 
-# --- Corrected Product Model with Discount System ---
 class Product(models.Model):
     STATUS_CHOICES = (
         ('avl', _('Available')),

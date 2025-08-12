@@ -1,0 +1,375 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load humanize %}
+{% load jalali_filter %}
+{% load persian_numbers %}
+{% block title %}
+    سفارش {{ order.id }}
+{% endblock %}
+{% block header_title %}
+    سفارش {{ order.id|translate_number }}
+{% endblock %}
+
+{% block content %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        'primary': '#2563eb',
+                        'success': '#059669',
+                        'warning': '#d97706',
+                        'danger': '#dc2626',
+                        'info': '#0891b2'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #fbbf24;
+        }
+
+        .status-processing {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .status-shipped {
+            background-color: #fed7aa;
+            color: #c2410c;
+            border-color: #fb923c;
+        }
+
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #f87171;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .paid-status {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .unpaid-status {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .order-item {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .total-price {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-stack {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mobile-full {
+                width: 100%;
+            }
+        }
+    </style>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 desktop-grid">
+            <!-- Left Column - Order & Customer Info -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Order Information -->
+                <div class="card p-6">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle ml-2 text-primary"></i>
+                        اطلاعات سفارش
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div class="info-row">
+                            <span class="info-label">شماره سفارش:</span>
+                            <span class="info-value text-primary text-lg">#{{ order.id|translate_number }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">وضعیت سفارش:</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border status-{{ order.status }}">
+                                {% if order.status == 'pending' %}
+                                    <i class="fas fa-clock ml-1"></i>
+                                {% elif order.status == 'processing' %}
+                                    <i class="fas fa-cog ml-1"></i>
+                                {% elif order.status == 'shipped' %}
+                                    <i class="fas fa-truck-moving ml-1"></i>
+                                {% elif order.status == 'completed' %}
+                                    <i class="fas fa-check-circle ml-1"></i>
+                                {% elif order.status == 'cancelled' %}
+                                    <i class="fas fa-times-circle ml-1"></i>
+                                {% endif %}
+                                {{ order.get_status_display }}
+    </span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">تاریخ ثبت:</span>
+                            <span class="info-value"> {{ order.datetime_created|time|translate_number }} - {{ order.datetime_created|to_jalali|translate_number }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">آخرین بروزرسانی:</span>
+                            <span class="info-value"> {{ order.datetime_modified|time|translate_number }} - {{ order.datetime_modified|to_jalali|translate_number }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">وضعیت پرداخت:</span>
+                            {% if order.paid %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium paid-status">
+        <i class="fas fa-check-circle ml-1"></i>
+        پرداخت شده
+    </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium unpaid-status">
+        <i class="fas fa-times-circle ml-1"></i>
+        پرداخت نشده
+    </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="card p-6">
+                    <h2 class="section-title">
+                        <i class="fas fa-user ml-2 text-success"></i>
+                        اطلاعات مشتری
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div class="info-row">
+                            <span class="info-label">نام و نام خانوادگی:</span>
+                            <span class="info-value">{{ order.first_name }} {{ order.last_name }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">ایمیل:</span>
+                            <span class="info-value text-primary">{{ order.email }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">شماره تماس:</span>
+                            <span class="info-value">{{ order.phone_number|translate_number }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">آدرس تحویل:</span>
+                            <span class="info-value">{{ order.address }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Notes -->
+                <div class="card p-6">
+                    <h2 class="section-title">
+                        <i class="fas fa-sticky-note ml-2 text-warning"></i>
+                        یادداشت مشتری
+                    </h2>
+
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        {% if order.order_notes %}
+                            <p class="text-gray-700 leading-relaxed">
+                                {{ order.order_notes }}
+                            </p> {% else %}
+                            <p class="text-gray-700 leading-relaxed">
+                                ندارد
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Right Column - Order Items -->
+            <div class="space-y-6">
+                <div class="card p-6">
+                    <h2 class="section-title">
+                        <i class="fas fa-shopping-cart ml-2 text-success"></i>
+                        محصولات سفارش
+                    </h2>
+
+                    <div class="space-y-4">
+                        {% for item in order.items.all %}
+                            <div class="order-item">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="font-semibold text-gray-900"> {{ item.product }}</h3>
+                                    <span class="text-sm text-gray-500">کد: {{ item.product.id|translate_number }}</span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 text-sm">
+                                    <div class="text-center">
+                                        <span class="block text-gray-500 mb-1">تعداد</span>
+                                        <span class="font-semibold text-lg">{{ item.quantity|translate_number }}</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="block text-gray-500 mb-1">قیمت واحد</span>
+                                        <span class="font-semibold">{{ item.price|translate_number|intcomma:False }} تومان </span>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="block text-gray-500 mb-1">جمع</span>
+                                        <span class="font-bold text-primary">{{ item.price|mul:item.quantity|translate_number|intcomma:False }} تومان </span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="total-price">
+                        <div class="flex justify-between items-center">
+                            <span>مجموع کل سفارش:</span>
+                            <span>{{ order.get_total_price|translate_number|intcomma:False }} تومان </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card p-6">
+                    <h2 class="section-title">
+                        <i class="fas fa-bolt ml-2 text-warning"></i>
+                        عملیات
+                    </h2>
+
+                    <div class="space-y-3">
+                        <a href="{% url 'invoice' order.id %}">
+                            <button class="w-full flex items-center justify-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                                <i class="fas fa-print ml-2"></i>
+                                مشاهده فاکتور
+                            </button>
+                        </a>
+                        <div class="space-y-3">
+                            <a href="">
+                                 <button class="w-full flex items-center justify-center px-4 py-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-blue-100 transition-colors">
+                            <i class="fas fa-pencil ml-2"></i>
+                           ویرایش سفارش
+                        </button>
+                            </a>
+                            <div class="space-y-3">
+                                <a href="">
+                                    <button class="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-trash ml-2"></i>
+                                    حذف سفارش
+                                </button>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </main>
+
+{% endblock %}

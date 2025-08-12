@@ -696,5 +696,24 @@
     });
 
 </script>
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+        // Find the messages container
+        const messagesContainer = document.getElementById('messages-container');
+
+        // Only run the script if the container exists on the page
+        if (messagesContainer) {
+            // Set a timer to start the fade-out process after 3 seconds
+            setTimeout(function () {
+                messagesContainer.style.opacity = '0';
+            }, 3000); // 3000 milliseconds = 3 seconds
+
+            // Listen for the CSS transition to end, then remove the element from the DOM
+            messagesContainer.addEventListener('transitionend', function () {
+                messagesContainer.remove();
+            });
+        }
+    });
+</script>
 </body>
 </html>
