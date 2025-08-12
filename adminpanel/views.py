@@ -6,6 +6,7 @@ import openpyxl
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db import transaction
 from django.db.models.aggregates import Sum
 from django.db.models.expressions import F
 from django.db.models.fields import IntegerField
@@ -18,7 +19,7 @@ from django.views import generic
 from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
-from adminpanel.forms import UserProfileForm
+from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet
 from orders.models import Order, OrderItem
 from products.models import Product
 
@@ -511,6 +512,46 @@ class OrderDetailView(LoginRequiredMixin, generic.DetailView):
         context["items"] = items
         context["total_price"] = total_price
         return context
+
+
+class OrderUpdateView(AdminRequiredMixin, LoginRequiredMixin, generic.UpdateView):
+    model = Order
+    form_class = OrderUpdateForm
+    template_name = 'adminpanel/admin/admin_editorder.html'
+    context_object_name = "order"
+
+    def get_success_url(self):
+        return reverse_lazy('panel_order_detail', kwargs={'pk': self.object.pk})
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = Product.objects.all()
+        if self.request.method == 'POST':
+            context['formset'] = OrderItemFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = OrderItemFormSet(instance=self.object)
+
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+
+        with transaction.atomic():
+            self.object = form.save()
+            if formset.is_valid():
+                formset.instance = self.object
+                formset.save()
+            else:
+                return self.form_invalid(form)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AdminProductManageView(AdminRequiredMixin, generic.TemplateView):

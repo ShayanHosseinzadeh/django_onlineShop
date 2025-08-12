@@ -351,22 +351,23 @@
                                 مشاهده فاکتور
                             </button>
                         </a>
-                        <div class="space-y-3">
-                            <a href="">
-                                 <button class="w-full flex items-center justify-center px-4 py-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-blue-100 transition-colors">
-                            <i class="fas fa-pencil ml-2"></i>
-                           ویرایش سفارش
-                        </button>
+                        {% if user.profile.role == "admin" %}
+                            <div class="space-y-3">
+                            <a href="{% url 'order_update' order.id %}">
+                                <button class="w-full flex items-center justify-center px-4 py-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-pencil ml-2"></i>
+                                    ویرایش سفارش
+                                </button>
                             </a>
                             <div class="space-y-3">
                                 <a href="">
                                     <button class="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-blue-100 transition-colors">
-                                    <i class="fas fa-trash ml-2"></i>
-                                    حذف سفارش
-                                </button>
+                                        <i class="fas fa-trash ml-2"></i>
+                                        حذف سفارش
+                                    </button>
                                 </a>
-
                             </div>
+                        {% endif %}
                         </div>
                     </div>
                 </div>
