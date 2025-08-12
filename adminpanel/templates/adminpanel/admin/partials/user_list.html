@@ -265,9 +265,11 @@
                     class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
                 انصراف
             </button>
-            <button id="confirmDeleteUser" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+            <form id="deleteform" action="">
+                <button id="confirmDeleteUser" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                 حذف کاربر
             </button>
+            </form>
         </div>
     </div>
 </div>
@@ -337,10 +339,15 @@
         document.getElementById('deleteUserName').textContent = name || 'کاربر ناشناس';
         document.getElementById('deleteUserId').textContent = userId;
 
-        const form = document.getElementById('deleteUserForm');
+        const form = document.getElementById('deleteform');
         if (form && userId) {
-            form.action = `/users/delete/${userId}/`;
+            form.action = `/panel/users/delete/${userId}/`;
+
         }
+        const delbutton = document.getElementById("confirmDeleteUser")
+        delbutton.addEventListener("click", () => {
+            form.submit()
+        })
         // Use classList to show the modal
         document.getElementById('deleteUserModal').classList.remove('hidden');
     }
@@ -349,13 +356,6 @@
     // --- JavaScript that runs once the page is ready ---
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Add a listener to the 'ذخیره تغییرات' button to submit the form
-        const saveEditUserButton = document.getElementById('saveEditUser');
-        if (saveEditUserButton) {
-            saveEditUserButton.addEventListener('click', () => {
-                document.getElementById('editUserForm').submit();
-            });
-        }
 
         // --- Bulk Actions Logic ---
         const selectAllCheckbox = document.getElementById('selectAll');

@@ -11,7 +11,7 @@ from django.db.models.expressions import F
 from django.db.models.fields import IntegerField
 from django.db.models.functions.comparison import Cast
 from django.db.models.query_utils import Q
-from django.http.response import HttpResponseForbidden, HttpResponse
+from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls.base import reverse_lazy
 from django.views import generic
@@ -73,7 +73,7 @@ class AdminUserManage(AdminRequiredMixin, generic.ListView):
         search = self.request.GET.get('search', '')
         if search:
             qs = qs.filter(
-                Q(username__icontains=search) |
+                Q(profile__full_name__icontains=search) |
                 Q(email__icontains=search) |
                 Q(profile__phone_number__icontains=search)
             )
@@ -274,6 +274,18 @@ class UserProfileUpdateView(AdminRequiredMixin, LoginRequiredMixin, generic.Upda
         user.save()
         messages.success(self.request, 'پروفایل کاربر با موفقیت به‌روزرسانی شد.')
         return super().form_valid(form)
+
+
+class UserProfileDeleteView(AdminRequiredMixin, generic.DeleteView):
+    model = get_user_model()
+    success_url = reverse_lazy('admin_user_manage')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        messages.success(self.request, 'کاربر با موفقیت حذف شد')
+        return HttpResponseRedirect(self.success_url)
+
 
 class AdminDashboardView(AdminRequiredMixin, generic.TemplateView):
     template_name = ""
