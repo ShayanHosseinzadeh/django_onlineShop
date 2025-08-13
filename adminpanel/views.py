@@ -20,6 +20,7 @@ from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
 from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm
+from orders.forms import OrderForm
 from orders.models import Order, OrderItem
 from products.models import Product
 
@@ -62,7 +63,7 @@ class Admin_Home(LoginRequiredMixin, generic.TemplateView):
         return context
 
 
-class UserProfileCreateView(AdminRequiredMixin, LoginRequiredMixin , generic.View):
+class UserProfileCreateView(AdminRequiredMixin, LoginRequiredMixin, generic.View):
     template_name = "adminpanel/admin/admin_user_create.html"
     success_url = reverse_lazy("admin_user_manage")
 
@@ -514,6 +515,8 @@ class AdminOrderManageView(AdminRequiredMixin, generic.ListView):
         return context
 
 
+
+
 class OrderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Order
     template_name = "adminpanel/user/user_order_detail.html"
@@ -541,6 +544,73 @@ class OrderDetailView(LoginRequiredMixin, generic.DetailView):
         context["items"] = items
         context["total_price"] = total_price
         return context
+
+
+class OrderCreateView(AdminRequiredMixin, LoginRequiredMixin, generic.CreateView):
+    model = Order
+    form_class = OrderUpdateForm
+    template_name = 'adminpanel/admin/admin_create_order.html'
+    context_object_name = "order"
+
+    def get_success_url(self):
+        return reverse_lazy('panel_order_detail', kwargs={'pk': self.object.pk})
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        """
+        Provide products and the inline formset.
+        On GET: empty formset bound to a fresh Order() so the template can render rows.
+        On invalid POST: reuse the bound formset passed in kwargs.
+        """
+        context = super().get_context_data(**kwargs)
+        context['products'] = Product.objects.all()
+
+        if 'formset' in kwargs:
+            context['formset'] = kwargs['formset']
+        else:
+            # fresh instance so inline formset renders empty forms on GET
+            context['formset'] = OrderItemFormSet(instance=Order())
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Validate parent form and formset together.
+        We bind the formset to form.instance (unsaved) for validation, then save atomically.
+        """
+        self.object = None
+        form = self.get_form()
+        # Bind formset to the (unsaved) parent so validation can run
+        formset = OrderItemFormSet(self.request.POST, instance=form.instance)
+
+        if form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                # Save parent first (ensure it has a PK)
+                self.object = form.save(commit=False)
+
+                # If your form doesn't expose 'user' and you want creator as owner by default:
+                if not self.object.user_id:
+                    self.object.user = self.request.user
+
+                self.object.save()
+
+                # Now save the items against the saved parent
+                formset.instance = self.object
+                formset.save()
+
+            return redirect(self.get_success_url())
+
+        # invalid: re-render with errors
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
+
+    def form_invalid(self, form):
+        """
+        Keep parity with UpdateView’s behavior if Django routes here.
+        Make sure a bound formset is present.
+        """
+        formset = OrderItemFormSet(self.request.POST, instance=form.instance)
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 
 class OrderUpdateView(AdminRequiredMixin, LoginRequiredMixin, generic.UpdateView):
