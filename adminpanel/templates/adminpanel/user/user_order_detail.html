@@ -360,13 +360,114 @@
                                 </button>
                             </a>
                             <div class="space-y-3">
-                                <a href="">
-                                    <button class="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-blue-100 transition-colors">
-                                        <i class="fas fa-trash ml-2"></i>
-                                        حذف سفارش
-                                    </button>
-                                </a>
+                                <button id="openDeleteModal"
+                                        class="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-trash ml-2"></i>
+                                    حذف سفارش
+                                </button>
                             </div>
+                            <!-- Delete modal -->
+                            <div id="deleteOrderModal"
+                                 class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4
+            opacity-0 transition-opacity duration-200 ease-out">
+                                <div class="bg-white rounded-xl shadow-xl max-w-md w-full
+                transform transition-all duration-200 ease-out
+                opacity-0 scale-95">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-semibold text-red-600">حذف سفارش</h3>
+                                            <button id="closeDeleteModal" class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-times text-xl"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="px-6 py-4">
+                                        <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">آیا مطمئن هستید؟</h4>
+                                                <p class="text-sm text-gray-600">این عمل قابل بازگشت نیست.</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700">
+                                            سفارش با شماره
+                                            <span class="font-bold text-red-600">{{ order.id }}</span>
+                                            حذف خواهد شد
+                                        </p>
+                                    </div>
+                                    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3 space-x-reverse">
+                                        <button id="cancelDeleteUser"
+                                                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                            انصراف
+                                        </button>
+                                        <a href="{% url 'order_delete' order.id %}">
+                                            <button id="confirmDeleteUser"
+                                                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                                حذف کاربر
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const modal = document.getElementById("deleteOrderModal");
+                                    const modalContent = modal.querySelector(".bg-white");
+
+                                    const openBtn = document.getElementById("openDeleteModal"); // add this button somewhere
+                                    const closeBtn = document.getElementById("closeDeleteModal");
+                                    const cancelBtn = document.getElementById("cancelDeleteUser");
+
+                                    function openModal() {
+                                        // show & set start state (already opacity-0 & scale-95 from HTML)
+                                        modal.classList.remove("hidden");
+
+                                        // force reflow so the following class removals trigger the transition
+                                        // (either line works)
+                                        // modal.getBoundingClientRect();
+                                        void modal.offsetWidth;
+
+                                        // animate to visible
+                                        modal.classList.remove("opacity-0");
+                                        modalContent.classList.remove("opacity-0", "scale-95");
+                                    }
+
+                                    function closeModal() {
+                                        // animate to hidden
+                                        modal.classList.add("opacity-0");
+                                        modalContent.classList.add("opacity-0", "scale-95");
+
+                                        // after transition ends, actually hide the element
+                                        const onFadeOutEnd = (e) => {
+                                            // ensure we only respond to the overlay's opacity transition
+                                            if (e.target === modal && e.propertyName === "opacity") {
+                                                modal.classList.add("hidden");
+                                                modal.removeEventListener("transitionend", onFadeOutEnd);
+                                            }
+                                        };
+                                        modal.addEventListener("transitionend", onFadeOutEnd);
+                                    }
+
+                                    // Wire up triggers (guarding in case some buttons are absent)
+                                    if (openBtn) openBtn.addEventListener("click", openModal);
+                                    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+                                    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+                                    // Click outside the dialog (on overlay) closes modal
+                                    modal.addEventListener("click", function (e) {
+                                        if (e.target === modal) closeModal();
+                                    });
+
+                                    // Prevent clicks inside content from bubbling to overlay
+                                    modalContent.addEventListener("click", function (e) {
+                                        e.stopPropagation();
+                                    });
+                                });
+                            </script>
+
                         {% endif %}
                         </div>
                     </div>

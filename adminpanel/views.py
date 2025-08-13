@@ -13,7 +13,7 @@ from django.db.models.fields import IntegerField
 from django.db.models.functions.comparison import Cast
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls.base import reverse_lazy
 from django.views import generic
 from openpyxl.styles import Font, Alignment
@@ -552,6 +552,17 @@ class OrderUpdateView(AdminRequiredMixin, LoginRequiredMixin, generic.UpdateView
 
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class OrderDeleteView(AdminRequiredMixin, generic.View):
+    success_url = reverse_lazy("admin_order_manage")
+
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+        order_id = order.pk
+        order.delete()
+        messages.success(request, f"سفارش {order_id} با موفقیت حذف شد.")
+        return redirect(self.success_url)
 
 
 class AdminProductManageView(AdminRequiredMixin, generic.TemplateView):
