@@ -13,13 +13,13 @@ from django.db.models.fields import IntegerField
 from django.db.models.functions.comparison import Cast
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls.base import reverse_lazy
 from django.views import generic
 from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
-from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet
+from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm
 from orders.models import Order, OrderItem
 from products.models import Product
 
@@ -60,6 +60,35 @@ class Admin_Home(LoginRequiredMixin, generic.TemplateView):
             'total_users': total_users,
         })
         return context
+
+
+class UserProfileCreateView(AdminRequiredMixin, LoginRequiredMixin , generic.View):
+    template_name = "adminpanel/admin/admin_user_create.html"
+    success_url = reverse_lazy("admin_user_manage")
+
+    def get(self, request, *args, **kwargs):
+        user_form = UserCreateForm()
+        profile_form = UserProfileForm()
+        return render(request, self.template_name, {"user_form": user_form, "profile_form": profile_form})
+
+    def post(self, request, *args, **kwargs):
+        user_form = UserCreateForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            with transaction.atomic():
+                user = user_form.save(commit=False)
+                user.email = user_form.cleaned_data["email"]
+                user.save()
+
+                profile = profile_form.save(commit=False)
+                profile.user = user
+                profile.save()
+
+            messages.success(request, "کاربر و پروفایل با موفقیت ایجاد شدند.")
+            return redirect(self.success_url)
+
+        return render(request, self.template_name, {"user_form": user_form, "profile_form": profile_form})
 
 
 class AdminUserManage(AdminRequiredMixin, generic.ListView):

@@ -1,0 +1,302 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers %}
+{% load jalali_filter %}
+
+{% block title %}ایجاد حساب کاربری{% endblock %}
+{% block header_title %}ایجاد کاربر جدید{% endblock %}
+{% block header_description %}اطلاعات کاربر و پروفایل را تکمیل کنید{% endblock %}
+
+{% block content %}
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { 'vazir': ['Vazirmatn','sans-serif'] },
+        colors: {
+          'primary':'#6366f1','primary-light':'#818cf8','primary-dark':'#4f46e5',
+          'secondary':'#f1f5f9','accent':'#10b981','error':'#ef4444','warning':'#f59e0b'
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .input-focus:focus{box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+  .avatar-preview{
+    background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>');
+    background-size:60%;background-repeat:no-repeat;background-position:center
+  }
+  .border-error{border-color:#ef4444}
+</style>
+
+<div class="container mx-auto px-4 max-w-4xl">
+  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <form id="profileForm" class="p-8" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% if user_form.non_field_errors %}
+        <div class="text-error text-sm mb-4">
+          {% for e in user_form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+        </div>
+      {% endif %}
+      {% if profile_form.non_field_errors %}
+        <div class="text-error text-sm mb-4">
+          {% for e in profile_form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Avatar -->
+      <div class="flex flex-col items-center mb-8 pb-8 border-b border-gray-100">
+        <div class="relative">
+          <div id="avatarPreview"
+               class="w-32 h-32 bg-gray-100 rounded-full border-4 border-white shadow-lg avatar-preview flex items-center justify-center text-gray-400 overflow-hidden">
+            <i class="fas fa-user text-4xl"></i>
+          </div>
+          <label for="id_avatar"
+                 class="absolute bottom-0 right-0 w-10 h-10 bg-primary hover:bg-primary-dark rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-all duration-200 hover:scale-110">
+            <i class="fas fa-camera text-white text-sm"></i>
+          </label>
+          {{ profile_form.avatar }}
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mt-4">تصویر پروفایل</h3>
+        <p class="text-sm text-gray-500 text-center mt-1">برای تغییر تصویر کلیک کنید<br>حداکثر حجم: ۲ مگابایت</p>
+        <div id="avatarError" class="text-error text-sm mt-2 hidden"></div>
+        {% if profile_form.avatar.errors %}
+          <div class="text-error text-sm mt-2">{% for e in profile_form.avatar.errors %}<p>{{ e }}</p>{% endfor %}</div>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- USER fields -->
+        <div>
+          <label for="id_username" class="block text-sm font-semibold text-gray-700 mb-2">
+            نام کاربری <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ user_form.username }}
+            <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="usernameError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in user_form.username.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_email" class="block text-sm font-semibold text-gray-700 mb-2">
+            ایمیل <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ user_form.email }}
+            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="emailError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in user_form.email.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_password1" class="block text-sm font-semibold text-gray-700 mb-2">
+            رمز عبور <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ user_form.password1 }}
+            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="password1Error" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in user_form.password1.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_password2" class="block text-sm font-semibold text-gray-700 mb-2">
+            تکرار رمز عبور <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ user_form.password2 }}
+            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="password2Error" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in user_form.password2.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <!-- PROFILE fields -->
+        <div class="lg:col-span-2">
+          <label for="id_full_name" class="block text-sm font-semibold text-gray-700 mb-2">
+            نام کامل <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ profile_form.full_name }}
+            <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="fullNameError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.full_name.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_user_role" class="block text-sm font-semibold text-gray-700 mb-2">
+            نقش کاربر <span class="text-error">*</span>
+          </label>
+          <div class="relative">
+            {{ profile_form.role }}
+            <i class="fas fa-chevron-down absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+          </div>
+          <div id="userRoleError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.role.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_phone_number" class="block text-sm font-semibold text-gray-700 mb-2">
+            شماره تماس
+          </label>
+          <div class="relative">
+            {{ profile_form.phone_number }}
+            <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="phoneNumberError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.phone_number.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_birth_date" class="block text-sm font-semibold text-gray-700 mb-2">
+            تاریخ تولد
+          </label>
+          <div class="relative">
+            {{ profile_form.birth_date }}
+            <i class="fas fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="birthDateError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.birth_date.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_city" class="block text-sm font-semibold text-gray-700 mb-2">
+            شهر
+          </label>
+          <div class="relative">
+            {{ profile_form.city }}
+            <i class="fas fa-city absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="cityError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.city.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="id_postal_code" class="block text-sm font-semibold text-gray-700 mb-2">
+            کد پستی
+          </label>
+          <div class="relative">
+            {{ profile_form.postal_code }}
+            <i class="fas fa-mail-bulk absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <div id="postalCodeError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.postal_code.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="lg:col-span-2">
+          <label for="id_address" class="block text-sm font-semibold text-gray-700 mb-2">
+            آدرس
+          </label>
+          <div class="relative">
+            {{ profile_form.address }}
+            <i class="fas fa-map-marker-alt absolute left-4 top-4 text-gray-400"></i>
+          </div>
+          <div id="addressError" class="text-error text-sm mt-1 hidden"></div>
+          {% for e in profile_form.address.errors %}<p class="text-error text-sm">{{ e }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t border-gray-100">
+        <button type="submit" id="saveButton"
+                class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 flex items-center justify-center">
+          <i class="fas fa-save ml-2"></i> ایجاد کاربر
+        </button>
+        <a href="{% url 'admin_user_manage' %}"
+           class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg flex items-center justify-center text-center">
+          <i class="fas fa-times ml-2"></i> انصراف
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Persian Date Picker (if available)
+  const birthDateInput = document.getElementById('id_birth_date');
+  if (birthDateInput && window.$ && $.fn.persianDatepicker) {
+    $(birthDateInput).persianDatepicker({ format:'YYYY/MM/DD', initialValueType:'gregorian' });
+  }
+
+  // Elements
+  const form = document.getElementById('profileForm');
+  const avatarInput = document.getElementById('id_avatar');
+  const avatarPreview = document.getElementById('avatarPreview');
+
+  // Preview avatar
+  if (avatarInput) {
+    avatarInput.addEventListener('change', (e)=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      if(file.size>2*1024*1024){ showError('avatarError','حجم فایل نباید بیشتر از ۲ مگابایت باشد'); return; }
+      if(!file.type.startsWith('image/')){ showError('avatarError','لطفاً یک فایل تصویری انتخاب کنید'); return; }
+      const reader=new FileReader();
+      reader.onload=(ev)=>{ avatarPreview.innerHTML=`<img src="${ev.target.result}" class="w-full h-full object-cover rounded-full" alt="">`; hideError('avatarError'); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Validation patterns
+  const patterns = {
+    email:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone:/^09[0-9]{9}$/,
+    postalCode:/^[0-9]{10}$/
+  };
+
+  // Helper functions
+  function showError(id,msg){ const el=document.getElementById(id); if(el){ el.textContent=msg; el.classList.remove('hidden'); } }
+  function hideError(id){ const el=document.getElementById(id); if(el){ el.textContent=''; el.classList.add('hidden'); } }
+
+  // Inputs & client validation
+  const inputs = {
+    username:   { el: document.getElementById('id_username'),   validate:v=>v && v.trim().length>=3, msg:'نام کاربری حداقل ۳ کاراکتر' },
+    email:      { el: document.getElementById('id_email'),      validate:v=>patterns.email.test(v||''), msg:'ایمیل معتبر وارد کنید' },
+    password1:  { el: document.getElementById('id_password1'),  validate:v=>(v||'').length>=8, msg:'رمز عبور حداقل ۸ کاراکتر' },
+    password2:  { el: document.getElementById('id_password2'),  validate:v=>v===(document.getElementById('id_password1')?.value||''), msg:'تکرار رمز عبور مطابقت ندارد' },
+    fullName:   { el: document.getElementById('id_full_name'),   validate:v=>v && v.trim().length>=2, msg:'نام کامل باید حداقل ۲ کاراکتر باشد' },
+    userRole:   { el: document.getElementById('id_user_role'),   validate:v=>v && v!=='' , msg:'نقش کاربر را انتخاب کنید' },
+    phone:      { el: document.getElementById('id_phone_number'),validate:v=>!v || patterns.phone.test(v), msg:'شماره باید با 09 و 11 رقم باشد' },
+    postalCode: { el: document.getElementById('id_postal_code'), validate:v=>!v || patterns.postalCode.test(v), msg:'کد پستی باید ۱۰ رقم باشد' }
+  };
+
+  Object.entries(inputs).forEach(([key,{el}])=>{
+    if(!el) return;
+    el.addEventListener('blur', ()=>validateField(key));
+    el.addEventListener('input', ()=>{
+      const err = document.getElementById(key+'Error');
+      if(err && !err.classList.contains('hidden')) validateField(key);
+    });
+  });
+
+  function validateField(key){
+    const f=inputs[key]; if(!f||!f.el) return true;
+    const ok=f.validate(f.el.value||'');
+    const errId = key+'Error';
+    if(ok){ f.el.classList.remove('border-error'); hideError(errId); }
+    else { f.el.classList.add('border-error'); showError(errId,f.msg); }
+    return ok;
+  }
+
+  function validateAll(){
+    let ok=true;
+    Object.keys(inputs).forEach(k=>{ if(!validateField(k)) ok=false; });
+    return ok;
+  }
+
+  // Formatting helpers
+  const phoneEl = document.getElementById('id_phone_number');
+  if (phoneEl) phoneEl.addEventListener('input', e=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,11); });
+  const pcEl = document.getElementById('id_postal_code');
+  if (pcEl) pcEl.addEventListener('input', e=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,10); });
+
+  // Submit
+  form.addEventListener('submit', e=>{
+    if(!validateAll()){ e.preventDefault(); }
+  });
+</script>
+{% endblock %}

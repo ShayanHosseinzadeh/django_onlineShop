@@ -13,6 +13,7 @@ urlpatterns = [
     path('notifications/', views.AdminNotificationsView.as_view(), name='admin_notifications'),
     path('settings/', views.AdminSettingsView.as_view(), name='admin_settings'),
 
+    path('users/new/', views.UserProfileCreateView.as_view(), name='user_create'),
     path('users/edit/<int:pk>/', views.UserProfileUpdateView.as_view(), name='edit_user_profile'),
     path('users/delete/<int:pk>/', views.UserProfileDeleteView.as_view(), name='delete_user_profile'),
 
