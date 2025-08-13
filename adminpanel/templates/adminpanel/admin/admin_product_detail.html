@@ -1,0 +1,407 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers %}
+{% load jalali_filter %}
+{% load humanize %}
+
+{% block title %}جزئیات محصول | {{ product.title }}{% endblock %}
+
+{% block content %}
+
+    <style>
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: .2s;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #6b7280
+        }
+
+        .tab-button.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #f3f4f6;
+            color: #374151
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: #6b7280
+        }
+
+        .price-final {
+            color: #059669;
+            font-weight: 700
+        }
+
+        .status-available {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981
+        }
+
+        .status-unavailable {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #f87171
+        }
+/* Reset list bullets */
+.feature-bullets ul,
+.feature-bullets ol { list-style: none; margin: 0; padding: 0; }
+
+/* Bullets for LI items */
+.feature-bullets li {
+  position: relative;
+  padding-right: 1.25rem;   /* RTL: bullet on the right */
+  margin-bottom: .5rem;
+}
+.feature-bullets li::before {
+  content: "";
+  position: absolute;
+  right: 0; top: .6em;
+  width: .45rem; height: .45rem;
+  border-radius: 999px;
+  background: #2563eb;      /* primary blue */
+}
+
+/* Bullets for plain paragraphs/divs directly inside .feature-bullets (NOT UL/OL) */
+.feature-bullets > *:not(ul):not(ol) {
+  position: relative;
+  padding-right: 1.25rem;
+  margin-bottom: .5rem;
+}
+.feature-bullets > *:not(ul):not(ol)::before {
+  content: "";
+  position: absolute;
+  right: 0; top: .6em;
+  width: .45rem; height: .45rem;
+  border-radius: 999px;
+  background: #2563eb;
+}
+
+/* Optional: smaller/softer bullets for nested lists */
+.feature-bullets ul ul li::before {
+  width: .35rem; height: .35rem;
+  background: #9ca3af;  /* gray-400 */
+}
+
+
+    </style>
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- سرتیتر فشرده محصول -->
+        <div class="card p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">{{ product.title }}</h2>
+                    <p class="text-sm text-gray-500">کد محصول: #{{ product.id|translate_number }}</p>
+                </div>
+                <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                     {% if product.status == 'avl' %}status-available{% else %}status-unavailable{% endif %}">
+          {% if product.status == 'avl' %}
+              <i class="fas fa-check-circle ml-1"></i> موجود
+          {% else %}
+              <i class="fas fa-times-circle ml-1"></i> ناموجود
+          {% endif %}
+        </span>
+                    <a href="{% url 'admin_product_edit' product.id %}"
+                       class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                        <i class="fas fa-edit ml-2"></i> ویرایش
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- تصویر + خلاصه قیمت/امتیاز -->
+        <div class="card p-6 mb-6">
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+                <div class="w-full md:w-80 flex-shrink-0">
+                    <div class="relative aspect-square rounded-xl overflow-hidden bg-gray-100">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}"
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-400">بدون تصویر</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">{{ product.title }}</h3>
+
+                    <!-- امتیاز -->
+                    <div class="flex items-center gap-2 mb-4 text-gray-700">
+                        {% if rating_count %}
+                            <span class="font-medium">{{ rating_avg|floatformat:1|translate_number }}</span>
+                            <span class="text-sm text-gray-500">({{ rating_count|translate_number }} نظر تایید‌شده)</span>
+                        {% else %}
+                            <span class="text-sm text-gray-500">نظری ثبت نشده است</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- قیمت -->
+                    <div class="flex items-center gap-4">
+                        <div class="space-y-1">
+                            {% if has_discount %}
+                                <div class="price-original">
+                                    {{ product.price|intcomma:False|translate_number }} تومان
+                                </div>
+                                <div class="price-final text-xl">
+                                    {{ final_price|intcomma:False|translate_number }} تومان
+                                </div>
+                            {% else %}
+                                <div class="text-xl font-bold text-gray-900">
+                                    {{ product.price|intcomma:False|translate_number }} تومان
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {% if product.stock_quantity|default:0 < 5 and product.status == 'avl' %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-amber-100 text-amber-800">
+                موجودی کم
+              </span>
+                            {% elif product.status == 'avl' %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-emerald-100 text-emerald-800">
+                در انبار
+              </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- نمای کلی -->
+        <div class="card p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">نمای کلی محصول</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-sm text-gray-500 mb-1">قیمت پایه</div>
+                    <div class="text-base font-semibold text-gray-900">
+                        {{ product.price|intcomma:False|translate_number }} تومان
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-sm text-gray-500 mb-1">درصد تخفیف</div>
+                    <div class="text-base font-semibold text-blue-700">
+                        {{ product.discount_percent|translate_number }}%
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-sm text-gray-500 mb-1">قیمت نهایی</div>
+                    <div class="text-base font-semibold price-final">
+                        {% if has_discount %}
+                            {{ final_price|intcomma:False|translate_number }} تومان
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-sm text-gray-500 mb-1">موجودی انبار</div>
+                    <div class="text-base font-semibold text-gray-900">
+                        {{ product.stock_quantity|translate_number }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-gray-200">
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">دسته‌بندی</div>
+                    {% if product.category %}
+                        <span class="text-blue-600 font-medium">{{ product.category }}</span>
+                    {% else %}
+                        <span class="text-gray-500">—</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">میانگین امتیاز</div>
+
+                        {% if rating_count %}
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-center text-yellow-400 text-base leading-none">
+                                    {% with avg=rating_avg|default:0 %}
+                                        <i class="{% if avg >= 1 %}fa-solid fa-star text-yellow-400{% elif avg >= 0.5 %}fa-solid fa-star-half-stroke text-yellow-400{% else %}fa-regular fa-star text-gray-300{% endif %}"></i>
+                                        <i class="{% if avg >= 2 %}fa-solid fa-star text-yellow-400{% elif avg >= 1.5 %}fa-solid fa-star-half-stroke text-yellow-400{% else %}fa-regular fa-star text-gray-300{% endif %}"></i>
+                                        <i class="{% if avg >= 3 %}fa-solid fa-star text-yellow-400{% elif avg >= 2.5 %}fa-solid fa-star-half-stroke text-yellow-400{% else %}fa-regular fa-star text-gray-300{% endif %}"></i>
+                                        <i class="{% if avg >= 4 %}fa-solid fa-star text-yellow-400{% elif avg >= 3.5 %}fa-solid fa-star-half-stroke text-yellow-400{% else %}fa-regular fa-star text-gray-300{% endif %}"></i>
+                                        <i class="{% if avg >= 5 %}fa-solid fa-star text-yellow-400{% elif avg >= 4.5 %}fa-solid fa-star-half-stroke text-yellow-400{% else %}fa-regular fa-star text-gray-300{% endif %}"></i>
+                                    {% endwith %}
+                                </div>
+
+                                <span class="font-medium">{{ rating_avg|floatformat:1|translate_number }}</span>
+                                <span class="text-sm text-gray-500">از {{ rating_count|translate_number }} نظر</span>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-center text-base leading-none">
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                    <i class="fa-regular fa-star text-gray-300"></i>
+                                </div>
+                                <span class="text-gray-500">—</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- تب‌ها -->
+            <div class="card p-6 mt-5">
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button type="button" class="tab-button active" data-tab="specs">مشخصات</button>
+                    <button type="button" class="tab-button" data-tab="description">توضیحات</button>
+                    <button type="button" class="tab-button" data-tab="comments">نظرات</button>
+                    <button type="button" class="tab-button" data-tab="meta">اطلاعات فنی</button>
+                </div>
+
+                <!-- Specs -->
+                <section id="specs" class="tab-pane">
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">توضیح کوتاه</h4>
+                            <p class="text-gray-700 leading-relaxed">
+                                {{ product.short_description|default:"—" }}
+                            </p>
+                        </div>
+                        <div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">ویژگی‌های کلیدی</h4>
+                                <div class="feature-bullets prose max-w-none text-gray-700 leading-relaxed">
+                                    {% if product.key_features %}
+                                        {{ product.key_features|safe }}
+                                    {% else %}
+                                        <p class="text-gray-500">—</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Description -->
+                <section id="description" class="tab-pane hidden">
+                    <div class="prose max-w-none text-gray-700 leading-relaxed">
+                        {{ product.description|safe }}
+                    </div>
+                </section>
+
+                <!-- Comments (show ALL: verified + unverified) -->
+<section id="comments" class="tab-pane hidden">
+  <div class="mb-4 text-sm text-gray-600">
+    مجموع نظرات: {{ all_comments|length|translate_number }}
+    {% if rating_count %} • تایید‌شده: {{ rating_count|translate_number }}{% endif %}
+  </div>
+
+  <div class="space-y-4">
+    {% for c in all_comments %}
+      <div class="border rounded-xl p-4
+                  {% if c.is_verified %} bg-green-50 border-green-200 {% else %} bg-red-50 border-red-200 {% endif %}">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-sm text-gray-700">
+            {{ c.user.get_username }}
+            <span class="text-gray-400">•</span>
+            <span class="text-gray-500">
+              {{ c.datetime_created|to_jalali|translate_number }}
+            </span>
+          </div>
+
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                       {% if c.is_verified %} bg-green-100 text-green-800 {% else %} bg-red-100 text-red-800 {% endif %}">
+            {% if c.is_verified %}
+              <i class="fas fa-check ml-1"></i> تایید شده
+            {% else %}
+              <i class="fas fa-clock ml-1"></i> در انتظار بررسی
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="text-xs text-amber-600 font-medium mb-2">
+          امتیاز: {{ c.stars|translate_number }} از ۵
+        </div>
+
+        <p class="text-gray-800 leading-relaxed">{{ c.text }}</p>
+      </div>
+    {% empty %}
+      <div class="text-gray-500">نظری ثبت نشده است.</div>
+    {% endfor %}
+  </div>
+</section>
+
+
+                <!-- Meta -->
+                <section id="meta" class="tab-pane hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">اطلاعات ایجاد</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">تاریخ ایجاد:</span>
+                                    <span class="font-medium">{{ product.datetime_created|to_jalali|translate_number }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">زمان ایجاد:</span>
+                                    <span class="font-medium">{{ product.datetime_created|date:'H:i'|translate_number }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">آخرین تغییر</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">تاریخ تغییر:</span>
+                                    <span class="font-medium">{{ product.datetime_modified|to_jalali|translate_number }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">زمان تغییر:</span>
+                                    <span class="font-medium">{{ product.datetime_modified|date:'H:i'|translate_number }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+    </main>
+
+    <!-- JS حداقلی فقط برای تب‌ها -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.tab-button');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // active state
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    // panes
+                    const target = btn.dataset.tab;
+                    panes.forEach(p => p.classList.toggle('hidden', p.id !== target));
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

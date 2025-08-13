@@ -1,10 +1,281 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load persian_numbers %}
+{% load jalali_filter %}
+{% load humanize %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      {% csrf_token %}
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <input type="checkbox" id="selectAllProducts"
+                 class="rounded border-gray-300 text-orange-light focus:ring-orange-light">
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          کد محصول
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          نام محصول
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          دسته‌بندی
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          قیمت
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          تخفیف
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          موجودی
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          وضعیت
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          تاریخ ایجاد
+        </th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          عملیات
+        </th>
+      </tr>
+      </thead>
 
-</body>
-</html>
+      <tbody class="bg-white divide-y divide-gray-200" id="productsTableBody">
+      {% for product in products %}
+        <tr class="hover:bg-gray-50"
+            data-product-id="{{ product.id }}"
+            data-product-status="{{ product.status }}">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <input type="checkbox"
+                   class="product-checkbox rounded border-gray-300 text-orange-light focus:ring-orange-light">
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">#{{ product.id|translate_number }}</div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{ product.title }}</div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ product.category }}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {% if product.discount_percent > 0 %}
+              <span class="line-through text-gray-400 ml-2">{{ product.price|translate_number|intcomma:False }}</span>
+              <span class="font-semibold text-green-700">{{ product.get_discounted_price|translate_number|intcomma:False }}</span>
+            {% else %}
+              {{ product.price|translate_number|intcomma:False }}
+            {% endif %}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ product.discount_percent|translate_number|intcomma:False }}%
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ product.stock_quantity|translate_number|intcomma:False }}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            {% if product.status == 'avl' %}
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">موجود</span>
+            {% elif product.status == 'una' %}
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">ناموجود</span>
+            {% endif %}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ product.datetime_created|to_jalali|translate_number }}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex items-center justify-content-center space-x-2 space-x-reverse">
+              <a href="{% url 'admin_product_detail' product.id %}">
+                <button class="text-gray-700 hover:text-gray-900" title="نمایش">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+            هیچ محصولی یافت نشد.
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+    <div class="flex items-center text-sm text-gray-700">
+      نمایش {{ page_obj.start_index|translate_number }} تا {{ page_obj.end_index|translate_number }}
+      از {{ paginator.count|translate_number }} محصول
+    </div>
+    <div class="flex items-center space-x-2 space-x-reverse">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50">
+          قبلی
+        </a>
+      {% else %}
+        <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50" disabled>
+          قبلی
+        </button>
+      {% endif %}
+
+      {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+          <button class="px-3 py-1 bg-orange-light text-white rounded-md text-sm hover:bg-orange-dark">
+            {{ i|translate_number }}
+          </button>
+        {% else %}
+          <a href="?page={{ i }}"
+             class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+            {{ i|translate_number }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+          بعدی
+        </a>
+      {% else %}
+        <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 disabled:opacity-50" disabled>
+          بعدی
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Bulk actions (same UX as orders) -->
+<div id="bulkProductsBar"
+     class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 px-6 py-3 hidden">
+  <div class="flex items-center space-x-4 space-x-reverse">
+    <span class="text-sm text-gray-700">
+      <span id="selectedProductsCount">0</span> محصول انتخاب شده
+    </span>
+    <div class="flex items-center space-x-2 space-x-reverse">
+      <button id="markAvailableBulk"
+              class="px-3 py-1 bg-green-100 text-green-700 rounded-md text-sm hover:bg-green-200">
+        موجود
+      </button>
+      <button id="markUnavailableBulk"
+              class="px-3 py-1 bg-red-100 text-red-700 rounded-md text-sm hover:bg-red-200">
+        ناموجود
+      </button>
+      <button id="deleteProductsBulk"
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+        حذف
+      </button>
+      <button id="closeBulkProducts"
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectAll = document.getElementById('selectAllProducts');
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    const bar = document.getElementById('bulkProductsBar');
+    const countSpan = document.getElementById('selectedProductsCount');
+    const closeBtn = document.getElementById('closeBulkProducts');
+
+    const btnAvail = document.getElementById('markAvailableBulk');
+    const btnUnavail = document.getElementById('markUnavailableBulk');
+    const btnDelete = document.getElementById('deleteProductsBulk');
+
+    function updateBar() {
+      const checked = document.querySelectorAll('.product-checkbox:checked');
+      const count = checked.length;
+
+      if (count > 0) {
+        bar.classList.remove('hidden');
+        countSpan.textContent = count;
+      } else {
+        bar.classList.add('hidden');
+      }
+
+      const total = checkboxes.length;
+      if (count === total && total > 0) {
+        selectAll.checked = true;
+        selectAll.indeterminate = false;
+      } else if (count > 0) {
+        selectAll.checked = false;
+        selectAll.indeterminate = true;
+      } else {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+      }
+    }
+
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        checkboxes.forEach(cb => { cb.checked = this.checked; });
+        updateBar();
+      });
+    }
+    checkboxes.forEach(cb => cb.addEventListener('change', updateBar));
+    closeBtn && closeBtn.addEventListener('click', () => {
+      checkboxes.forEach(cb => cb.checked = false);
+      updateBar();
+    });
+
+    btnAvail && btnAvail.addEventListener('click', () => submitBulk('avl'));
+    btnUnavail && btnUnavail.addEventListener('click', () => submitBulk('una'));
+    btnDelete && btnDelete.addEventListener('click', () => {
+      if (confirm('آیا مطمئن هستید؟ این عمل قابل بازگشت نیست.')) submitBulk('delete');
+    });
+
+    function submitBulk(action) {
+      const ids = Array.from(document.querySelectorAll('.product-checkbox:checked'))
+        .map(cb => cb.closest('tr').dataset.productId);
+
+      if (ids.length === 0) {
+        alert('لطفاً حداقل یک محصول را انتخاب کنید.');
+        return;
+      }
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = "{% url 'bulk_product_action' %}"; // define this URL in urls.py
+      form.style.display = 'none';
+
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrfmiddlewaretoken';
+      csrfInput.value = csrfToken;
+      form.appendChild(csrfInput);
+
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = action;
+      form.appendChild(actionInput);
+
+      ids.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'product_ids[]';
+        input.value = id;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+  });
+</script>

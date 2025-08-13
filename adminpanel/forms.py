@@ -1,16 +1,18 @@
+from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm, inlineformset_factory
+from django.forms.widgets import ClearableFileInput
 
 from accounts.models import UserProfile
 from adminpanel.jalali import JalaliOrGregorianDateField
 from orders.models import Order, OrderItem
+from products.models import Product, Comment
 
 User = get_user_model()
 
-# --- UserCreateForm (as you already have, trimmed for brevity) ---
+
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
@@ -125,6 +127,7 @@ class UserProfileForm(ModelForm):
             }),
         }
 
+
 class OrderUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -156,4 +159,84 @@ OrderItemFormSet = inlineformset_factory(
         'product': forms.Select(attrs={'class': 'form-select'}),
         'price': forms.HiddenInput(),
     }
+)
+
+INPUT_CLS = "tw-input w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-right"
+
+class ProductForm(ModelForm):
+    # CKEditor برای فیلدهای ریچ
+    description = forms.CharField(
+        label="توضیحات",
+        widget=CKEditorWidget(config_name="default"),
+        required=False,
+    )
+    key_features = forms.CharField(
+        label="ویژگی‌های کلیدی",
+        widget=CKEditorWidget(config_name="default"),
+        required=False,
+    )
+
+    # کنترل حذف تصویر به‌صورت سفارشی (جایگزین ClearableFileInput)
+    remove_image = forms.BooleanField(required=False, widget=forms.HiddenInput())
+
+    class Meta:
+        model = Product
+        fields = [
+            "title", "category", "status",
+            "price", "discount_percent", "stock_quantity",
+            "short_description", "key_features", "description", "image",
+        ]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": INPUT_CLS, "placeholder": "نام محصول"}),
+            "category": forms.Select(attrs={"class": INPUT_CLS}),
+            "status": forms.Select(attrs={"class": INPUT_CLS}),
+            "price": forms.NumberInput(attrs={"class": INPUT_CLS, "min": 0, "inputmode": "numeric"}),
+            "discount_percent": forms.NumberInput(attrs={"class": INPUT_CLS, "min": 0, "max": 100}),
+            "stock_quantity": forms.NumberInput(attrs={"class": INPUT_CLS, "min": 0}),
+            "short_description": forms.Textarea(attrs={"class": INPUT_CLS, "rows": 3, "placeholder": "توضیح کوتاه"}),
+            # فایل اینپوت معمولی (بدون متن «در حال حاضر… پاک کردن»)
+            "image": forms.FileInput(attrs={"class": "hidden", "accept": "image/*", "id": "id_image"}),
+        }
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # اگر کاربر «حذف تصویر» را زد
+        if self.cleaned_data.get("remove_image"):
+            if instance.image:
+                instance.image.delete(save=False)
+            instance.image = None
+
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
+
+
+class CommentInlineForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["stars", "text", "is_verified"]
+        labels = {
+            "stars": "امتیاز",
+            "text": "متن نظر",
+            "is_verified": "تایید؟",
+        }
+        widgets = {
+            "stars": forms.Select(attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 "
+                         "focus:ring-blue-200 focus:border-blue-500 bg-white text-right"
+            }),
+            "text": forms.Textarea(attrs={
+                "rows": 3,
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 "
+                         "focus:ring-blue-200 focus:border-blue-500 resize-y text-right leading-relaxed",
+                "placeholder": "متن نظر را بنویسید…",
+            }),
+            "is_verified": forms.CheckboxInput(attrs={
+                "class": "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            }),
+        }
+CommentInlineFormSet = inlineformset_factory(
+    Product, Comment, form=CommentInlineForm, extra=0, can_delete=True
 )

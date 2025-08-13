@@ -7,10 +7,11 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Avg
 from django.db.models.expressions import F
 from django.db.models.fields import IntegerField
 from django.db.models.functions.comparison import Cast
+from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404, render
@@ -19,10 +20,10 @@ from django.views import generic
 from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
-from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm
-from orders.forms import OrderForm
+from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm, ProductForm, \
+    CommentInlineFormSet
 from orders.models import Order, OrderItem
-from products.models import Product
+from products.models import Product, Comment
 
 
 class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -396,7 +397,7 @@ def get_filtered_orders_queryset(request):
     return qs.order_by('-datetime_created')
 
 
-class ExportOrdersToExcelView(AdminRequiredMixin, generic.View):
+class ExportOrdersToExcelView(AdminRequiredMixin, LoginRequiredMixin, generic.View):
 
     def get(self, request, *args, **kwargs):
         queryset = get_filtered_orders_queryset(request)
@@ -454,7 +455,7 @@ class ExportOrdersToExcelView(AdminRequiredMixin, generic.View):
         return response
 
 
-class AdminOrderManageView(AdminRequiredMixin, generic.ListView):
+class AdminOrderManageView(AdminRequiredMixin, LoginRequiredMixin, generic.ListView):
     template_name = 'adminpanel/admin/admin_orders.html'
     model = Order
     context_object_name = 'orders'
@@ -513,8 +514,6 @@ class AdminOrderManageView(AdminRequiredMixin, generic.ListView):
         context['completed_orders'] = self.model.objects.filter(status='completed').count()
         context['cancelled_orders'] = self.model.objects.filter(status='cancelled').count()
         return context
-
-
 
 
 class OrderDetailView(LoginRequiredMixin, generic.DetailView):
@@ -664,12 +663,172 @@ class OrderDeleteView(AdminRequiredMixin, generic.View):
         return redirect(self.success_url)
 
 
-class AdminProductManageView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+class BulkProductActionView(AdminRequiredMixin, generic.View):
+    def post(self, request, *args, **kwargs):
+        product_ids = request.POST.getlist('product_ids[]')
+        action = request.POST.get('action', '').strip()
+
+        if not product_ids:
+            messages.error(request, "هیچ محصولی انتخاب نشده است.")
+            return redirect('admin_product_manage')
+
+        qs = Product.objects.filter(id__in=product_ids)
+
+        if action == 'avl':  # mark available
+            updated = qs.update(status='avl')
+            messages.success(request, f"{updated} محصول به «موجود» تغییر یافت.")
+        elif action == 'una':  # mark unavailable
+            updated = qs.update(status='una')
+            messages.success(request, f"{updated} محصول به «ناموجود» تغییر یافت.")
+        elif action == 'delete':
+            count = qs.count()
+            qs.delete()
+            messages.success(request, f"{count} محصول حذف شد.")
+        else:
+            messages.error(request, "عملیات نامعتبر است.")
+
+        return redirect('admin_product_manage')
+
+
+class AdminProductManageView(AdminRequiredMixin, generic.ListView):
+    template_name = 'adminpanel/admin/admin_products.html'
+    model = Product
+    context_object_name = 'products'
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = self.model.objects.select_related('category').all()
+
+        # --- Search Filter ---
+        search = (self.request.GET.get('search') or '').strip()
+        if search:
+            qs = qs.filter(
+                Q(id__icontains=search) |
+                Q(title__icontains=search) |
+                Q(short_description__icontains=search) |
+                Q(description__icontains=search) |
+                Q(category__name__icontains=search)
+            )
+
+        # --- Status Filter ---
+        status = (self.request.GET.get('status') or '').strip()
+        if status in ['avl', 'una']:  # موجود / ناموجود
+            qs = qs.filter(status=status)
+
+        # --- Date Filter ---
+        date_filter = (self.request.GET.get('date') or '').strip()
+        now = datetime.now()
+        if date_filter == 'today':
+            qs = qs.filter(datetime_created__date=now.date())
+        elif date_filter == 'week':
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=7))
+        elif date_filter == 'month':
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=30))
+        elif date_filter == 'year':
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=365))
+
+        return qs.order_by('-datetime_created')
+
+    def get(self, request, *args, **kwargs):
+        # HTMX partial rendering
+        if 'HX-Request' in request.headers:
+            self.template_name = 'adminpanel/admin/partials/product_list.html'
+            return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['total_products'] = self.model.objects.count()
+        context['available_products'] = self.model.objects.filter(status='avl').count()
+        context['unavailable_products'] = self.model.objects.filter(status='una').count()
         return context
+
+
+class AdminProductDetailView(AdminRequiredMixin, generic.DetailView):
+    model = Product
+    template_name = 'adminpanel/admin/admin_product_detail.html'
+    context_object_name = 'product'
+
+    def get_queryset(self):
+        # همه نظرات (برای نمایش)
+        all_comments_qs = Comment.objects.select_related('user').order_by('-datetime_created')
+        # فقط نظرات تاییدشده (برای آمار امتیاز)
+        verified_qs = Comment.verified_comments.select_related('user').order_by('-datetime_created')
+
+        return (
+            Product.objects
+            .select_related('category')
+            .prefetch_related(
+                Prefetch('comments', queryset=all_comments_qs, to_attr='all_comments_list'),
+                Prefetch('comments', queryset=verified_qs, to_attr='verified_comments_list'),
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        p = self.object
+
+        # آمار فقط از نظرات تاییدشده
+        base_qs = Comment.verified_comments.filter(product=p)
+        rating_avg = base_qs.aggregate(avg=Avg(Cast('stars', IntegerField())))['avg'] or 0
+        rating_count = base_qs.count()
+
+        ctx.update({
+            'has_discount': p.discount_percent > 0,
+            'final_price': p.get_discounted_price,
+            'verified_comments': getattr(p, 'verified_comments_list', []),  # اگر جایی نیاز شد
+            'all_comments': getattr(p, 'all_comments_list', []),  # برای رندر همه نظرات
+            'rating_avg': round(rating_avg, 1),
+            'rating_count': rating_count,  # تعداد نظرات تاییدشده
+        })
+        return ctx
+
+
+class AdminProductUpdateView(AdminRequiredMixin, generic.UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "adminpanel/admin/admin_product_edit.html"
+    context_object_name = "product"
+
+    def get_success_url(self):
+        return reverse_lazy("admin_product_detail", kwargs={"pk": self.object.pk})
+
+    def get_formset(self):
+        if self.request.method == "POST":
+            return CommentInlineFormSet(self.request.POST, instance=self.object)
+        return CommentInlineFormSet(
+            instance=self.object,
+            queryset=Comment.objects.filter(product=self.object)
+            .select_related("user")
+            .order_by("-datetime_created")
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.method == 'POST':
+            ctx['comments_formset'] = CommentInlineFormSet(self.request.POST, instance=self.object,
+                queryset=Comment.objects.select_related('user').order_by('-datetime_created'))
+        else:
+            ctx['comments_formset'] = CommentInlineFormSet(instance=self.object,
+                queryset=Comment.objects.select_related('user').order_by('-datetime_created'))
+        return ctx
+
+    def form_valid(self, form):
+        formset = self.get_formset()
+        with transaction.atomic():
+            self.object = form.save()
+            if formset.is_valid():
+                formset.instance = self.object
+                formset.save()
+            else:
+                # Re-render with errors
+                return self.render_to_response(self.get_context_data(form=form, formset=formset))
+        messages.success(self.request, "محصول و نظرات با موفقیت به‌روزرسانی شدند.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "خطا در فرم. لطفاً موارد را بررسی کنید.")
+        return self.render_to_response(self.get_context_data(form=form, formset=self.get_formset()))
 
 
 class AdminReportsView(AdminRequiredMixin, generic.TemplateView):

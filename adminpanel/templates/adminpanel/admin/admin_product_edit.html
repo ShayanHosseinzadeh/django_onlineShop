@@ -1,0 +1,488 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers jalali_filter humanize %}
+
+{% block title %}ویرایش محصول | {{ product.title }}{% endblock %}
+{% block header_title %}ویرایش محصول{% endblock %}
+{% block header_description %}{{ product.title }}{% endblock %}
+
+{% block content %}
+    {{ form.media }} {# لازم برای CKEditor #}
+
+    <style>
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+            border: 1px solid #e5e7eb
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px
+        }
+
+        .form-error {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: #6b7280;
+            font-size: 14px
+        }
+
+        .price-final {
+            color: #059669;
+            font-weight: 700;
+            font-size: 18px
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        .stepper button {
+            background: #f3f4f6;
+            border: none;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: .2s;
+            color: #374151;
+            font-weight: 500
+        }
+
+        .stepper button:hover {
+            background: #e5e7eb
+        }
+
+        .stepper input {
+            border: none;
+            padding: 12px 16px;
+            text-align: center;
+            font-weight: 500;
+            background: #fff;
+            min-width: 90px
+        }
+
+        .stepper input:focus {
+            outline: none
+        }
+
+        .img-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f3f4f6
+        }
+
+        .img-act {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px
+        }
+
+        .img-btn {
+            background: rgba(0, 0, 0, .65);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 12px
+        }
+
+        .img-btn:hover {
+            background: rgba(0, 0, 0, .8)
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac
+        }
+
+        .badge-pending {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca
+        }
+
+        /* ورودی‌های عمومی در صورت نبود کلاس */
+        input.tw-input, select.tw-input, textarea.tw-input {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <form method="post" enctype="multipart/form-data" class="space-y-8">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">اطلاعات پایه محصول</h3>
+
+                        {% if form.non_field_errors %}
+                            <div class="mb-4 text-red-600 text-sm">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Image picker -->
+                            <div class="md:col-span-1">
+                                <div class="img-wrap aspect-square w-full cursor-pointer" id="imageBox">
+                                    {% if product.image %}
+                                        <img id="imagePreview" src="{{ product.image.url }}" alt="{{ product.title }}"
+                                             class="w-full h-full object-cover">
+                                    {% else %}
+                                        <img id="imagePreview"
+                                             src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E"
+                                             class="w-full h-full object-cover" alt="no image">
+                                    {% endif %}
+                                    <div class="img-act">
+                                        <button type="button" class="img-btn" id="btnPick"><i
+                                                class="fas fa-image ml-1"></i> تغییر تصویر
+                                        </button>
+                                        {% if product.image %}
+                                            <button type="button" class="img-btn" id="btnRemove"><i
+                                                    class="fas fa-trash ml-1"></i> حذف تصویر
+                                            </button>
+                                        {% else %}
+                                            <button type="button" class="img-btn hidden" id="btnRemove"><i
+                                                    class="fas fa-trash ml-1"></i> حذف تصویر
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                {{ form.image }} {# hidden file input #}
+                                {{ form.remove_image }} {# hidden bool field #}
+
+                                {% for e in form.image.errors %}
+                                    <div class="form-error mt-2">{{ e }}</div>{% endfor %}
+                            </div>
+
+                            <!-- Fields -->
+                            <div class="md:col-span-2 space-y-4">
+                                <div>
+                                    <label class="form-label">نام محصول</label>
+                                    {{ form.title }}
+                                    {% for e in form.title.errors %}
+                                        <div class="form-error">{{ e }}</div>{% endfor %}
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="form-label">دسته‌بندی</label>
+                                        {{ form.category }}
+                                        {% for e in form.category.errors %}
+                                            <div class="form-error">{{ e }}</div>{% endfor %}
+                                    </div>
+                                    <div>
+                                        <label class="form-label">وضعیت (موجود/ناموجود)</label>
+                                        {{ form.status }}
+                                        {% for e in form.status.errors %}
+                                            <div class="form-error">{{ e }}</div>{% endfor %}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">توضیح کوتاه</label>
+                                    {{ form.short_description }}
+                                    {% for e in form.short_description.errors %}
+                                        <div class="form-error">{{ e }}</div>{% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rich fields -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">محتوا</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="form-label">ویژگی‌های کلیدی</label>
+                                {{ form.key_features }} {# CKEditorWidget #}
+                                {% for e in form.key_features.errors %}
+                                    <div class="form-error">{{ e }}</div>{% endfor %}
+                            </div>
+                            <div>
+                                <label class="form-label">توضیحات</label>
+                                {{ form.description }} {# CKEditorWidget #}
+                                {% for e in form.description.errors %}
+                                    <div class="form-error">{{ e }}</div>{% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+{# edit template #}
+<section class="card p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900">نظرات محصول</h3>
+    <div class="text-sm text-gray-500">
+      مجموع: {{ comments_formset.total_form_count|default:0|translate_number }}
+    </div>
+  </div>
+
+  {{ comments_formset.management_form }}
+
+  {% if comments_formset.total_form_count %}
+    {% for cform in comments_formset.forms %}
+      <div class="rounded-xl border p-4 mb-4
+                  {% if cform.instance.is_verified %}bg-green-50 border-green-200{% else %}bg-rose-50 border-rose-200{% endif %}">
+        <!-- header -->
+        <div class="flex items-center justify-between mb-3 text-sm">
+          <div class="text-gray-600">
+            <span class="font-medium text-gray-900">{{ cform.instance.user|default:"—" }}</span>
+            <span class="mx-2">•</span>
+            <span>{{ cform.instance.datetime_created|to_jalali }}</span>
+          </div>
+          <span class="px-2 py-1 rounded-full text-xs font-medium
+                       {% if cform.instance.is_verified %}bg-green-100 text-green-800{% else %}bg-rose-100 text-rose-800{% endif %}">
+            {% if cform.instance.is_verified %}تایید شده{% else %}در انتظار بررسی{% endif %}
+          </span>
+        </div>
+
+        <!-- fields -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">امتیاز</label>
+            {{ cform.stars }}
+          </div>
+          <div class="md:col-span-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">متن نظر</label>
+            {{ cform.text }}
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center gap-6">
+          <label class="inline-flex items-center text-gray-700">
+            {{ cform.is_verified }} <span class="mr-2">تایید؟</span>
+          </label>
+          {% if cform.DELETE %}
+            <label class="inline-flex items-center text-red-600">
+              {{ cform.DELETE }} <span class="mr-2">حذف</span>
+            </label>
+          {% endif %}
+        </div>
+
+        {{ cform.id }}{{ cform.product }}{{ cform.user }}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-gray-500">نظری ثبت نشده است.</p>
+  {% endif %}
+</section>
+
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Pricing -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">قیمت‌گذاری</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label">قیمت پایه (تومان)</label>
+                                {{ form.price }}
+                                {% for e in form.price.errors %}
+                                    <div class="form-error">{{ e }}</div>{% endfor %}
+                            </div>
+                            <div>
+                                <label class="form-label">درصد تخفیف</label>
+                                {{ form.discount_percent }}
+                                {% for e in form.discount_percent.errors %}
+                                    <div class="form-error">{{ e }}</div>{% endfor %}
+                            </div>
+                            <div class="bg-gray-100 rounded-xl p-4">
+                                <div class="text-sm text-gray-500 mb-2">پیش‌نمایش قیمت</div>
+                                <div class="space-y-1">
+                                    <div class="price-original"
+                                         id="originalPricePreview">{{ product.price|intcomma:False|translate_number }}
+                                        تومان
+                                    </div>
+                                    <div class="price-final"
+                                         id="finalPricePreview">{{ product.get_discounted_price|intcomma:False|translate_number }}
+                                        تومان
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">موجودی انبار</h3>
+                        <div class="space-y-4">
+                            <label class="form-label">تعداد موجودی</label>
+                            <div class="stepper">
+                                <button type="button" id="decrStock"><i class="fas fa-minus"></i></button>
+                                {{ form.stock_quantity }}
+                                <button type="button" id="incrStock"><i class="fas fa-plus"></i></button>
+                            </div>
+                            {% for e in form.stock_quantity.errors %}
+                                <div class="form-error">{{ e }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">عملیات</h3>
+                        <div class="space-y-3">
+                            <button type="submit"
+                                    class="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                                <i class="fas fa-save ml-2"></i> ذخیره تغییرات
+                            </button>
+                            <a href="{% url 'admin_product_detail' product.id %}"
+                               class="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">
+                                انصراف
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // قیمت لحظه‌ای
+        function updatePricePreview() {
+            const priceEl = document.getElementById('id_price');
+            const discountEl = document.getElementById('id_discount_percent');
+            if (!priceEl || !discountEl) return;
+            const base = parseInt((priceEl.value || '0').replace(/,/g, ''), 10) || 0;
+            const disc = Math.min(100, Math.max(0, parseInt(discountEl.value || '0', 10) || 0));
+            const final = Math.max(0, Math.round(base - (base * disc / 100)));
+            document.getElementById('originalPricePreview').textContent = numberWithCommas(base) + ' تومان';
+            document.getElementById('finalPricePreview').textContent = numberWithCommas(final) + ' تومان';
+        }
+
+        function numberWithCommas(x) {
+            return (parseInt(x || 0, 10) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        document.addEventListener('input', e => {
+            if (e.target && (e.target.id === 'id_price' || e.target.id === 'id_discount_percent')) updatePricePreview();
+        });
+        document.addEventListener('DOMContentLoaded', updatePricePreview);
+
+        // استپر موجودی
+        document.getElementById('decrStock')?.addEventListener('click', () => {
+            const i = document.getElementById('id_stock_quantity');
+            if (!i) return;
+            const v = parseInt(i.value || 0, 10) || 0;
+            i.value = Math.max(0, v - 1);
+        });
+        document.getElementById('incrStock')?.addEventListener('click', () => {
+            const i = document.getElementById('id_stock_quantity');
+            if (!i) return;
+            const v = parseInt(i.value || 0, 10) || 0;
+            i.value = v + 1;
+        });
+
+        // تصویر: تغییر/حذف + پیش‌نمایش
+        (function () {
+            const btnPick = document.getElementById('btnPick');
+            const btnRemove = document.getElementById('btnRemove');
+            const fileInput = document.getElementById('id_image');
+            const removeInput = document.getElementById('id_remove_image');
+            const preview = document.getElementById('imagePreview');
+            const imageBox = document.getElementById('imageBox');
+
+            function pick() {
+                fileInput?.click();
+            }
+
+            btnPick?.addEventListener('click', pick);
+            imageBox?.addEventListener('click', e => {
+                // فقط وقتی روی دکمه‌ها کلیک نشده
+                if (e.target.id !== 'btnPick' && e.target.id !== 'btnRemove') pick();
+            });
+
+            fileInput?.addEventListener('change', e => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                if (!f.type.startsWith('image/')) {
+                    alert('لطفاً فایل تصویری انتخاب کنید');
+                    fileInput.value = '';
+                    return;
+                }
+                if (f.size > 5 * 1024 * 1024) {
+                    alert('حجم تصویر نباید بیش از ۵ مگابایت باشد');
+                    fileInput.value = '';
+                    return;
+                }
+                const r = new FileReader();
+                r.onload = ev => {
+                    preview.src = ev.target.result;
+                };
+                r.readAsDataURL(f);
+                if (removeInput) {
+                    removeInput.checked = false;
+                    removeInput.value = '';
+                }
+                btnRemove?.classList.remove('hidden');
+            });
+
+            btnRemove?.addEventListener('click', () => {
+                // علامت‌گذاری برای حذف در سمت سرور
+                if (removeInput) {
+                    removeInput.checked = true;
+                    removeInput.value = 'on';
+                }
+                // ریست ورودی فایل و پیش‌نمایش
+                if (fileInput) fileInput.value = '';
+                preview.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+                btnRemove?.classList.add('hidden');
+            });
+        })();
+    </script>
+    <script>
+        // convert EN -> FA digits
+        function toFaDigits(str) {
+            return String(str).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+        }
+
+        // convert FA -> EN digits (for calculation)
+        function toEnDigits(str) {
+            return String(str).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        }
+
+        function numberWithCommas(x) {
+            const n = parseInt(String(x).replace(/,/g, ''), 10) || 0;
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function updatePricePreview() {
+            const priceEl = document.getElementById('id_price');
+            const discountEl = document.getElementById('id_discount_percent');
+            const base = parseInt(toEnDigits(priceEl?.value || '0').replace(/,/g, ''), 10) || 0;
+            const disc = Math.min(100, Math.max(0, parseInt(toEnDigits(discountEl?.value || '0'), 10) || 0));
+            const final = Math.max(0, Math.round(base - (base * disc / 100)));
+
+            document.getElementById('originalPricePreview').textContent =
+                toFaDigits(numberWithCommas(base)) + ' تومان';
+            document.getElementById('finalPricePreview').textContent =
+                toFaDigits(numberWithCommas(final)) + ' تومان';
+        }
+
+        document.addEventListener('input', e => {
+            if (e.target && (e.target.id === 'id_price' || e.target.id === 'id_discount_percent')) {
+                updatePricePreview();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', updatePricePreview);
+    </script>
+
+{% endblock %}
