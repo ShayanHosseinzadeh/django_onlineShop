@@ -30,4 +30,9 @@ urlpatterns = [
     path("products/<int:pk>/edit/", AdminProductUpdateView.as_view(), name="admin_product_edit"),
     path("products/<int:pk>/delete/", AdminProductDeleteView.as_view(), name="admin_product_delete"),
 
+    path('categories/', views.AdminCategoryManageView.as_view(), name='admin_category_manage'),
+    path('categories/create/modal/', views.AdminCategoryCreateModalView.as_view(), name='admin_category_create_modal'),
+    path('categories/<int:pk>/edit/modal/', views.AdminCategoryUpdateModalView.as_view(), name='admin_category_edit_modal'),
+    path('categories/<int:pk>/delete/modal/', views.AdminCategoryDeleteModalView.as_view(),
+         name='admin_category_delete_modal'),
 ]

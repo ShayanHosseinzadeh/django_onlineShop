@@ -4,11 +4,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.forms.models import ModelForm, inlineformset_factory
 from django.forms.widgets import ClearableFileInput
+from django.utils.text import slugify
 
 from accounts.models import UserProfile
 from adminpanel.jalali import JalaliOrGregorianDateField
 from orders.models import Order, OrderItem
-from products.models import Product, Comment
+from products.models import Product, Comment, Category
 
 User = get_user_model()
 
@@ -145,9 +146,6 @@ class OrderUpdateForm(forms.ModelForm):
         }
 
 
-# Create the formset factory for OrderItem, related to Order
-# extra=1 allows adding one new blank form for a new item
-# can_delete=True adds a checkbox to delete existing items
 OrderItemFormSet = inlineformset_factory(
     Order,
     OrderItem,
@@ -240,3 +238,55 @@ class CommentInlineForm(forms.ModelForm):
 CommentInlineFormSet = inlineformset_factory(
     Product, Comment, form=CommentInlineForm, extra=0, can_delete=True
 )
+
+
+BASE_INPUT = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl " \
+             "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ["name", "slug", "icon"]
+        labels = {
+            "name": "نام دسته‌بندی",
+            "slug": "اسلاگ",
+            "icon": "آیکن",
+        }
+        help_texts = {
+            "slug": "اگر خالی بماند، بر اساس نام ساخته می‌شود.",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": f"{BASE_INPUT} text-right placeholder:text-right",
+                "placeholder": "نام دسته‌بندی",
+                "dir": "rtl",
+            }),
+            "slug": forms.TextInput(attrs={
+                # slug is naturally LTR
+                "class": f"{BASE_INPUT} ltr text-left font-mono placeholder:text-left",
+                "placeholder": "مثال: mobile-accessories",
+                "dir": "ltr",
+                "inputmode": "latin",
+                "style": "direction:ltr;text-align:left;",
+            }),
+            "icon": forms.ClearableFileInput(attrs={
+                # hidden, we trigger with a custom button
+                "class": "hidden",
+                "id": "id_icon",
+                "accept": "image/*",
+            }),
+        }
+
+    def clean_slug(self):
+        name = (self.cleaned_data.get("name") or "").strip()
+        slug = (self.cleaned_data.get("slug") or "").strip()
+        if not slug:
+            slug = slugify(name, allow_unicode=True)
+        if not slug:
+            raise forms.ValidationError("اسلاگ معتبر وارد کنید.")
+        qs = Category.objects.filter(slug__iexact=slug)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("این اسلاگ قبلاً استفاده شده است.")
+        return slug

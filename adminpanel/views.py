@@ -1,3 +1,4 @@
+import json
 from datetime import date, timedelta, datetime
 from io import BytesIO
 
@@ -21,9 +22,9 @@ from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
 from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm, ProductForm, \
-    CommentInlineFormSet
+    CommentInlineFormSet, CategoryForm
 from orders.models import Order, OrderItem
-from products.models import Product, Comment
+from products.models import Product, Comment, Category
 
 
 class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -842,6 +843,86 @@ class AdminProductDeleteView(AdminRequiredMixin, generic.View):
         product.delete()
         messages.success(request, f"محصول {product_id} با موفقیت حذف شد.")
         return redirect(self.success_url)
+
+
+class AdminCategoryManageView(AdminRequiredMixin, generic.ListView):
+    template_name = 'adminpanel/admin/admin_categories.html'
+    model = Category
+    context_object_name = 'categories'
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        search = (self.request.GET.get('search') or '').strip()
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(slug__icontains=search)
+            )
+        # optional date filter (if you add created field later)
+        return qs.order_by('name')
+
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('HX-Request'):
+            self.template_name = 'adminpanel/admin/partials/categories_list.html'
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['total_categories'] = self.model.objects.count()
+        return ctx
+
+
+class _CategoryModalBase(AdminRequiredMixin):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'adminpanel/admin/partials/category_modal.html'
+    context_object_name = 'category'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # 204 with HX-Trigger to refresh list + toast
+        resp = HttpResponse(status=204)
+        resp['HX-Trigger'] = json.dumps({
+            'refreshCategoryList': True,
+            'toast': {'type': 'success', 'message': 'تغییرات با موفقیت ذخیره شد.'}
+        })
+        return resp
+
+    def form_invalid(self, form):
+        # Return the modal with form errors
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class AdminCategoryCreateModalView(_CategoryModalBase, generic.CreateView):
+    pass
+
+
+class AdminCategoryUpdateModalView(_CategoryModalBase, generic.UpdateView):
+    pass
+
+
+class AdminCategoryDeleteModalView(AdminRequiredMixin, generic.DeleteView):
+    model = Category
+    template_name = 'adminpanel/admin/partials/category_delete_modal.html'
+    context_object_name = 'category'
+    success_url = reverse_lazy("admin_category_manage")
+
+    def form_valid(self, form):
+        obj = self.get_object()
+        name = obj.name
+        obj.delete()
+        messages.success(self.request, f'«{name}» حذف شد.')
+
+        if self.request.headers.get('HX-Request'):
+            resp = HttpResponse(status=204)
+            resp['HX-Redirect'] = str(self.get_success_url())
+            return resp
+
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AdminReportsView(AdminRequiredMixin, generic.TemplateView):

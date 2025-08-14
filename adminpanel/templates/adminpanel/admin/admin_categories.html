@@ -1,0 +1,88 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers %}
+
+{% block title %}مدیریت دسته‌بندی‌ها{% endblock %}
+{% block header_title %}مدیریت دسته‌بندی‌ها{% endblock %}
+{% block header_description %}ایجاد، ویرایش و حذف دسته‌بندی‌ها{% endblock %}
+
+{% block content %}
+<main class="p-6">
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white rounded-xl p-6 card-shadow">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">کل دسته‌بندی‌ها</p>
+          <p class="text-2xl font-bold text-gray-900">{{ total_categories|translate_number }}</p>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-tags text-blue-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <form id="filterForm" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex-1 max-w-md">
+        <div class="relative">
+          <input
+            type="text"
+            name="search"
+            id="searchInput"
+            placeholder="جستجو بر اساس نام یا اسلاگ..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-transparent"
+            hx-get="{% url 'admin_category_manage' %}"
+            hx-target="#categoryList"
+            hx-swap="outerHTML"
+            hx-trigger="keyup changed delay:400ms, search"
+          >
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="inline-flex items-center px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          hx-get="{% url 'admin_category_create_modal' %}"
+          hx-target="#modal-container"
+          hx-swap="innerHTML">
+          <i class="fas fa-plus ml-3"></i>
+          دسته‌بندی جدید
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- List -->
+  <div id="categoryList"
+       hx-trigger="refreshCategoryList from:body"
+       hx-get="{% url 'admin_category_manage' %}"
+       hx-target="this"
+       hx-swap="outerHTML">
+    {% include 'adminpanel/admin/partials/categories_list.html' %}
+  </div>
+
+  <!-- Modal container (HTMX swaps here) -->
+  <div id="modal-container"></div>
+</main>
+
+<script>
+  // Simple toast listener for HX-Trigger {"toast": {...}}
+  document.body.addEventListener('toast', function (ev) {
+    const d = ev.detail || {};
+    const el = document.createElement('div');
+    el.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ' +
+                   (d.type === 'success' ? 'bg-green-600' :
+                    d.type === 'error' ? 'bg-red-600' : 'bg-blue-600');
+    el.textContent = d.message || 'انجام شد';
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 2500);
+  });
+</script>
+{% endblock %}

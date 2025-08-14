@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+{% load persian_numbers %}
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" id="categoryList">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">اسلاگ</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">آیکن</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        {% for cat in categories %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ forloop.counter|translate_number }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ cat.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ cat.slug }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {% if cat.icon %}
+                <img src="{{ cat.icon.url }}" alt="{{ cat.name }}" class="w-10 h-10 rounded-lg object-cover border" />
+              {% else %}
+                <span class="text-xs text-gray-400">—</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex items-center space-x-3 space-x-reverse">
+                <button
+                  class="text-amber-600 hover:text-amber-700"
+                  title="ویرایش"
+                  hx-get="{% url 'admin_category_edit_modal' cat.id %}"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button
+                  class="text-red-600 hover:text-red-700"
+                  title="حذف"
+                  hx-get="{% url 'admin_category_delete_modal' cat.id %}"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">هیچ دسته‌بندی‌ای یافت نشد.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+      <div class="text-sm text-gray-700">
+        نمایش {{ page_obj.start_index|translate_number }} تا {{ page_obj.end_index|translate_number }}
+        از {{ paginator.count|translate_number }} دسته
+      </div>
+      <div class="flex items-center space-x-2 space-x-reverse">
+        {% if page_obj.has_previous %}
+          <a hx-get="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+             hx-target="#categoryList"
+             hx-swap="outerHTML"
+             class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50">قبلی</a>
+        {% else %}
+          <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 opacity-50" disabled>قبلی</button>
+        {% endif %}
+
+        {% for i in paginator.page_range %}
+          {% if page_obj.number == i %}
+            <button class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">{{ i|translate_number }}</button>
+          {% else %}
+            <a hx-get="?page={{ i }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+               hx-target="#categoryList"
+               hx-swap="outerHTML"
+               class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+              {{ i|translate_number }}
+            </a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a hx-get="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+             hx-target="#categoryList"
+             hx-swap="outerHTML"
+             class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">بعدی</a>
+        {% else %}
+          <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 opacity-50" disabled>بعدی</button>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>

@@ -121,7 +121,15 @@
                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_product_manage' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
                         <i class="fas fa-boxes ml-3"></i>
-                        مدیریت محصولات و موجودی
+                        مدیریت محصولات
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_category_manage' %}"
+                       class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
+     {% if request.resolver_match.url_name == 'admin_category_manage' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
+                        <i class="fas fa-tags ml-3"></i>
+                        مدیریت دسته‌بندی
                     </a>
                 </li>
 
@@ -689,7 +697,7 @@
 
 </script>
 <script>
-     document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // Find the messages container
         const messagesContainer = document.getElementById('messages-container');
 
