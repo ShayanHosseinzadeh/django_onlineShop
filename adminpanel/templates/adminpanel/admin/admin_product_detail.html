@@ -57,45 +57,57 @@
             color: #991b1b;
             border: 1px solid #f87171
         }
-/* Reset list bullets */
-.feature-bullets ul,
-.feature-bullets ol { list-style: none; margin: 0; padding: 0; }
 
-/* Bullets for LI items */
-.feature-bullets li {
-  position: relative;
-  padding-right: 1.25rem;   /* RTL: bullet on the right */
-  margin-bottom: .5rem;
-}
-.feature-bullets li::before {
-  content: "";
-  position: absolute;
-  right: 0; top: .6em;
-  width: .45rem; height: .45rem;
-  border-radius: 999px;
-  background: #2563eb;      /* primary blue */
-}
+        /* Reset list bullets */
+        .feature-bullets ul,
+        .feature-bullets ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
 
-/* Bullets for plain paragraphs/divs directly inside .feature-bullets (NOT UL/OL) */
-.feature-bullets > *:not(ul):not(ol) {
-  position: relative;
-  padding-right: 1.25rem;
-  margin-bottom: .5rem;
-}
-.feature-bullets > *:not(ul):not(ol)::before {
-  content: "";
-  position: absolute;
-  right: 0; top: .6em;
-  width: .45rem; height: .45rem;
-  border-radius: 999px;
-  background: #2563eb;
-}
+        /* Bullets for LI items */
+        .feature-bullets li {
+            position: relative;
+            padding-right: 1.25rem; /* RTL: bullet on the right */
+            margin-bottom: .5rem;
+        }
 
-/* Optional: smaller/softer bullets for nested lists */
-.feature-bullets ul ul li::before {
-  width: .35rem; height: .35rem;
-  background: #9ca3af;  /* gray-400 */
-}
+        .feature-bullets li::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: .6em;
+            width: .45rem;
+            height: .45rem;
+            border-radius: 999px;
+            background: #2563eb; /* primary blue */
+        }
+
+        /* Bullets for plain paragraphs/divs directly inside .feature-bullets (NOT UL/OL) */
+        .feature-bullets > *:not(ul):not(ol) {
+            position: relative;
+            padding-right: 1.25rem;
+            margin-bottom: .5rem;
+        }
+
+        .feature-bullets > *:not(ul):not(ol)::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: .6em;
+            width: .45rem;
+            height: .45rem;
+            border-radius: 999px;
+            background: #2563eb;
+        }
+
+        /* Optional: smaller/softer bullets for nested lists */
+        .feature-bullets ul ul li::before {
+            width: .35rem;
+            height: .35rem;
+            background: #9ca3af; /* gray-400 */
+        }
 
 
     </style>
@@ -123,6 +135,10 @@
                        class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
                         <i class="fas fa-edit ml-2"></i> ویرایش
                     </a>
+                    <button id="openDeleteModal"
+                       class="inline-flex items-center px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                        <i class="fas fa-trash ml-2"></i> حذف
+                    </button>
                 </div>
             </div>
         </div>
@@ -308,46 +324,46 @@
                 </section>
 
                 <!-- Comments (show ALL: verified + unverified) -->
-<section id="comments" class="tab-pane hidden">
-  <div class="mb-4 text-sm text-gray-600">
-    مجموع نظرات: {{ all_comments|length|translate_number }}
-    {% if rating_count %} • تایید‌شده: {{ rating_count|translate_number }}{% endif %}
-  </div>
+                <section id="comments" class="tab-pane hidden">
+                    <div class="mb-4 text-sm text-gray-600">
+                        مجموع نظرات: {{ all_comments|length|translate_number }}
+                        {% if rating_count %} • تایید‌شده: {{ rating_count|translate_number }}{% endif %}
+                    </div>
 
-  <div class="space-y-4">
-    {% for c in all_comments %}
-      <div class="border rounded-xl p-4
+                    <div class="space-y-4">
+                        {% for c in all_comments %}
+                            <div class="border rounded-xl p-4
                   {% if c.is_verified %} bg-green-50 border-green-200 {% else %} bg-red-50 border-red-200 {% endif %}">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-sm text-gray-700">
-            {{ c.user.get_username }}
-            <span class="text-gray-400">•</span>
-            <span class="text-gray-500">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-sm text-gray-700">
+                                        {{ c.user.get_username }}
+                                        <span class="text-gray-400">•</span>
+                                        <span class="text-gray-500">
               {{ c.datetime_created|to_jalali|translate_number }}
             </span>
-          </div>
+                                    </div>
 
-          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                        {% if c.is_verified %} bg-green-100 text-green-800 {% else %} bg-red-100 text-red-800 {% endif %}">
             {% if c.is_verified %}
-              <i class="fas fa-check ml-1"></i> تایید شده
+                <i class="fas fa-check ml-1"></i> تایید شده
             {% else %}
-              <i class="fas fa-clock ml-1"></i> در انتظار بررسی
+                <i class="fas fa-clock ml-1"></i> در انتظار بررسی
             {% endif %}
           </span>
-        </div>
+                                </div>
 
-        <div class="text-xs text-amber-600 font-medium mb-2">
-          امتیاز: {{ c.stars|translate_number }} از ۵
-        </div>
+                                <div class="text-xs text-amber-600 font-medium mb-2">
+                                    امتیاز: {{ c.stars|translate_number }} از ۵
+                                </div>
 
-        <p class="text-gray-800 leading-relaxed">{{ c.text }}</p>
-      </div>
-    {% empty %}
-      <div class="text-gray-500">نظری ثبت نشده است.</div>
-    {% endfor %}
-  </div>
-</section>
+                                <p class="text-gray-800 leading-relaxed">{{ c.text }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="text-gray-500">نظری ثبت نشده است.</div>
+                        {% endfor %}
+                    </div>
+                </section>
 
 
                 <!-- Meta -->
@@ -385,7 +401,53 @@
             </div>
     </main>
 
-    <!-- JS حداقلی فقط برای تب‌ها -->
+
+    <div id="deleteProductModal"
+         class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4
+            opacity-0 transition-opacity duration-200 ease-out">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full
+                transform transition-all duration-200 ease-out
+                opacity-0 scale-95">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-red-600">حذف محصول</h3>
+                    <button id="closeDeleteModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center space-x-4 space-x-reverse mb-4">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-900">آیا مطمئن هستید؟</h4>
+                        <p class="text-sm text-gray-600">این عمل قابل بازگشت نیست.</p>
+                    </div>
+                </div>
+                <p class="text-gray-700">
+                    محصول با شماره
+                    <span class="font-bold text-red-600">{{ product.id }}</span>
+                    حذف خواهد شد
+                </p>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3 space-x-reverse">
+                <button id="cancelDeleteUser"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    انصراف
+                </button>
+                <a href="{% url 'admin_product_delete' product.id %}">
+                    <button id="confirmDeleteUser"
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        حذف محصول
+                    </button>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.tab-button');
@@ -403,5 +465,60 @@
             });
         });
     </script>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const modal = document.getElementById("deleteProductModal");
+                                    const modalContent = modal.querySelector(".bg-white");
+
+                                    const openBtn = document.getElementById("openDeleteModal"); // add this button somewhere
+                                    const closeBtn = document.getElementById("closeDeleteModal");
+                                    const cancelBtn = document.getElementById("cancelDeleteUser");
+
+                                    function openModal() {
+                                        // show & set start state (already opacity-0 & scale-95 from HTML)
+                                        modal.classList.remove("hidden");
+
+                                        // force reflow so the following class removals trigger the transition
+                                        // (either line works)
+                                        // modal.getBoundingClientRect();
+                                        void modal.offsetWidth;
+
+                                        // animate to visible
+                                        modal.classList.remove("opacity-0");
+                                        modalContent.classList.remove("opacity-0", "scale-95");
+                                    }
+
+                                    function closeModal() {
+                                        // animate to hidden
+                                        modal.classList.add("opacity-0");
+                                        modalContent.classList.add("opacity-0", "scale-95");
+
+                                        // after transition ends, actually hide the element
+                                        const onFadeOutEnd = (e) => {
+                                            // ensure we only respond to the overlay's opacity transition
+                                            if (e.target === modal && e.propertyName === "opacity") {
+                                                modal.classList.add("hidden");
+                                                modal.removeEventListener("transitionend", onFadeOutEnd);
+                                            }
+                                        };
+                                        modal.addEventListener("transitionend", onFadeOutEnd);
+                                    }
+
+                                    // Wire up triggers (guarding in case some buttons are absent)
+                                    if (openBtn) openBtn.addEventListener("click", openModal);
+                                    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+                                    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+                                    // Click outside the dialog (on overlay) closes modal
+                                    modal.addEventListener("click", function (e) {
+                                        if (e.target === modal) closeModal();
+                                    });
+
+                                    // Prevent clicks inside content from bubbling to overlay
+                                    modalContent.addEventListener("click", function (e) {
+                                        e.stopPropagation();
+                                    });
+                                });
+                            </script>
 
 {% endblock %}

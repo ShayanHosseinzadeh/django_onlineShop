@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import BulkProductActionView, AdminProductUpdateView
+from .views import BulkProductActionView, AdminProductUpdateView, AdminProductDeleteView
 
 urlpatterns = [
     path('', views.Admin_Home.as_view(), name='admin_dashboard'),
@@ -28,5 +28,6 @@ urlpatterns = [
     path('products/', views.AdminProductManageView.as_view(), name='admin_product_manage'),
     path('products/<int:pk>', views.AdminProductDetailView.as_view(), name='admin_product_detail'),
     path("products/<int:pk>/edit/", AdminProductUpdateView.as_view(), name="admin_product_edit"),
+    path("products/<int:pk>/delete/", AdminProductDeleteView.as_view(), name="admin_product_delete"),
 
 ]

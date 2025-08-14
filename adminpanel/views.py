@@ -807,10 +807,12 @@ class AdminProductUpdateView(AdminRequiredMixin, generic.UpdateView):
         ctx = super().get_context_data(**kwargs)
         if self.request.method == 'POST':
             ctx['comments_formset'] = CommentInlineFormSet(self.request.POST, instance=self.object,
-                queryset=Comment.objects.select_related('user').order_by('-datetime_created'))
+                                                           queryset=Comment.objects.select_related('user').order_by(
+                                                               '-datetime_created'))
         else:
             ctx['comments_formset'] = CommentInlineFormSet(instance=self.object,
-                queryset=Comment.objects.select_related('user').order_by('-datetime_created'))
+                                                           queryset=Comment.objects.select_related('user').order_by(
+                                                               '-datetime_created'))
         return ctx
 
     def form_valid(self, form):
@@ -829,6 +831,17 @@ class AdminProductUpdateView(AdminRequiredMixin, generic.UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "خطا در فرم. لطفاً موارد را بررسی کنید.")
         return self.render_to_response(self.get_context_data(form=form, formset=self.get_formset()))
+
+
+class AdminProductDeleteView(AdminRequiredMixin, generic.View):
+    success_url = reverse_lazy("admin_product_manage")
+
+    def get(self, request, pk, *args, **kwargs):
+        product = get_object_or_404(Product, pk=pk)
+        product_id = product.pk
+        product.delete()
+        messages.success(request, f"محصول {product_id} با موفقیت حذف شد.")
+        return redirect(self.success_url)
 
 
 class AdminReportsView(AdminRequiredMixin, generic.TemplateView):
