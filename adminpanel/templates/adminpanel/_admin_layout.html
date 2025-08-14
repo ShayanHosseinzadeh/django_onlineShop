@@ -10,7 +10,7 @@
           href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -308,15 +308,18 @@
 
                     <!-- Logo & Title (Hidden on mobile) -->
                     <div class="hidden lg:flex items-center space-x-3 space-x-reverse">
-                        <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
-                            <i class="fas fa-bolt text-white text-lg"></i>
-                        </div>
+                        {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="logo" class="w-8 h-8 rounded-lg object-cover">
+                        {% else %}
+                            <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-lg"></i>
+                            </div>
+                        {% endif %}
                         <div>
-                            <h1 class="text-lg font-bold text-gray-900">شایان شاپ</h1>
+                            <h1 class="text-lg font-bold text-gray-900">{{ site_settings.site_name|default:"فروشگاه آنلاین" }}</h1>
                             <p class="text-xs text-gray-500">پنل مدیریت</p>
                         </div>
                     </div>
-
                     <!-- Page Title (Mobile Only) -->
                     <h1 class="text-xl font-semibold text-gray-900 lg:hidden">داشبورد</h1>
                 </div>
@@ -464,16 +467,19 @@
                     </button>
 
                     <!-- Logo & Title (Hidden on mobile) -->
-                    <div class="hidden lg:flex items-center space-x-3 space-x-reverse">
-                        <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
-                            <i class="fas fa-bolt text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-lg font-bold text-gray-900">فروشگاه آنلاین</h1>
-                            <p class="text-xs text-gray-500">پنل کاربری</p>
-                        </div>
-                    </div>
-
+<div class="hidden lg:flex items-center space-x-3 space-x-reverse">
+  {% if site_settings.logo %}
+    <img src="{{ site_settings.logo.url }}" alt="logo" class="w-8 h-8 rounded-lg object-cover">
+  {% else %}
+    <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
+      <i class="fas fa-bolt text-white text-lg"></i>
+    </div>
+  {% endif %}
+  <div>
+    <h1 class="text-lg font-bold text-gray-900">{{ site_settings.site_name|default:"فروشگاه آنلاین" }}</h1>
+    <p class="text-xs text-gray-500">پنل کاربری</p>
+  </div>
+</div>
                     <!-- Page Title (Mobile Only) -->
                     <h1 class="text-xl font-semibold text-gray-900 lg:hidden">داشبورد</h1>
                 </div>

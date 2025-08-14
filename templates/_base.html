@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{% block title %}شایان شاپ - فروشگاه آنلاین شما{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.site_name|default:"فروشگاه آنلاین" }}{% endblock %}</title>
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -14,6 +14,9 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
     />
+    {% if site_settings.favicon %}
+        <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
     <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,142 +34,111 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-vazir">
 <header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-reverse space-x-6">
-            <a href="{% url 'home' %}">
-                <h1 class="text-2xl font-bold text-orange-600">شایان شاپ</h1>
-            </a>
-            <nav class="hidden md:flex items-center gap-x-6" aria-label="Main Navigation">
-                <a href="{% url 'product_list' %}"
-                   class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
-                    محصولات
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="{% url 'aboutus' %}"
-                   class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
-                    درباره ما
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="{% url 'contact' %}"
-                   class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
-                    تماس با ما
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <!-- فرم جستجوی دسکتاپ -->
-                <form method="get" action="{% url 'search_results' %}" class="ml-6 hidden sm:flex relative">
-                    <input
-                            type="text"
-                            name="q"
-                            placeholder="جستجو..."
-                            class="search-input px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                            value="{{ request.GET.q|default:'' }}"
-                    />
-                    <button type="submit"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                </form>
-            </nav>
-        </div>
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- برند + منوی دسکتاپ -->
+    <div class="flex items-center gap-6">
+      <a href="{% url 'home' %}" class="flex items-center gap-3">
+        {% if site_settings.logo %}
+          <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="w-8 h-8 rounded-lg object-cover">
+        {% else %}
+          <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white">
+            <i class="fa-solid fa-bolt text-lg"></i>
+          </div>
+        {% endif %}
+        <h1 class="text-2xl font-bold text-gray-900">
+          {{ site_settings.site_name|default:"فروشگاه آنلاین" }}
+        </h1>
+      </a>
 
-        <!-- بخش آیکون‌ها و منوی موبایل -->
-        <div class="flex items-center space-x-reverse space-x-4">
-            {% if user.is_authenticated %}
-                <div class="flex items-center space-x-4 space-x-reverse text-gray-700 font-medium">
-                    <span>خوش آمدید، {{ user.profile.full_name|default:user.username }}</span>
-                    <a href="{% url 'admin_dashboard' %}" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
+      <!-- منوی اصلی (دسکتاپ) -->
+      <nav class="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+        <a href="{% url 'product_list' %}" class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+          محصولات
+          <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+        </a>
+        <a href="{% url 'aboutus' %}" class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+          درباره ما
+          <span class="absolute bottom-0 left-0 w-0.5 h-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+        </a>
+        <a href="{% url 'contact' %}" class="relative text-gray-700 hover:text-orange-600 transition-colors font-medium group">
+          تماس با ما
+          <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+        </a>
 
-                    <form method="post" action="{% url 'account_logout' %}" class="inline">
-                        {% csrf_token %}
-                        <button type="submit"
-                                class="text-orange-600 hover:text-orange-800 transition-colors font-semibold">خروج
-                        </button>
-                    </form>
-
-                </div>
-                    <div class="relative">
-                        <a href="{% url 'cart_detail' %}"
-                           class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
-                            <i class="fa-solid fa-cart-shopping text-xl"></i>
-                        </a>
-                        <span class="cart-badge absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {{ cart|length|translate_number }}
-          </span>
-                    </div>
-                </div>
-            {% else %}
-                <div class="relative flex items-center space-x-reverse space-x-4">
-                    <a href="{% url 'account_login' %}" class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </a>
-                    <div class="relative">
-                        <a href="{% url 'cart_detail' %}"
-                           class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
-                            <i class="fa-solid fa-cart-shopping text-xl"></i>
-                        </a>
-                        <span class="cart-badge absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {{ cart|length|translate_number }}
-          </span>
-                    </div>
-                </div>
-            {% endif %}
-            <!-- دکمه منوی موبایل -->
-            <button id="menu-btn" class="md:hidden p-2 text-gray-700 hover:text-orange-600 transition-colors">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-
-    <!-- منوی موبایل (مخفی) -->
-    <nav id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
-        <div class="px-4 py-4 space-y-4">
-            <a href="{% url 'product_list' %}" class="block text-gray-700 hover:text-orange-600 font-medium">محصولات</a>
-            <a href="{% url 'aboutus' %}" class="block text-gray-700 hover:text-orange-600 font-medium">درباره ما</a>
-            <a href="{% url 'contact' %}" class="block text-gray-700 hover:text-orange-600 font-medium">تماس با ما</a>
-            {% if user.is_authenticated %}
-                <a href="" class="block text-gray-700 hover:text-orange-600 font-medium">پنل کاربری</a>
-                <form method="post" action="{% url 'account_logout' %}" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" class="text-orange-600 hover:text-orange-800 transition-colors font-semibold">
-                        خروج
-                    </button>
-                </form>
-            {% else %}
-                <a href="#" class="block text-gray-700 hover:text-orange-600 font-medium">ورود / ثبت‌نام</a>
-            {% endif %}
-        </div>
-    </nav>
-
-    <!-- فرم جستجو موبایل زیر منو -->
-    <div class="sm:hidden px-4 py-3 border-t border-gray-200">
-        <form method="get" action="{% url 'search_results' %}" class="relative">
-            <input
-                    type="text"
-                    name="q"
-                    placeholder="جستجو..."
-                    class="search-input w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                    value="{{ request.GET.q|default:'' }}"
-            />
-            <button type="submit"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </button>
+        <!-- جستجو (دسکتاپ) -->
+        <form method="get" action="{% url 'search_results' %}" class="ml-2 relative hidden lg:block">
+          <input
+            type="text" name="q" placeholder="جستجو..."
+            class="px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+            value="{{ request.GET.q|default:'' }}"
+          />
+          <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </form>
+      </nav>
     </div>
-</header>
 
+    <!-- اکشن‌ها + منوی موبایل -->
+    <div class="flex items-center gap-4">
+      {% if user.is_authenticated %}
+        <div class="hidden sm:flex items-center gap-3 text-gray-700">
+          <span>خوش آمدید، {{ user.profile.full_name|default:user.username }}</span>
+          <a href="{% url 'admin_dashboard' %}" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
+          <form method="post" action="{% url 'account_logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="text-orange-600 hover:text-orange-800 font-semibold">خروج</button>
+          </form>
+        </div>
+      {% endif %}
+
+      <div class="relative">
+        <a href="{% url 'cart_detail' %}" class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
+          <i class="fa-solid fa-cart-shopping text-xl"></i>
+        </a>
+        <span class="absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          {{ cart|length|translate_number }}
+        </span>
+      </div>
+
+      <!-- دکمه منوی موبایل -->
+      <button id="menu-btn" class="md:hidden p-2 text-gray-700 hover:text-orange-600 transition-colors" aria-label="باز کردن منو">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- منوی موبایل -->
+  <nav id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+    <div class="px-4 py-4 space-y-4">
+      <a href="{% url 'product_list' %}" class="block text-gray-700 hover:text-orange-600 font-medium">محصولات</a>
+      <a href="{% url 'aboutus' %}" class="block text-gray-700 hover:text-orange-600 font-medium">درباره ما</a>
+      <a href="{% url 'contact' %}" class="block text-gray-700 hover:text-orange-600 font-medium">تماس با ما</a>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'admin_dashboard' %}" class="block text-gray-700 hover:text-orange-600 font-medium">پنل کاربری</a>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="text-orange-600 hover:text-orange-800 font-semibold mt-2">خروج</button>
+        </form>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="block text-gray-700 hover:text-orange-600 font-medium">ورود / ثبت‌نام</a>
+      {% endif %}
+
+      <!-- جستجو (موبایل) -->
+      <form method="get" action="{% url 'search_results' %}" class="relative pt-2">
+        <input
+          type="text" name="q" placeholder="جستجو..."
+          class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+          value="{{ request.GET.q|default:'' }}"
+        />
+        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+    </div>
+  </nav>
+</header>
 <main class="container mx-auto px-4 py-8 flex-grow">
     {% if messages %}
         <div
@@ -187,76 +159,68 @@
     {% endif %}
     {% block content %}{% endblock %}
 </main>
-<footer class="bg-gray-800 text-white mt-16 z-20">
-    <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-                <h3 class="text-xl font-bold mb-4">شایان شاپ</h3>
-                <p class="text-gray-300 mb-4">
-                    فروشگاه آنلاین شایان، ارائه‌دهنده بهترین محصولات تکنولوژی با کیفیت بالا و قیمت مناسب.
-                </p>
+<footer class="bg-gray-800 text-white mt-16">
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- برند و توضیح -->
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          {% if site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="w-8 h-8 rounded-lg object-cover">
+          {% else %}
+            <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white">
+              <i class="fa-solid fa-bolt text-lg"></i>
             </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">دسترسی سریع</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="{% url 'aboutus' %}" class="text-gray-300 hover:text-orange-400 transition-colors">درباره ما</a>
-                    </li>
-                    <li>
-                        <a href="[{% url 'contact' %}" class="text-gray-300 hover:text-orange-400 transition-colors">تماس با ما</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">سوالات متداول</a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-orange-400 transition-colors">شرایط و قوانین</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">راهنمای خرید</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
-                            نحوه ثبت سفارش
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
-                            شیوه ارسال کالا
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
-                            روش‌های پرداخت
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400 transition-colors">
-                            پیگیری سفارشات
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">اطلاعات تماس</h4>
-                <div class="space-y-2 text-gray-300">
-                    <p>📞 ۰۲۱-۱۲۳۴۵۶۷۸</p>
-                    <p>📧 info@shayanshop.ir</p>
-                    <p>📍 تهران، خیابان ولیعصر</p>
-                </div>
-            </div>
+          {% endif %}
+          <h3 class="text-xl font-bold">
+            {{ site_settings.site_name|default:"فروشگاه آنلاین" }}
+          </h3>
         </div>
+        <p class="text-gray-300">
+          فروشگاه آنلاین {{ site_settings.site_name|default:"ما" }}، ارائه‌دهنده بهترین محصولات با کیفیت بالا و قیمت مناسب.
+        </p>
+      </div>
 
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p class="text-gray-300">© ۲۰۲۵ تمامی حقوق محفوظ است - shayandev.ir</p>
+      <!-- دسترسی سریع -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">دسترسی سریع</h4>
+        <ul class="space-y-2">
+          <li><a href="{% url 'aboutus' %}" class="text-gray-300 hover:text-orange-400">درباره ما</a></li>
+          <li><a href="{% url 'contact' %}" class="text-gray-300 hover:text-orange-400">تماس با ما</a></li>
+          <li><a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400">سوالات متداول</a></li>
+          <li><a href="#" class="text-gray-300 hover:text-orange-400">شرایط و قوانین</a></li>
+        </ul>
+      </div>
+
+      <!-- راهنمای خرید -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">راهنمای خرید</h4>
+        <ul class="space-y-2">
+          <li><a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400">نحوه ثبت سفارش</a></li>
+          <li><a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400">شیوه ارسال کالا</a></li>
+          <li><a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400">روش‌های پرداخت</a></li>
+          <li><a href="{% url 'contact' %}#faq" class="text-gray-300 hover:text-orange-400">پیگیری سفارشات</a></li>
+        </ul>
+      </div>
+
+      <!-- اطلاعات تماس از تنظیمات -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">اطلاعات تماس</h4>
+        <div class="space-y-2 text-gray-300">
+          {% if site_settings.support_phone %}<p>📞 {{ site_settings.support_phone }}</p>{% endif %}
+          {% if site_settings.support_email %}<p>📧 {{ site_settings.support_email }}</p>{% endif %}
+          {% if site_settings.support_address %}<p>📍 {{ site_settings.support_address }}</p>{% endif %}
         </div>
+      </div>
     </div>
-</footer>
 
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+      <p class="text-gray-300">
+        © {{ "2025"|translate_number }} تمامی حقوق محفوظ است — {{ site_settings.site_name|default:"فروشگاه آنلاین" }}
+      </p>
+    </div>
+  </div>
+</footer>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // Fade out پیام‌ها بعد از 5 ثانیه

@@ -1,0 +1,153 @@
+{% extends "adminpanel/_admin_layout.html" %}
+{% load static i18n %}
+
+{% block title %}تنظیمات سایت{% endblock %}
+
+{% block header_title %}تنظیمات سایت{% endblock %}
+{% block header_description %}مدیریت اطلاعات پایه و ظاهر سایت{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  {% csrf_token %}
+
+  <!-- اطلاعات پایه -->
+  <section class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">نام سایت</label>
+      {{ form.site_name }}
+      {% if form.site_name.errors %}<p class="text-xs text-red-600 mt-1">{{ form.site_name.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">ایمیل پشتیبانی</label>
+      {{ form.support_email }}
+      {% if form.support_email.errors %}<p class="text-xs text-red-600 mt-1">{{ form.support_email.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">شماره پشتیبانی</label>
+      {{ form.support_phone }}
+      {% if form.support_phone.errors %}<p class="text-xs text-red-600 mt-1">{{ form.support_phone.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">آدرس پشتیبانی</label>
+      {{ form.support_address }}
+      {% if form.support_address.errors %}<p class="text-xs text-red-600 mt-1">{{ form.support_address.errors.0 }}</p>{% endif %}
+    </div>
+  </section>
+
+  <!-- برندینگ: لوگو و فاوآیکن -->
+  <section class="bg-white rounded-xl border border-gray-200 p-6 space-y-8">
+
+    <!-- لوگو -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-sm font-medium text-gray-700">لوگو</label>
+        <!-- فلگ حذف همیشه حضور دارد -->
+        <input type="hidden" name="remove_logo" id="remove_logo" value="0">
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div id="logoPreview" class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+          {% if site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" class="w-full h-full object-cover" alt="logo">
+          {% else %}
+            <i class="fas fa-image text-gray-400 text-2xl"></i>
+          {% endif %}
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="id_logo" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer">
+            <i class="fas fa-upload ml-2"></i> انتخاب
+          </label>
+          <button type="button" id="btn-del-logo" class="px-4 py-2 text-red-700 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100">
+            حذف
+          </button>
+        </div>
+      </div>
+
+      {{ form.logo }} <!-- hidden file input -->
+      {% if form.logo.errors %}<p class="text-xs text-red-600 mt-1">{{ form.logo.errors.0 }}</p>{% endif %}
+    </div>
+
+    <!-- فاوآیکن -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-sm font-medium text-gray-700">فاوآیکن</label>
+        <input type="hidden" name="remove_favicon" id="remove_favicon" value="0">
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div id="faviconPreview" class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+          {% if site_settings.favicon %}
+            <img src="{{ site_settings.favicon.url }}" class="w-full h-full object-cover" alt="favicon">
+          {% else %}
+            <i class="fas fa-image text-gray-400 text-xl"></i>
+          {% endif %}
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="id_favicon" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer">
+            <i class="fas fa-upload ml-2"></i> انتخاب
+          </label>
+          <button type="button" id="btn-del-favicon" class="px-4 py-2 text-red-700 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100">
+            حذف
+          </button>
+        </div>
+      </div>
+
+      {{ form.favicon }}
+      {% if form.favicon.errors %}<p class="text-xs text-red-600 mt-1">{{ form.favicon.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div class="pt-2">
+      <button class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">ذخیره</button>
+    </div>
+  </section>
+</form>
+
+<script>
+  // پیش‌نمایش فایل‌ها
+  function bindPreview(fileInputId, previewBoxId){
+    const input = document.getElementById(fileInputId);
+    const box = document.getElementById(previewBoxId);
+    if(!input || !box) return;
+    input.addEventListener('change', (e)=>{
+      const f = e.target.files?.[0];
+      if(!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        box.innerHTML = "";
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        img.className = "w-full h-full object-cover";
+        box.appendChild(img);
+      };
+      r.readAsDataURL(f);
+      // اگر فایل جدید انتخاب شد، فلگ حذف را صفر کن
+      if(fileInputId === "id_logo") document.getElementById("remove_logo").value = "0";
+      if(fileInputId === "id_favicon") document.getElementById("remove_favicon").value = "0";
+    });
+  }
+  bindPreview("id_logo", "logoPreview");
+  bindPreview("id_favicon", "faviconPreview");
+
+  // دکمه‌های حذف: فقط فلگ hidden را 1 می‌کنند و ورودی فایل را خالی می‌کنند
+  document.getElementById("btn-del-logo")?.addEventListener("click", ()=>{
+    document.getElementById("remove_logo").value = "1";
+    const inp = document.getElementById("id_logo");
+    if(inp) inp.value = "";
+    const box = document.getElementById("logoPreview");
+    if(box) box.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
+  });
+
+  document.getElementById("btn-del-favicon")?.addEventListener("click", ()=>{
+    document.getElementById("remove_favicon").value = "1";
+    const inp = document.getElementById("id_favicon");
+    if(inp) inp.value = "";
+    const box = document.getElementById("faviconPreview");
+    if(box) box.innerHTML = '<i class="fas fa-image text-gray-400 text-xl"></i>';
+  });
+</script>
+{% endblock %}

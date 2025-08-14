@@ -1,12 +1,10 @@
-from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.db import models
+# Create your models here.
+from django.utils.translation import gettext_lazy as _
 
 from products.models import Product
 
-
-# Create your models here.
-from django.utils.translation import gettext_lazy as _
 
 class Order(models.Model):
     STATUS_CHOICES = [

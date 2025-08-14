@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'persian_translate.apps.PersianTranslateConfig',
     'orders.apps.OrdersConfig',
+    'core.apps.CoreConfig',
     'adminpanel.apps.AdminpanelConfig'
     # 'payment.apps.PaymentConfig', # DISABLED
 ]
@@ -95,7 +96,9 @@ TEMPLATES = [
         },
     },
 ]
-
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "core.context_processors.site_settings",
+]
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database

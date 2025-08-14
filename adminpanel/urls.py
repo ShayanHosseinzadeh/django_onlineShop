@@ -1,7 +1,7 @@
-from django.urls import path
-
+from core.views import AdminSiteSettingsView
 from . import views
 from .views import BulkProductActionView, AdminProductUpdateView, AdminProductDeleteView
+from django.urls import path
 
 urlpatterns = [
     path('', views.Admin_Home.as_view(), name='admin_dashboard'),
@@ -37,4 +37,7 @@ urlpatterns = [
          name='admin_category_delete_modal'),
 
     path("admin/reports/", views.AdminReportsView.as_view(), name="admin_reports"),
+
+    path("panel/admin/settings/", AdminSiteSettingsView.as_view(), name="admin_settings"),
+
 ]
