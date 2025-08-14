@@ -9,6 +9,12 @@ class SiteSettings(models.Model):
     support_email = models.EmailField(blank=True)
     support_phone = models.CharField(max_length=50, blank=True)
     support_address = models.CharField(max_length=500, blank=True)
+    maintenance_enabled = models.BooleanField(default=False, verbose_name="حالت نگه‌داری")
+    maintenance_message = models.TextField(
+        blank=True,
+        default="سایت موقتاً در حال بروزرسانی است. لطفاً دقایقی دیگر مراجعه کنید.",
+        verbose_name="متن پیام حالت نگه‌داری",
+    )
 
     class Meta:
         verbose_name = "تنظیمات سایت"

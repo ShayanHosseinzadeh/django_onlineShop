@@ -1,0 +1,123 @@
+{% load static %}
+{% load persian_numbers %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site_settings.site_name|default:"فروشگاه آنلاین" }} — در حال بروزرسانی</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap');
+    * { font-family: Vazirmatn, Tahoma, Arial, sans-serif; }
+
+    /* شیشه‌ای */
+    .glass {
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    /* انیمیشن خیلی ملایم برای آیکن */
+    .float { animation: f 4s ease-in-out infinite; }
+    @keyframes f { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    /* نوار پیشرفت فقط با CSS */
+    .progress { width:0%; animation: p 12s ease-in-out infinite; }
+    @keyframes p { 0%{width:0%} 50%{width:78%} 100%{width:100%} }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4
+             bg-gradient-to-br from-sky-500 via-indigo-500 to-orange-400">
+
+  <!-- الگوهای ظریف پس‌زمینه -->
+  <div class="pointer-events-none absolute inset-0 opacity-15">
+    <div class="absolute top-10 right-10 w-24 h-24 rounded-full border-2 border-white/60"></div>
+    <div class="absolute bottom-24 left-12 w-16 h-16 rounded-full border-2 border-white/60"></div>
+  </div>
+
+  <main class="relative w-full max-w-4xl mx-auto text-center space-y-8">
+
+    <!-- لوگو و نام سایت -->
+    <div class="space-y-3">
+      <div class="mx-auto w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center float">
+        {% if site_settings.logo %}
+          <img src="{{ site_settings.logo.url }}" alt="لوگوی {{ site_settings.site_name|default:'فروشگاه' }}"
+               class="w-14 h-14 object-contain"/>
+        {% else %}
+          <i class="fa-solid fa-store text-2xl text-indigo-600"></i>
+        {% endif %}
+      </div>
+      <h1 class="text-2xl font-bold text-white">
+        {{ site_settings.site_name|default:"فروشگاه آنلاین" }}
+      </h1>
+      <p class="text-white/80 text-sm">به‌زودی با تجربه‌ای بهتر برمی‌گردیم</p>
+    </div>
+
+    <!-- کارت اصلی -->
+    <section class="glass rounded-3xl p-8 md:p-12 space-y-6">
+      <div class="flex flex-col items-center space-y-4">
+        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-orange-400
+                    shadow-xl flex items-center justify-center">
+          <i class="fa-solid fa-screwdriver-wrench text-white text-3xl"></i>
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-bold text-white">
+          در حال بروزرسانی هستیم
+        </h2>
+
+        <p class="text-white/90 leading-relaxed max-w-2xl mx-auto">
+          {{ site_settings.maintenance_message|default:"در حال بهبود سرعت، امنیت و تجربه کاربری هستیم. لطفاً کمی صبر کنید." }}
+        </p>
+      </div>
+
+      <!-- نوار پیشرفت (حس زنده بودن صفحه) -->
+      <div class="pt-2">
+        <div class="flex items-center justify-between text-white/80 text-xs mb-1">
+          <span>پیشرفت بروزرسانی</span>
+          <span>در حال انجام…</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-white/25 overflow-hidden">
+          <div class="progress h-full rounded-full
+                      bg-gradient-to-r from-sky-300 via-emerald-400 to-indigo-400"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- راه‌های ارتباطی -->
+    <section class="glass rounded-2xl p-6">
+      <h3 class="text-lg font-bold text-white mb-4">راه‌های ارتباط با ما</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex items-center justify-center gap-3 text-white/90">
+          <div class="w-10 h-10 rounded-full bg-emerald-500/30 flex items-center justify-center">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div class="text-sm">
+            <div class="opacity-90">تلفن پشتیبانی</div>
+            <div class="font-semibold">
+              {{ site_settings.support_phone|default:"۰۲۱-۱۲۳۴۵۶۷۸"|translate_number }}
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center gap-3 text-white/90">
+          <div class="w-10 h-10 rounded-full bg-sky-500/30 flex items-center justify-center">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="text-sm">
+            <div class="opacity-90">ایمیل پشتیبانی</div>
+            <div class="font-semibold ltr">
+              {{ site_settings.support_email|default:"support@example.com" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="text-white/70 text-xs">© {{ site_settings.site_name|default:"فروشگاه آنلاین" }}</p>
+  </main>
+</body>
+</html>

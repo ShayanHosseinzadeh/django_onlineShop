@@ -2,7 +2,6 @@
 {% load static i18n %}
 
 {% block title %}تنظیمات سایت{% endblock %}
-
 {% block header_title %}تنظیمات سایت{% endblock %}
 {% block header_description %}مدیریت اطلاعات پایه و ظاهر سایت{% endblock %}
 
@@ -35,16 +34,40 @@
       {{ form.support_address }}
       {% if form.support_address.errors %}<p class="text-xs text-red-600 mt-1">{{ form.support_address.errors.0 }}</p>{% endif %}
     </div>
+
+    <!-- NEW: حالت نگه‌داری -->
+    <div class="pt-4">
+      <h3 class="text-base font-semibold text-gray-900 mb-3">حالت نگه‌داری</h3>
+
+      <!-- برای حرکت دکمه از چپ به راست، کانتینر را LTR می‌کنیم تا در RTL مشکلی نباشد -->
+      <div dir="ltr" class="flex items-center justify-between gap-4 mb-3">
+        <span class="text-sm text-gray-700" dir="rtl">فعال‌سازی حالت نگه‌داری</span>
+
+        <label class="relative inline-flex items-center cursor-pointer select-none">
+          {{ form.maintenance_enabled }}
+          <!-- Track -->
+          <span class="w-11 h-6 bg-gray-200 rounded-full transition peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-200 peer-checked:bg-blue-600"></span>
+          <!-- Knob -->
+          <span class="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition
+                       peer-checked:translate-x-5"></span>
+        </label>
+      </div>
+
+      <label class="block text-sm font-medium text-gray-700 mb-1">پیام نمایش‌داده‌شده</label>
+      {{ form.maintenance_message }}
+      {% if form.maintenance_message.errors %}
+        <p class="text-xs text-red-600 mt-1">{{ form.maintenance_message.errors.0 }}</p>
+      {% endif %}
+      <p class="text-xs text-gray-500 mt-2">وقتی فعال باشد، کاربران غیرادمین این پیام را می‌بینند.</p>
+    </div>
   </section>
 
   <!-- برندینگ: لوگو و فاوآیکن -->
   <section class="bg-white rounded-xl border border-gray-200 p-6 space-y-8">
-
     <!-- لوگو -->
     <div>
       <div class="flex items-center justify-between mb-2">
         <label class="block text-sm font-medium text-gray-700">لوگو</label>
-        <!-- فلگ حذف همیشه حضور دارد -->
         <input type="hidden" name="remove_logo" id="remove_logo" value="0">
       </div>
 
@@ -67,7 +90,7 @@
         </div>
       </div>
 
-      {{ form.logo }} <!-- hidden file input -->
+      {{ form.logo }}
       {% if form.logo.errors %}<p class="text-xs text-red-600 mt-1">{{ form.logo.errors.0 }}</p>{% endif %}
     </div>
 
@@ -108,7 +131,6 @@
 </form>
 
 <script>
-  // پیش‌نمایش فایل‌ها
   function bindPreview(fileInputId, previewBoxId){
     const input = document.getElementById(fileInputId);
     const box = document.getElementById(previewBoxId);
@@ -125,7 +147,6 @@
         box.appendChild(img);
       };
       r.readAsDataURL(f);
-      // اگر فایل جدید انتخاب شد، فلگ حذف را صفر کن
       if(fileInputId === "id_logo") document.getElementById("remove_logo").value = "0";
       if(fileInputId === "id_favicon") document.getElementById("remove_favicon").value = "0";
     });
@@ -133,7 +154,6 @@
   bindPreview("id_logo", "logoPreview");
   bindPreview("id_favicon", "faviconPreview");
 
-  // دکمه‌های حذف: فقط فلگ hidden را 1 می‌کنند و ورودی فایل را خالی می‌کنند
   document.getElementById("btn-del-logo")?.addEventListener("click", ()=>{
     document.getElementById("remove_logo").value = "1";
     const inp = document.getElementById("id_logo");

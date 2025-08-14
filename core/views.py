@@ -2,35 +2,32 @@
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
+
+from adminpanel.views import AdminRequiredMixin
 from .models import SiteSettings
 from .forms import SiteSettingsForm
 
 
-class AdminSiteSettingsView(UpdateView):
+class AdminSiteSettingsView(AdminRequiredMixin, UpdateView):
     model = SiteSettings
     form_class = SiteSettingsForm
     template_name = "adminpanel/admin/admin_site_settings.html"
-    context_object_name = "site_settings"
     success_url = reverse_lazy("admin_settings")
 
     def get_object(self, queryset=None):
-        obj, _ = SiteSettings.objects.get_or_create(pk=1, defaults={"site_name": "شایان شاپ"})
-        return obj
+        return SiteSettings.get_solo()
 
     def form_valid(self, form):
-        inst = form.save(commit=False)
-
-        # اگر فایل جدید آپلود نشده و فلگ حذف زده شده، فایل قبلی را پاک کن
-        if self.request.POST.get("remove_logo") == "1" and not self.request.FILES.get("logo"):
-            if inst.logo:
-                inst.logo.delete(save=False)
-            inst.logo = None
-
-        if self.request.POST.get("remove_favicon") == "1" and not self.request.FILES.get("favicon"):
-            if inst.favicon:
-                inst.favicon.delete(save=False)
-            inst.favicon = None
-
-        inst.save()
+        # پشتیبانی از حذف لوگو/فاویکن اگر ورودی خالی شد
+        obj = form.save(commit=False)
+        if "logo" in form.changed_data and not form.cleaned_data.get("logo"):
+            if obj.logo:
+                obj.logo.delete(save=False)
+            obj.logo = None
+        if "favicon" in form.changed_data and not form.cleaned_data.get("favicon"):
+            if obj.favicon:
+                obj.favicon.delete(save=False)
+            obj.favicon = None
+        obj.save()
         messages.success(self.request, "تنظیمات با موفقیت ذخیره شد.")
         return super().form_valid(form)
