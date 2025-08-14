@@ -46,36 +46,41 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">آیکن</label>
-        <div class="flex items-center gap-4">
-          <div id="iconPreview"
-               class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
-            {% if category and category.icon %}
-              <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="w-full h-full object-cover">
-            {% else %}
-              <i class="fas fa-image text-gray-400 text-2xl"></i>
-            {% endif %}
-          </div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">آیکن</label>
 
-          <div class="space-x-2 space-x-reverse">
-            <label for="id_icon"
-                   class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer">
-              <i class="fas fa-upload ml-2"></i>
-              انتخاب آیکن
-            </label>
-            {% if category and category.icon %}
-              <label class="inline-flex items-center px-4 py-2 text-red-700 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 cursor-pointer">
-                {{ form.icon.clear_checkbox }}
-                <span class="mr-2">حذف آیکن</span>
-              </label>
-            {% endif %}
-          </div>
-        </div>
-        {{ form.icon }}
-        {% if form.icon.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.icon.errors.0 }}</p>
-        {% endif %}
-      </div>
+  <div class="flex items-center gap-4">
+    <div id="iconPreview"
+         class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+      {% if category and category.icon %}
+        <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="w-full h-full object-cover">
+      {% else %}
+        <i class="fas fa-image text-gray-400 text-2xl"></i>
+      {% endif %}
+    </div>
+
+    <div class="space-x-2 space-x-reverse">
+      {# trigger the hidden input #}
+      <label for="id_icon"
+             class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <i class="fas fa-upload ml-2"></i>
+        انتخاب آیکن
+      </label>
+
+      {% if category and category.icon %}
+        <button type="button" id="removeIconBtn"
+                class="inline-flex items-center px-4 py-2 text-red-700 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100">
+          حذف آیکن
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  {# keep the file input in the form but invisible (hidden class comes from the widget) #}
+  {{ form.icon }}
+  {% if form.icon.errors %}
+    <p class="text-xs text-red-600 mt-1">{{ form.icon.errors.0 }}</p>
+  {% endif %}
+</div>
 
       <div class="pt-2 flex items-center justify-end gap-3 border-t border-gray-100">
         <button type="button"
@@ -111,4 +116,34 @@
       r.readAsDataURL(f);
     });
   })();
+</script>
+<script>
+(function () {
+  const fileInput = document.getElementById('id_icon');
+  const preview   = document.getElementById('iconPreview');
+  const removeBtn = document.getElementById('removeIconBtn');
+
+  // preview on select
+  if (fileInput && preview) {
+    fileInput.addEventListener('change', e => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        preview.innerHTML = '<img class="w-full h-full object-cover" src="'+ ev.target.result +'">';
+      };
+      r.readAsDataURL(f);
+    });
+  }
+
+  // clear on click (IMPORTANT: set the clear checkbox by NAME)
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      const clearBox = document.querySelector('input[name="icon-clear"]'); // ← works regardless of id
+      if (clearBox) clearBox.checked = true;
+      if (fileInput) fileInput.value = '';
+      if (preview) preview.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
+    });
+  }
+})();
 </script>

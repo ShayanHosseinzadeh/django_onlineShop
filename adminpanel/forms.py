@@ -161,6 +161,7 @@ OrderItemFormSet = inlineformset_factory(
 
 INPUT_CLS = "tw-input w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-right"
 
+
 class ProductForm(ModelForm):
     # CKEditor برای فیلدهای ریچ
     description = forms.CharField(
@@ -235,22 +236,40 @@ class CommentInlineForm(forms.ModelForm):
                 "class": "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             }),
         }
+
+
 CommentInlineFormSet = inlineformset_factory(
     Product, Comment, form=CommentInlineForm, extra=0, can_delete=True
 )
+class NoTextClearableFileInput(ClearableFileInput):
+    # minimal widget that hides Django’s default “Currently/Change” text
+    template_name = 'adminpanel/widgets/no_text_clearable_file_input.html'
 
 
-BASE_INPUT = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl " \
-             "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+BASE_INPUT = (
+    "w-full px-4 py-3 border-2 border-gray-200 rounded-xl "
+    "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+)
+
 
 class CategoryForm(forms.ModelForm):
+    # IMPORTANT: override field so Django shows the clear checkbox (icon-clear)
+    icon = forms.ImageField(
+        required=False,
+        label="آیکن",
+        widget=NoTextClearableFileInput(attrs={
+            "id": "id_icon",
+            "class": "hidden",      # you trigger with your custom button
+            "accept": "image/*",
+        }),
+    )
+
     class Meta:
         model = Category
         fields = ["name", "slug", "icon"]
         labels = {
             "name": "نام دسته‌بندی",
             "slug": "اسلاگ",
-            "icon": "آیکن",
         }
         help_texts = {
             "slug": "اگر خالی بماند، بر اساس نام ساخته می‌شود.",
@@ -261,19 +280,13 @@ class CategoryForm(forms.ModelForm):
                 "placeholder": "نام دسته‌بندی",
                 "dir": "rtl",
             }),
+            # slug is LTR by nature
             "slug": forms.TextInput(attrs={
-                # slug is naturally LTR
                 "class": f"{BASE_INPUT} ltr text-left font-mono placeholder:text-left",
                 "placeholder": "مثال: mobile-accessories",
                 "dir": "ltr",
                 "inputmode": "latin",
                 "style": "direction:ltr;text-align:left;",
-            }),
-            "icon": forms.ClearableFileInput(attrs={
-                # hidden, we trigger with a custom button
-                "class": "hidden",
-                "id": "id_icon",
-                "accept": "image/*",
             }),
         }
 
