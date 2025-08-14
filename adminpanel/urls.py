@@ -35,4 +35,6 @@ urlpatterns = [
     path('categories/<int:pk>/edit/modal/', views.AdminCategoryUpdateModalView.as_view(), name='admin_category_edit_modal'),
     path('categories/<int:pk>/delete/modal/', views.AdminCategoryDeleteModalView.as_view(),
          name='admin_category_delete_modal'),
+
+    path("admin/reports/", views.AdminReportsView.as_view(), name="admin_reports"),
 ]

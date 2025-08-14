@@ -1,0 +1,152 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load static %}
+
+{% block title %}گزارش‌ها و آمار فروش{% endblock %}
+{% block header_title %}گزارش‌ها و آمار فروش{% endblock %}
+
+{% block header_description %}نمای کلی عملکرد فروش در بازه‌های زمانی مختلف{% endblock %}
+
+{% block content %}
+
+<main class="p-6">
+
+  <!-- Sticky controls bar -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 flex flex-wrap items-center gap-4 justify-between">
+    <h1 class="text-xl font-bold text-gray-900">گزارش‌ها و آمار فروش</h1>
+
+    <div class="flex items-center gap-2">
+      <label for="range-select" class="text-sm font-medium text-gray-700">بازه زمانی:</label>
+      <select id="range-select" name="range"
+              class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              hx-get="{% url 'admin_reports' %}"
+              hx-target="#reports-container"
+              hx-swap="outerHTML"
+              hx-include="#range-select"
+              >
+        <option value="today" {% if range == 'today' %}selected{% endif %}>امروز</option>
+        <option value="7days" {% if range == '7days' %}selected{% endif %}>۷ روز گذشته</option>
+        <option value="30days" {% if range == '30days' %}selected{% endif %}>۳۰ روز گذشته</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="reports-container">
+    {% include 'adminpanel/admin/partials/reports_body.html' %}
+  </div>
+
+</main>
+    <script>
+(function(){
+  let charts = {};
+
+  function toPersianDigits(str) {
+    const d = '۰۱۲۳۴۵۶۷۸۹';
+    return String(str).replace(/[0-9]/g, w => d[w]);
+  }
+
+  function fmtCurrency(x){ return toPersianDigits((x||0).toLocaleString('en-US')); }
+  function fmtInt(x){ return toPersianDigits((x||0).toString()); }
+
+  function destroyCharts() {
+    Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+    charts = {};
+  }
+
+  function initReportsCharts() {
+    const payloadEl = document.getElementById('chart-data');
+    if (!payloadEl) return; // not on this page
+    const data = JSON.parse(payloadEl.textContent);
+
+    // X labels (Persian)
+    const labelsFa = data.labels.map(toPersianDigits);
+
+    // revenue
+    const revCtx = document.getElementById('revenueChart');
+    const ordCtx = document.getElementById('ordersChart');
+    const aovCtx = document.getElementById('aovChart');
+    const canCtx = document.getElementById('cancellationsChart');
+    const donutCtx = document.getElementById('statusDonut');
+
+    destroyCharts();
+
+    if (revCtx) {
+      charts.revenue = new Chart(revCtx.getContext('2d'), {
+        type: 'bar',
+        data: { labels: labelsFa, datasets: [{ label: 'درآمد', data: data.revenue }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { ticks: { callback: v => fmtCurrency(v) + ' تومان' } },
+            x: { ticks: { callback: v => labelsFa[v] } }
+          }
+        }
+      });
+    }
+
+    if (ordCtx) {
+      charts.orders = new Chart(ordCtx.getContext('2d'), {
+        type: 'line',
+        data: { labels: labelsFa, datasets: [{ label: 'سفارش', data: data.orders, fill: true, tension: .3 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { ticks: { callback: v => fmtInt(v) } },
+            x: { ticks: { callback: v => labelsFa[v] } }
+          }
+        }
+      });
+    }
+
+    if (aovCtx) {
+      charts.aov = new Chart(aovCtx.getContext('2d'), {
+        type: 'bar',
+        data: { labels: labelsFa, datasets: [{ label: 'AOV', data: data.aov }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { ticks: { callback: v => fmtCurrency(v) + ' تومان' } },
+            x: { ticks: { callback: v => labelsFa[v] } }
+          }
+        }
+      });
+    }
+
+    if (canCtx) {
+      charts.cancels = new Chart(canCtx.getContext('2d'), {
+        type: 'line',
+        data: { labels: labelsFa, datasets: [{ label: 'لغو', data: data.cancellations, fill: false, tension: .3 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { ticks: { callback: v => fmtInt(v) } },
+            x: { ticks: { callback: v => labelsFa[v] } }
+          }
+        }
+      });
+    }
+
+    if (donutCtx && data.status_dist) {
+      charts.status = new Chart(donutCtx.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: data.status_dist.labels.map(toPersianDigits),
+          datasets: [{ data: data.status_dist.values }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initReportsCharts);
+  document.body.addEventListener('htmx:afterSwap', function (e) {
+    if (e.detail && e.detail.target && e.detail.target.id === 'reports-container') {
+      initReportsCharts();
+    }
+  });
+})();
+</script>
+{% endblock %}

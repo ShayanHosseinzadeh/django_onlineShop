@@ -8,15 +8,18 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.db.models.aggregates import Sum, Avg
-from django.db.models.expressions import F
+from django.db.models.aggregates import Sum, Avg, Count
+from django.db.models.expressions import F, ExpressionWrapper
 from django.db.models.fields import IntegerField
 from django.db.models.functions.comparison import Cast
+from django.db.models.functions.datetime import TruncDate
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls.base import reverse_lazy
+from django.utils import timezone
+from django.utils.translation import gettext
 from django.views import generic
 from openpyxl.styles import Font, Alignment
 
@@ -925,12 +928,124 @@ class AdminCategoryDeleteModalView(AdminRequiredMixin, generic.DeleteView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class AdminReportsView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+def _date_range(rng: str):
+    today = timezone.localdate()
+    if rng == 'today':
+        return today, today
+    if rng == '30days':
+        return today - timedelta(days=29), today
+    # default 7 days
+    return today - timedelta(days=6), today
+
+
+class AdminReportsView(generic.TemplateView):
+    template_name = 'adminpanel/admin/admin_reports.html'
+    partial_template = 'adminpanel/admin/partials/reports_body.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        ctx = super().get_context_data(**kwargs)
+
+        rng = (self.request.GET.get('range') or '7days').lower()
+        start, end = _date_range(rng)
+
+        base_orders = (
+            Order.objects
+            .filter(datetime_created__date__gte=start, datetime_created__date__lte=end)
+            .exclude(status__in=['cancelled'])
+        )
+
+        # Build calendar days
+        days = [start + timedelta(days=i) for i in range((end - start).days + 1)]
+
+        # Orders per day
+        oqs = (
+            base_orders
+            .annotate(day=TruncDate('datetime_created'))
+            .values('day')
+            .annotate(c=Count('id'))
+        )
+        orders_map = {r['day']: r['c'] for r in oqs}
+        orders_series = [orders_map.get(d, 0) for d in days]
+
+        # Revenue per day (from OrderItem)
+        line_total = ExpressionWrapper(
+            F('quantity') * F('price'),
+            output_field=IntegerField()
+        )
+        rqs = (
+            OrderItem.objects
+            .filter(order__datetime_created__date__gte=start,
+                    order__datetime_created__date__lte=end)
+            .exclude(order__status__in=['cancelled'])
+            .annotate(day=TruncDate('order__datetime_created'))
+            .values('day')
+            .annotate(amount=Sum(line_total))
+        )
+        rev_map = {r['day']: int(r['amount'] or 0) for r in rqs}
+        revenue_series = [rev_map.get(d, 0) for d in days]
+
+        # AOV per day
+        aov_series = []
+        for d in days:
+            c = orders_map.get(d, 0)
+            aov_series.append(int(rev_map.get(d, 0) / c) if c else 0)
+
+        # Cancellations per day (optional chart)
+        cqs = (
+            Order.objects
+            .filter(datetime_created__date__gte=start,
+                    datetime_created__date__lte=end,
+                    status='cancelled')
+            .annotate(day=TruncDate('datetime_created'))
+            .values('day')
+            .annotate(c=Count('id'))
+        )
+        cancel_map = {r['day']: r['c'] for r in cqs}
+        cancellations_series = [cancel_map.get(d, 0) for d in days]
+
+        # Status distribution (donut)
+        sdist = (
+            Order.objects
+            .filter(datetime_created__date__gte=start,
+                    datetime_created__date__lte=end)
+            .values('status')
+            .annotate(c=Count('id'))
+            .order_by('-c')
+        )
+        status_display_map = {code: gettext(label) for code, label in Order.STATUS_CHOICES}
+        status_labels_fa = [status_display_map.get(r['status'], r['status']) for r in sdist]
+        status_values = [r['c'] for r in sdist]
+
+        total_revenue = sum(revenue_series)
+        total_orders = sum(orders_series)
+        aov = int(total_revenue / total_orders) if total_orders else 0
+
+        payload = {
+            'labels': [d.strftime('%Y-%m-%d') for d in days],
+            'orders': orders_series,
+            'revenue': revenue_series,
+            'aov': aov_series,
+            'cancellations': cancellations_series,
+            'status_dist': {'labels': status_labels_fa, 'values': status_values},
+        }
+
+        ctx.update({
+            'range': rng,
+            'kpis': {'revenue': total_revenue, 'orders': total_orders, 'aov': aov},
+            'chartjs_payload_json': json.dumps(payload, ensure_ascii=False),
+            'start': start, 'end': end,
+        })
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+        # HTMX = return partial only
+        if request.headers.get('HX-Request'):
+            return self.response_class(
+                request=request,
+                template=self.partial_template,
+                context=self.get_context_data()
+            )
+        return super().get(request, *args, **kwargs)
 
 
 class AdminNotificationsView(AdminRequiredMixin, generic.TemplateView):

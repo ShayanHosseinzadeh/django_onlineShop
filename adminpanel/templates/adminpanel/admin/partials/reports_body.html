@@ -1,0 +1,78 @@
+{# adminpanel/admin/partials/reports_body.html #}
+{% load humanize %}
+{% load persian_numbers %}
+
+<div class="space-y-8" id="reports-container">
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm text-gray-600 mb-1">درآمد کل</h3>
+      <p class="text-2xl font-bold text-gray-900">
+        {{ kpis.revenue|intcomma:False|translate_number }} تومان
+      </p>
+      <p class="text-xs text-gray-500 mt-1">در بازهٔ انتخابی</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm text-gray-600 mb-1">تعداد سفارش‌ها</h3>
+      <p class="text-2xl font-bold text-gray-900">
+        {{ kpis.orders|intcomma:False|translate_number }}
+      </p>
+      <p class="text-xs text-gray-500 mt-1">در بازهٔ انتخابی</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm text-gray-600 mb-1">میانگین ارزش سفارش</h3>
+      <p class="text-2xl font-bold text-gray-900">
+        {{ kpis.aov|intcomma:False|translate_number }} تومان
+      </p>
+      <p class="text-xs text-gray-500 mt-1">در بازهٔ انتخابی</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-sm text-gray-600 mb-1">توزیع وضعیت سفارش‌ها</h3>
+      <div class="h-28"><canvas id="statusDonut"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Trends -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">درآمد روزانه</h3>
+        <span class="text-sm text-gray-500">تومان</span>
+      </div>
+      <div class="h-64"><canvas id="revenueChart"></canvas></div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">سفارش‌های روزانه</h3>
+        <span class="text-sm text-gray-500">تعداد</span>
+      </div>
+      <div class="h-64"><canvas id="ordersChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Extra charts -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">AOV روزانه</h3>
+        <span class="text-sm text-gray-500">تومان</span>
+      </div>
+      <div class="h-64"><canvas id="aovChart"></canvas></div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">لغو سفارش‌ها (روزانه)</h3>
+        <span class="text-sm text-gray-500">تعداد</span>
+      </div>
+      <div class="h-64"><canvas id="cancellationsChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Chart payload -->
+  <script id="chart-data" type="application/json">{{ chartjs_payload_json|safe }}</script>
+</div>
