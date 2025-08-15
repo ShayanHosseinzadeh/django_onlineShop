@@ -1,63 +1,70 @@
 {% extends "adminpanel/_admin_layout.html" %}
 {% load static %}
 
-{% block title %}اعلان‌های من{% endblock %}
-{% block header_title %}اعلان‌های من{% endblock %}
-{% block header_description %}تمام اعلان‌های مربوط به حساب شما{% endblock %}
+{% block title %}اعلان‌ها{% endblock %}
+{% block header_title %}اعلان‌ها{% endblock %}
+{% block header_description %}مدیریت و مشاهده اعلان‌های سیستم{% endblock %}
 
 {% block content %}
-<div class="bg-white rounded-xl shadow-sm border border-gray-200">
-  <div class="p-4 sm:p-6 border-b border-gray-100 flex items-center gap-2">
-    <a hx-get="{% url 'user_notifications_partial' %}?tab=unread"
-       hx-target="#notif-list"
-       hx-swap="outerHTML"
-       class="px-3 py-2 rounded-lg text-sm {% if tab == 'unread' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
-      نخوانده
-    </a>
-    <a hx-get="{% url 'user_notifications_partial' %}?tab=all"
-       hx-target="#notif-list"
-       hx-swap="outerHTML"
-       class="px-3 py-2 rounded-lg text-sm {% if tab == 'all' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
-      همه
-    </a>
+<div class="p-4 sm:p-6 border-b border-gray-100 flex items-center gap-2">
+  <a
+    href="{% url 'admin_notifications' %}?tab=unread"
+    hx-get="{% url 'admin_notifications_partial' %}?tab=unread"
+    hx-target="#notif-list"
+    hx-swap="innerHTML"
+    hx-push-url="false"
+    class="px-3 py-2 rounded-lg text-sm {% if tab == 'unread' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+    نخوانده
+  </a>
 
-    <div class="flex-1"></div>
+  <a
+    href="{% url 'admin_notifications' %}?tab=all"
+    hx-get="{% url 'admin_notifications_partial' %}?tab=all"
+    hx-target="#notif-list"
+    hx-swap="innerHTML"
+    hx-push-url="false"
+    class="px-3 py-2 rounded-lg text-sm {% if tab == 'all' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+    همه
+  </a>
 
-    {% if tab == 'unread' %}
-      <button
-        hx-post="{% url 'user_notifications_mark_all' %}?tab={{ tab }}"
-        hx-target="#notif-list"
-        hx-swap="outerHTML"
-        class="px-3 py-2 rounded-lg text-sm bg-emerald-600 text-white hover:bg-emerald-700">
+  <div class="flex-1"></div>
+
+  {% if tab == 'unread' %}
+    <form
+      hx-post="{% url 'admin_notifications_mark_all' %}?tab={{ tab }}"
+      hx-target="#notif-list"
+      hx-swap="innerHTML"
+      hx-push-url="false">
+      {% csrf_token %}
+      <button type="submit" class="px-3 py-2 rounded-lg text-sm bg-emerald-600 text-white hover:bg-emerald-700">
         علامت‌گذاری همه به‌عنوان خوانده
       </button>
-    {% endif %}
-  </div>
-
-  <div id="notif-list" hx-get="{% url 'user_notifications_partial' %}?tab={{ tab }}" hx-trigger="load">
-    {# filled by htmx #}
-  </div>
+    </form>
+  {% endif %}
 </div>
-    <script>
-document.addEventListener("htmx:afterRequest", function(evt) {
-    // وقتی request به endpoint های اعلان‌ها رفت
-    if (evt.detail.path && evt.detail.path.includes("/admin/notifications")) {
-        // درخواست تعداد نخوانده‌ها
-        fetch("/api/notifications/?unread=1", { credentials: "include" })
-            .then(r => r.json())
-            .then(data => {
-                let count = Array.isArray(data.results) ? data.results.length : 0;
-                document.querySelectorAll(".notif-count").forEach(el => {
-                    el.textContent = count;
-                    if (count > 0) el.classList.remove("hidden");
-                    else el.classList.add("hidden");
-                });
-            })
-            .catch(()=>{});
-    }
+
+{# initial load of the partial #}
+<div id="notif-list"
+     hx-get="{% url 'admin_notifications_partial' %}?tab={{ tab }}"
+     hx-trigger="load"
+     hx-swap="innerHTML"
+     hx-push-url="false"
+     hx-boost="false"
+     hx-history="false">
+</div>
+
+{# Optional: if you still rely on afterRequest to sync the bell #}
+<script>
+document.addEventListener("htmx:afterRequest", function(){
+  fetch("/api/notifications/?unread=1", { credentials: "include" })
+    .then(r => r.json())
+    .then(data => {
+      const count = Array.isArray(data.results) ? data.results.length : 0;
+      document.querySelectorAll(".notif-count").forEach(el => {
+        el.textContent = count;
+        el.classList.toggle("hidden", count === 0);
+      });
+    }).catch(()=>{});
 });
-
 </script>
-
 {% endblock %}
-
