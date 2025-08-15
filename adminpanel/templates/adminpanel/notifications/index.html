@@ -1,34 +1,42 @@
 {% extends "adminpanel/_admin_layout.html" %}
-{% load static i18n %}
+{% load static %}
 
-{% block title %}اعلان‌ها{% endblock %}
-{% block header_title %}اعلان‌ها{% endblock %}
-{% block header_description %}مدیریت و مشاهده اعلان‌های سیستم{% endblock %}
+{% block title %}اعلان‌های من{% endblock %}
+{% block header_title %}اعلان‌های من{% endblock %}
+{% block header_description %}تمام اعلان‌های مربوط به حساب شما{% endblock %}
 
 {% block content %}
 <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-    <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4">
-        <div class="flex gap-4">
-            <a
-               href="{% url 'admin_notifications' %}?tab=unread"
-               class="tab-link {% if tab == 'unread' %}text-orange-600 font-semibold{% else %}text-gray-600{% endif %}">
-                نخوانده‌ها
-            </a>
-            <a
-               href="{% url 'admin_notifications' %}?tab=all"
-               class="tab-link {% if tab == 'all' %}text-orange-600 font-semibold{% else %}text-gray-600{% endif %}">
-                همه
-            </a>
-        </div>
-        <form hx-post="{% url 'admin_notifications_mark_all' %}?tab={{ tab }}" hx-target="#notif-list" hx-swap="outerHTML">
-            {% csrf_token %}
-            <button type="submit" class="text-sm text-orange-600 hover:underline">علامت‌گذاری همه به‌عنوان خوانده</button>
-        </form>
-    </div>
+  <div class="p-4 sm:p-6 border-b border-gray-100 flex items-center gap-2">
+    <a hx-get="{% url 'user_notifications_partial' %}?tab=unread"
+       hx-target="#notif-list"
+       hx-swap="outerHTML"
+       class="px-3 py-2 rounded-lg text-sm {% if tab == 'unread' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+      نخوانده
+    </a>
+    <a hx-get="{% url 'user_notifications_partial' %}?tab=all"
+       hx-target="#notif-list"
+       hx-swap="outerHTML"
+       class="px-3 py-2 rounded-lg text-sm {% if tab == 'all' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+      همه
+    </a>
 
-    <div id="notif-list" hx-get="{% url 'admin_notifications_partial' %}?tab={{ tab }}" hx-trigger="load">
+    <div class="flex-1"></div>
 
-    </div>
+    {% if tab == 'unread' %}
+      <button
+        hx-post="{% url 'user_notifications_mark_all' %}?tab={{ tab }}"
+        hx-target="#notif-list"
+        hx-swap="outerHTML"
+        class="px-3 py-2 rounded-lg text-sm bg-emerald-600 text-white hover:bg-emerald-700">
+        علامت‌گذاری همه به‌عنوان خوانده
+      </button>
+    {% endif %}
+  </div>
+
+  <div id="notif-list" hx-get="{% url 'user_notifications_partial' %}?tab={{ tab }}" hx-trigger="load">
+    {# filled by htmx #}
+  </div>
 </div>
     <script>
 document.addEventListener("htmx:afterRequest", function(evt) {
@@ -52,3 +60,4 @@ document.addEventListener("htmx:afterRequest", function(evt) {
 </script>
 
 {% endblock %}
+

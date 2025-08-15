@@ -45,9 +45,20 @@ urlpatterns = [
     path("notifications/partial/", views.AdminNotificationsPartialView.as_view(), name="admin_notifications_partial"),
     path("notifications/<int:pk>/toggle/", views.AdminNotificationToggleReadView.as_view(),
          name="admin_notification_toggle"),
-    path("panel/notifications/mark-all-read/", views.AdminNotificationsMarkAllReadView.as_view(),
+    path("notifications/mark-all-read/", views.AdminNotificationsMarkAllReadView.as_view(),
          name="admin_notifications_mark_all"),
 
 
     path('orders/',views.UserOrderListView.as_view(), name='user_order_list'),
+
+    path("me/notifications/", views.UserNotificationsIndexView.as_view(), name="user_notifications"),
+    path("me/notifications/partial/", views.UserNotificationsPartialView.as_view(), name="user_notifications_partial"),
+    path("me/notifications/<int:pk>/toggle/", views.UserNotificationToggleReadView.as_view(),
+         name="user_notification_toggle"),
+    path("me/notifications/mark-all-read/", views.UserNotificationsMarkAllReadView.as_view(),
+         name="user_notifications_mark_all"),
+
+
+    path("panel/me/settings/", views.UserSelfProfileUpdateView.as_view(), name="user_account_settings"),
+
 ]

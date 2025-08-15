@@ -1,0 +1,47 @@
+<div class="p-4 sm:p-5 flex items-start gap-3 {% if n.read_at %}opacity-70{% endif %}" data-nid="{{ n.id }}">
+  <div class="w-10 h-10 rounded-full flex items-center justify-center
+              {% if n.level == 'success' %}bg-emerald-100 text-emerald-600
+              {% elif n.level == 'warning' %}bg-amber-100 text-amber-600
+              {% elif n.level == 'error' %}bg-rose-100 text-rose-600
+              {% else %}bg-sky-100 text-sky-600{% endif %}">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 13l4 4L19 7"/>
+    </svg>
+  </div>
+
+  <div class="flex-1">
+    {% if n.payload.url %}
+      <a href="{{ n.payload.url }}" class="block">
+        <p class="text-sm font-medium text-gray-900">{{ n.verb }}</p>
+        {% if n.payload.description %}
+          <p class="text-sm text-gray-600">{{ n.payload.description }}</p>
+        {% endif %}
+      </a>
+    {% else %}
+      <p class="text-sm font-medium text-gray-900">{{ n.verb }}</p>
+      {% if n.payload.description %}
+        <p class="text-sm text-gray-600">{{ n.payload.description }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="text-xs text-gray-500 whitespace-nowrap mt-1">
+    {{ n.created_at|timesince }} پیش
+  </div>
+
+  <div class="ml-2">
+    <form
+      hx-post="{% url 'user_notification_toggle' n.id %}?tab={{ tab }}"
+      hx-target="closest [data-nid]"
+      hx-swap="outerHTML">
+      {% csrf_token %}
+      <button type="submit"
+              class="px-2.5 py-1.5 rounded-lg text-xs
+                     {% if n.read_at %}bg-gray-100 text-gray-700 hover:bg-gray-200
+                     {% else %}bg-emerald-600 text-white hover:bg-emerald-700{% endif %}">
+        {% if n.read_at %}علامت‌گذاری به‌عنوان نخوانده{% else %}خوانده شد{% endif %}
+      </button>
+    </form>
+  </div>
+</div>

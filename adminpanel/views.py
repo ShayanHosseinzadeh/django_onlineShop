@@ -1055,7 +1055,7 @@ class AdminReportsView(generic.TemplateView):
 PAGE_SIZE = 10
 
 
-class AdminNotificationListMixin(AdminRequiredMixin, LoginRequiredMixin,generic.ListView):
+class AdminNotificationListMixin(AdminRequiredMixin, LoginRequiredMixin, generic.ListView):
     """Common list behavior for admin panel."""
     paginate_by = PAGE_SIZE
 
@@ -1098,7 +1098,7 @@ class AdminNotificationsPartialView(AdminNotificationListMixin, generic.ListView
     context_object_name = "object_list"
 
 
-class AdminNotificationToggleReadView(AdminRequiredMixin,LoginRequiredMixin, SingleObjectMixin, generic.View):
+class AdminNotificationToggleReadView(AdminRequiredMixin, LoginRequiredMixin, SingleObjectMixin, generic.View):
     model = Notification
     template_name = "adminpanel/notifications/_item.html"
 
@@ -1111,7 +1111,8 @@ class AdminNotificationToggleReadView(AdminRequiredMixin,LoginRequiredMixin, Sin
         obj.save(update_fields=["read_at"])
 
         # HTML همان ردیف
-        html = render_to_string(self.template_name, {"n": obj, "tab": request.GET.get("tab", "unread")}, request=request)
+        html = render_to_string(self.template_name, {"n": obj, "tab": request.GET.get("tab", "unread")},
+                                request=request)
 
         # تعداد نخوانده‌های جدید را حساب کن
         unread_count = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
@@ -1212,3 +1213,139 @@ class UserOrderListView(LoginRequiredMixin, generic.ListView):
         ctx["completed_orders"] = base.filter(status="completed").count()
         ctx["cancelled_orders"] = base.filter(status="cancelled").count()
         return ctx
+
+
+class UserNotificationListMixin(LoginRequiredMixin, generic.ListView):
+    paginate_by = PAGE_SIZE
+
+    def get_tab(self) -> str:
+        tab = self.request.GET.get("tab", "unread")
+        return tab if tab in ("unread", "all") else "unread"
+
+    def get_queryset(self):
+        qs = (Notification.objects
+              .filter(user=self.request.user)
+              .order_by("-created_at"))
+        if self.get_tab() == "unread":
+            qs = qs.filter(read_at__isnull=True)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["tab"] = self.get_tab()
+        return ctx
+
+
+class UserNotificationsIndexView(UserNotificationListMixin, generic.ListView):
+    template_name = "adminpanel/user/notifications/index.html"
+    context_object_name = "object_list"
+
+
+class UserNotificationsPartialView(UserNotificationListMixin, generic.ListView):
+    template_name = "adminpanel/user/notifications/_list.html"
+    context_object_name = "object_list"
+
+
+class UserNotificationToggleReadView(LoginRequiredMixin, SingleObjectMixin, generic.View):
+    model = Notification
+    template_name = "adminpanel/user/notifications/_item.html"
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user_id != request.user.id:
+            return HttpResponseBadRequest("Forbidden")
+
+        obj.read_at = None if obj.read_at else timezone.now()
+        obj.save(update_fields=["read_at"])
+
+        html = render_to_string(self.template_name, {"n": obj, "tab": request.GET.get("tab", "unread")},
+                                request=request)
+
+        # Keep bell badge synced via HX-Trigger
+        unread_count = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
+        resp = HttpResponse(html)
+        resp["HX-Trigger"] = json.dumps({"notif:badge": {"unread": unread_count}})
+        return resp
+
+    def get(self, *args, **kwargs):
+        return HttpResponseBadRequest("POST required")
+
+
+class UserNotificationsMarkAllReadView(UserNotificationListMixin, generic.View):
+    template_name = "adminpanel/user/notifications/_list.html"
+
+    def post(self, request, *args, **kwargs):
+        (Notification.objects
+         .filter(user=request.user, read_at__isnull=True)
+         .update(read_at=timezone.now()))
+
+        qs = self.get_queryset()
+        paginator = Paginator(qs, PAGE_SIZE)
+        page_obj = paginator.get_page(1)
+
+        html = render_to_string(
+            self.template_name,
+            {"tab": self.get_tab(), "page_obj": page_obj, "is_paginated": page_obj.has_other_pages()},
+            request=request,
+        )
+
+        unread_count = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
+        resp = HttpResponse(html)
+        resp["HX-Trigger"] = json.dumps({"notif:badge": {"unread": unread_count}})
+        return resp
+
+    def get(self, *args, **kwargs):
+        return HttpResponseBadRequest("POST required")
+
+
+class UserSelfProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
+    """
+    User-facing Account Settings page.
+    Always edits the current user's profile (no pk in URL).
+    """
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "adminpanel/user/user_edit_profile.html"
+    success_url = reverse_lazy("user_account_settings")  # define this route below
+
+    # --- Hard-scope to the current user's profile ---
+    def get_object(self, queryset=None):
+        # If for any reason profile might not exist, ensure it does:
+        profile, _ = UserProfile.objects.get_or_create(user=self.request.user)
+        return profile
+
+    # --- Normalize Persian/Jalali date in POST before form validation ---
+    def post(self, request, *args, **kwargs):
+        data = request.POST.copy()
+
+        def persian_to_english_digits(s: str) -> str:
+            persian = "۰۱۲۳۴۵۶۷۸۹"
+            english = "0123456789"
+            for p, e in zip(persian, english):
+                s = s.replace(p, e)
+            return s
+
+        bd = data.get("birth_date")
+        if bd:
+            shamsi_str = persian_to_english_digits(bd)
+            try:
+                jy, jm, jd = map(int, shamsi_str.split("/"))
+                g = jdatetime.date(jy, jm, jd).togregorian()  # datetime.date
+                data["birth_date"] = g.strftime("%Y-%m-%d")
+            except Exception:
+                # Let form add an error if needed
+                pass
+
+        request.POST = data
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Optionally update auth user fields (email, first/last name) from the form/POST
+        user = self.request.user
+        new_email = self.request.POST.get("email")
+        if new_email and new_email != user.email:
+            user.email = new_email
+            user.save(update_fields=["email"])
+
+        messages.success(self.request, "پروفایل شما با موفقیت به‌روزرسانی شد.")
+        return super().form_valid(form)

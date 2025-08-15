@@ -1,0 +1,35 @@
+{% if object_list %}
+  <div class="divide-y divide-gray-100">
+    {% for n in object_list %}
+      {% include "adminpanel/user/notifications/_item.html" with n=n tab=tab %}
+    {% endfor %}
+  </div>
+
+  {% if is_paginated %}
+  <div class="p-4 flex items-center justify-center gap-2">
+    {% if page_obj.has_previous %}
+      <button
+        hx-get="{% url 'user_notifications_partial' %}?tab={{ tab }}&page={{ page_obj.previous_page_number }}"
+        hx-target="#notif-list"
+        hx-swap="outerHTML"
+        class="px-3 py-2 rounded-lg text-sm bg-gray-100 hover:bg-gray-200">
+        قبلی
+      </button>
+    {% endif %}
+    <span class="text-xs text-gray-500">
+      صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+      <button
+        hx-get="{% url 'user_notifications_partial' %}?tab={{ tab }}&page={{ page_obj.next_page_number }}"
+        hx-target="#notif-list"
+        hx-swap="outerHTML"
+        class="px-3 py-2 rounded-lg text-sm bg-gray-100 hover:bg-gray-200">
+        بعدی
+      </button>
+    {% endif %}
+  </div>
+  {% endif %}
+{% else %}
+  <div class="p-6 text-sm text-gray-500">اعلان جدیدی نیست.</div>
+{% endif %}

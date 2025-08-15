@@ -1,0 +1,54 @@
+{% extends "adminpanel/_admin_layout.html" %}
+{% load static i18n %}
+
+{% block title %}اعلان‌ها{% endblock %}
+{% block header_title %}اعلان‌ها{% endblock %}
+{% block header_description %}مدیریت و مشاهده اعلان‌های سیستم{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4">
+        <div class="flex gap-4">
+            <a
+               href="{% url 'user_notifications' %}?tab=unread"
+               class="tab-link {% if tab == 'unread' %}text-orange-600 font-semibold{% else %}text-gray-600{% endif %}">
+                نخوانده‌ها
+            </a>
+            <a
+               href="{% url 'user_notifications' %}?tab=all"
+               class="tab-link {% if tab == 'all' %}text-orange-600 font-semibold{% else %}text-gray-600{% endif %}">
+                همه
+            </a>
+        </div>
+        <form hx-post="{% url 'user_notifications_mark_all' %}?tab={{ tab }}" hx-target="#notif-list" hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit" class="text-sm text-orange-600 hover:underline">علامت‌گذاری همه به‌عنوان خوانده</button>
+        </form>
+    </div>
+
+    <div id="notif-list" hx-get="{% url 'user_notifications_partial' %}?tab={{ tab }}" hx-trigger="load">
+
+    </div>
+</div>
+    <script>
+document.addEventListener("htmx:afterRequest", function(evt) {
+    // وقتی request به endpoint های اعلان‌ها رفت
+    if (evt.detail.path && evt.detail.path.includes("/admin/notifications")) {
+        // درخواست تعداد نخوانده‌ها
+        fetch("/api/notifications/?unread=1", { credentials: "include" })
+            .then(r => r.json())
+            .then(data => {
+                let count = Array.isArray(data.results) ? data.results.length : 0;
+                document.querySelectorAll(".notif-count").forEach(el => {
+                    el.textContent = count;
+                    if (count > 0) el.classList.remove("hidden");
+                    else el.classList.add("hidden");
+                });
+            })
+            .catch(()=>{});
+    }
+});
+
+</script>
+
+{% endblock %}

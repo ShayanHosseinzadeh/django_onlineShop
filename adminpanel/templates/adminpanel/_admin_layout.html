@@ -201,6 +201,8 @@
             <div class="flex items-center space-x-3 space-x-reverse">
 
                 <div>
+                                        <p class="font-medium">{{ user.profile.full_name }}</p>
+
                     <p class="text-sm text-gray-400">{{ user.email }}</p>
                 </div>
             </div>
@@ -227,56 +229,28 @@
                     </a>
                 </li>
 
-                <!-- Wishlist -->
-                <li>
-                    <a href="#"
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
-                        <i class="fas fa-heart ml-3"></i>
-                        علاقه‌مندی‌ها
-                    </a>
-                </li>
-
                 <!-- Shopping Cart -->
                 <li>
-                    <a href="#"
+                    <a href="{% url 'cart_detail' %}"
                        class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
                         <i class="fas fa-shopping-cart ml-3"></i>
                         سبد خرید
-                        <span class="mr-auto bg-orange-light text-white text-xs px-2 py-1 rounded-full">۲</span>
                     </a>
                 </li>
 
-                <!-- Address Book -->
-                <li>
-                    <a href="#"
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
-                        <i class="fas fa-map-marker-alt ml-3"></i>
-                        آدرس‌های من
-                    </a>
-                </li>
-
-                <!-- Payment Methods -->
-                <li>
-                    <a href="#"
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
-                        <i class="fas fa-credit-card ml-3"></i>
-                        روش‌های پرداخت
-                    </a>
-                </li>
 
                 <!-- Notifications -->
                 <li>
-                    <a href="#"
+                    <a href="{% url 'user_notifications' %}"
                        class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
                         <i class="fas fa-bell ml-3"></i>
                         اعلان‌ها
-                        <span class="mr-auto bg-orange-light text-white text-xs px-2 py-1 rounded-full">۳</span>
                     </a>
                 </li>
 
                 <!-- Account Settings -->
                 <li>
-                    <a href="#"
+                    <a href="{% url 'user_account_settings' %}"
                        class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200">
                         <i class="fas fa-user-cog ml-3"></i>
                         تنظیمات حساب
@@ -390,7 +364,7 @@
                                 <p class="text-xs text-gray-600">{{ user.email }}</p>
                             </div>
                             <div class="py-2">
-                                <a href="#"
+                                <a href="{% url 'user_account_settings' %}"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
                                     <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -398,7 +372,7 @@
                                     </svg>
                                     پروفایل من
                                 </a>
-                                <a href="#"
+                                <a href="{% url 'admin_settings' %}"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
                                     <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -407,14 +381,6 @@
                                               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
                                     تنظیمات
-                                </a>
-                                <a href="#"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                    <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    راهنما
                                 </a>
                             </div>
                             <div class="border-t border-gray-100 py-2">
@@ -536,20 +502,10 @@
                                 <p class="text-xs text-gray-600">{{ user.email }}</p>
                             </div>
                             <div class="py-2">
-                                <a href="#"
+                                <a href="{% url 'user_account_settings' %}"
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
                                     <i class="fas fa-user ml-3"></i>
                                     پروفایل من
-                                </a>
-                                <a href="#"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                    <i class="fas fa-cog ml-3"></i>
-                                    تنظیمات
-                                </a>
-                                <a href="#"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                                    <i class="fas fa-question-circle ml-3"></i>
-                                    راهنما
                                 </a>
                             </div>
                             <div class="border-t border-gray-100 py-2">
