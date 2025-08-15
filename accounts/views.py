@@ -12,3 +12,4 @@ class CustomSignupView(SignupView):
 
     def form_valid(self, form):
         return super().form_valid(form)
+

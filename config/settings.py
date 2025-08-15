@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from pathlib import Path
+
 from environs import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'rosetta',
     'ckeditor',
+    'channels',
 
     # my apps
     'accounts.apps.AccountsConfig',
@@ -53,17 +56,20 @@ INSTALLED_APPS = [
     'persian_translate.apps.PersianTranslateConfig',
     'orders.apps.OrdersConfig',
     'core.apps.CoreConfig',
+    'notifications.apps.NotificationsConfig',
     'adminpanel.apps.AdminpanelConfig'
+
     # 'payment.apps.PaymentConfig', # DISABLED
 ]
 
+ASGI_APPLICATION = "config.asgi.application"
+NOTIFS = {
+    "BATCH_WINDOW_SECONDS": 120,
+}
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 
-    # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
-
 ]
 SITE_ID = 1
 MIDDLEWARE = [
@@ -77,7 +83,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
-
+# settings.py
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [

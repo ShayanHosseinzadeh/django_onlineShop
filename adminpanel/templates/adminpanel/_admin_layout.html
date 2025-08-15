@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -36,6 +37,7 @@
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body class="font-vazir bg-gray-50 min-h-screen">
+
 {% if messages %}
     <div
             id="messages-container"
@@ -338,7 +340,8 @@
                         <button id="notificationBtn"
                                 class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                             <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">۳</span>
+                            <span class="notif-count absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5
+             flex items-center justify-center animate-pulse hidden">0</span>
                         </button>
 
                         <!-- Notifications Dropdown Menu -->
@@ -347,39 +350,15 @@
                             <div class="px-4 py-3 border-b border-gray-100">
                                 <h3 class="text-sm font-semibold text-gray-900">اعلان‌ها</h3>
                             </div>
-                            <div class="max-h-64 overflow-y-auto">
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">سفارش جدید</p>
-                                        <p class="text-xs text-gray-600 mt-1">سفارش #۱۲۳۴ ثبت شد</p>
-                                        <p class="text-xs text-gray-500 mt-1">۵ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">پرداخت موفق</p>
-                                        <p class="text-xs text-gray-600 mt-1">پرداخت ۲۵۰,۰۰۰ تومان</p>
-                                        <p class="text-xs text-gray-500 mt-1">۱۰ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-orange-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">موجودی کم</p>
-                                        <p class="text-xs text-gray-600 mt-1">کفش ورزشی کمتر از ۵ عدد</p>
-                                        <p class="text-xs text-gray-500 mt-1">۱۵ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                            </div>
+
+
+                            <div id="notifList" class="max-h-64 overflow-y-auto"></div>
+
                             <div class="px-4 py-3 border-t border-gray-100">
-                                <a href="#" class="text-sm text-orange-light hover:text-orange-dark font-medium">مشاهده
-                                    همه
-                                    اعلان‌ها</a>
+                                <a href="{% url 'admin_notifications' %}"
+                                   class="text-sm text-orange-light hover:text-orange-dark font-medium">
+                                    مشاهده همه اعلان‌ها
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -470,19 +449,19 @@
                     </button>
 
                     <!-- Logo & Title (Hidden on mobile) -->
-<div class="hidden lg:flex items-center space-x-3 space-x-reverse">
-  {% if site_settings.logo %}
-    <img src="{{ site_settings.logo.url }}" alt="logo" class="w-8 h-8 rounded-lg object-cover">
-  {% else %}
-    <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
-      <i class="fas fa-bolt text-white text-lg"></i>
-    </div>
-  {% endif %}
-  <div>
-    <h1 class="text-lg font-bold text-gray-900">{{ site_settings.site_name|default:"فروشگاه آنلاین" }}</h1>
-    <p class="text-xs text-gray-500">پنل کاربری</p>
-  </div>
-</div>
+                    <div class="hidden lg:flex items-center space-x-3 space-x-reverse">
+                        {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="logo" class="w-8 h-8 rounded-lg object-cover">
+                        {% else %}
+                            <div class="w-8 h-8 bg-orange-light rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-lg"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-900">{{ site_settings.site_name|default:"فروشگاه آنلاین" }}</h1>
+                            <p class="text-xs text-gray-500">پنل کاربری</p>
+                        </div>
+                    </div>
                     <!-- Page Title (Mobile Only) -->
                     <h1 class="text-xl font-semibold text-gray-900 lg:hidden">داشبورد</h1>
                 </div>
@@ -508,49 +487,26 @@
                         <button id="notificationBtn"
                                 class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                             <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">۳</span>
+                            <span class="notif-count absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5
+             flex items-center justify-center animate-pulse hidden">0</span>
                         </button>
 
                         <!-- Notifications Dropdown Menu -->
-                        <div id="notificationDropdown"
-                             class="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hidden">
-                            <div class="px-4 py-3 border-b border-gray-100">
-                                <h3 class="text-sm font-semibold text-gray-900">اعلان‌ها</h3>
-                            </div>
-                            <div class="max-h-64 overflow-y-auto">
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">سفارش جدید</p>
-                                        <p class="text-xs text-gray-600 mt-1">سفارش #۱۲۳۴ ثبت شد</p>
-                                        <p class="text-xs text-gray-500 mt-1">۵ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">پرداخت موفق</p>
-                                        <p class="text-xs text-gray-600 mt-1">پرداخت ۲۵۰,۰۰۰ تومان</p>
-                                        <p class="text-xs text-gray-500 mt-1">۱۰ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                                <a href="#"
-                                   class="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                    <div class="w-2 h-2 bg-orange-500 rounded-full mt-2 ml-3 flex-shrink-0"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">موجودی کم</p>
-                                        <p class="text-xs text-gray-600 mt-1">کفش ورزشی کمتر از ۵ عدد</p>
-                                        <p class="text-xs text-gray-500 mt-1">۱۵ دقیقه پیش</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="px-4 py-3 border-t border-gray-100">
-                                <a href="#" class="text-sm text-orange-light hover:text-orange-dark font-medium">مشاهده
-                                    همه اعلان‌ها</a>
-                            </div>
-                        </div>
+<div id="notificationDropdown"
+     class="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 hidden">
+  <div class="px-4 py-3 border-b border-gray-100">
+    <h3 class="text-sm font-semibold text-gray-900">اعلان‌ها</h3>
+  </div>
+
+  <!-- 👇 این div رو خالی بذار و id بده -->
+  <div id="notifList" class="max-h-64 overflow-y-auto"></div>
+
+  <div class="px-4 py-3 border-t border-gray-100">
+    <a href="{% url 'admin_notifications' %}" class="text-sm text-orange-light hover:text-orange-dark font-medium">
+      مشاهده همه اعلان‌ها
+    </a>
+  </div>
+</div>
                     </div>
 
                     <!-- User Profile Dropdown -->
@@ -626,6 +582,9 @@
         {% endblock %}
     </main>
 </div>
+<audio id="notif-audio" preload="auto">
+    <source src="{% static 'sound/ding.mp3' %}" type="audio/mpeg">
+</audio>
 
 
 <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
@@ -725,4 +684,260 @@
     });
 </script>
 </body>
+{#Websocket script#}
+<script>
+(function(){
+  // ---- DOM ready ----
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  // ===== Helpers =====
+  function selectBadges(){ return Array.from(document.querySelectorAll(".notif-count")); }
+  function showBadges(badges, n){ badges.forEach(el => { el.textContent = String(n); n>0 ? el.classList.remove("hidden") : el.classList.add("hidden"); }); }
+  function getCookie(name){ const m = document.cookie.match(new RegExp("(^| )"+name+"=([^;]+)")); return m ? decodeURIComponent(m[2]) : null; }
+  function levelStyles(level){
+    switch(level){
+      case "success": return "border-emerald-300 bg-emerald-50 text-emerald-800";
+      case "warning": return "border-amber-300 bg-amber-50 text-amber-800";
+      case "error":   return "border-rose-300 bg-rose-50 text-rose-800";
+      default:        return "border-sky-300 bg-sky-50 text-sky-800";
+    }
+  }
+  function levelDot(level){ return level==="success"?"bg-green-500":level==="warning"?"bg-orange-500":level==="error"?"bg-red-500":"bg-blue-500"; }
+  function fromNow(iso){
+    if(!iso) return "";
+    const d=new Date(iso), diffM=Math.floor((Date.now()-d.getTime())/60000);
+    if(diffM<1) return "همین الان";
+    if(diffM<60) return `${diffM} دقیقه پیش`;
+    const h=Math.floor(diffM/60); if(h<24) return `${h} ساعت پیش`;
+    const day=Math.floor(h/24); return `${day} روز پیش`;
+  }
+  function buildNotificationText(n){
+    const verb=(n.verb||"did something").trim();
+    const count=Number(n?.payload?.count||1);
+    const actors=Array.isArray(n?.payload?.actors)?n.payload.actors:[];
+    let actorPhrase="";
+    if(actors.length===1) actorPhrase=actors[0];
+    else if(actors.length===2) actorPhrase=`${actors[0]} and ${actors[1]}`;
+    else if(actors.length>=3){ const others=Math.max(0,count-2); actorPhrase=`${actors[0]}, ${actors[1]} and ${others} other${others>1?"s":""}`; }
+    return actorPhrase ? `${actorPhrase} ${verb}`.trim() : (count>1?`${verb} ×${count}`:verb);
+  }
+
+  // ===== Local read persistence (fallback) =====
+  const READ_KEY="read_notifs_v1";
+  function loadReadSet(){ try{ return new Set(JSON.parse(localStorage.getItem(READ_KEY)||"[]")); }catch{ return new Set(); } }
+  function saveReadSet(set){ try{ localStorage.setItem(READ_KEY, JSON.stringify([...set])); }catch{} }
+  let readSet = loadReadSet();
+  function markLocalRead(id){ if(!id) return; readSet.add(String(id)); saveReadSet(readSet); }
+  function isLocallyRead(id){ return readSet.has(String(id)); }
+
+  // ===== Main init =====
+  function init(){
+    const csrftoken = getCookie("csrftoken") || "";
+    const badges = selectBadges();
+    let unreadCount = 0;
+
+    // --- Sound ---
+    const audio = document.getElementById("notif-audio");
+    let unlocked=false, pendingDing=false;
+    async function unlockAudio(){ if(!audio) return; try{ await audio.play(); audio.pause(); audio.currentTime=0; unlocked=true; if(pendingDing){ pendingDing=false; ding(); } }catch{} }
+    ["pointerdown","keydown","touchstart"].forEach(ev=>{ window.addEventListener(ev,function handler(){ window.removeEventListener(ev,handler,{capture:false}); unlockAudio(); },{once:true, passive:true}); });
+    function ding(){ if(!audio) return; if(!unlocked){ pendingDing=true; return; } audio.currentTime=0; audio.play().catch(()=>{}); }
+
+    // --- API helpers ---
+    function markRead(id){
+      if(!id) return Promise.resolve();
+      return fetch(`/api/notifications/${id}/read/`,{
+        method:"POST", credentials:"include",
+        headers:{ "X-Requested-With":"XMLHttpRequest", "X-CSRFToken": csrftoken }
+      });
+    }
+    function fetchUnreadCount(){
+      return fetch("/api/notifications/?unread=1",{credentials:"include"})
+        .then(r=>r.json()).then(d=>Array.isArray(d.results)?d.results.length:0);
+    }
+    function fetchRecent(limit=10){
+      return fetch("/api/notifications/?page=1",{credentials:"include"})
+        .then(r=>r.json()).then(d=>Array.isArray(d.results)?d.results.slice(0,limit):[]);
+    }
+
+    // --- Toast ---
+    let toastContainer = document.getElementById("messages-container");
+    function ensureToastContainer(){
+      if(!toastContainer){
+        toastContainer=document.createElement("div");
+        toastContainer.id="messages-container";
+        toastContainer.className=["fixed","bottom-4","left-1/2","transform","-translate-x-1/2","z-50","max-w-lg","w-[90vw]","sm:w-96","px-4","space-y-2","transition-opacity","duration-500","ease-in-out","opacity-100"].join(" ");
+        document.body.appendChild(toastContainer);
+      }
+    }
+    const toastTimers=new Map();
+    function removeToast(el,id){ const t=toastTimers.get(id); if(t) clearTimeout(t); el.style.opacity="0"; setTimeout(()=>el.remove(),200); }
+    function upsertToast(n, timeoutMs=5000){
+      ensureToastContainer();
+      const sel=`[data-nid="${n.id}"]`;
+      let div=toastContainer.querySelector(sel);
+      if(div){
+        div.textContent=buildNotificationText(n);
+        div.className=`rounded-md border p-4 ${levelStyles(n.level)} shadow-sm cursor-pointer`;
+        div.style.opacity="0"; requestAnimationFrame(()=>{ div.style.opacity="1"; });
+        const old=toastTimers.get(n.id); if(old) clearTimeout(old);
+        if(timeoutMs) toastTimers.set(n.id, setTimeout(()=>removeToast(div,n.id), timeoutMs));
+      }else{
+        div=document.createElement("div");
+        div.dataset.nid=n.id;
+        div.className=`rounded-md border p-4 ${levelStyles(n.level)} shadow-sm cursor-pointer`;
+        div.textContent=buildNotificationText(n);
+        div.style.opacity="0"; div.style.transition="opacity .2s ease";
+        toastContainer.prepend(div); requestAnimationFrame(()=>{ div.style.opacity="1"; });
+        div.addEventListener("click",(ev)=>{
+          ev.preventDefault(); ev.stopPropagation();
+          markRead(n.id).then(()=>{ decUnread(); markLocalRead(n.id); }).catch(()=>{});
+          if(n?.payload?.url && String(n.payload.url).trim()) window.location.assign(n.payload.url);
+          removeToast(div,n.id);
+        });
+        if(timeoutMs) toastTimers.set(n.id, setTimeout(()=>removeToast(div,n.id), timeoutMs));
+      }
+    }
+
+    // --- Badge controls ---
+    function incUnread(){ unreadCount=(unreadCount||0)+1; showBadges(badges, unreadCount); }
+    function decUnread(){ unreadCount=Math.max(0,(unreadCount||0)-1); showBadges(badges, unreadCount); }
+
+    // --- Dropdown ---
+    const notifList = document.getElementById("notifList");
+    function renderDropItem(n){
+      const a=document.createElement("a");
+      a.href = (n?.payload?.url && String(n.payload.url).trim()) ? n.payload.url : "#";
+      a.className="flex items-start px-4 py-3 hover:bg-gray-50 transition-colors duration-200";
+      a.dataset.nid=n.id;
+
+      const dot=document.createElement("div");
+      dot.className=`w-2 h-2 ${levelDot(n.level)} rounded-full mt-2 ml-3 flex-shrink-0`;
+
+      const flex=document.createElement("div"); flex.className="flex-1";
+      const title=document.createElement("p"); title.className="text-sm font-medium text-gray-900"; title.textContent=buildNotificationText(n);
+      const meta=document.createElement("p"); meta.className="text-xs text-gray-500 mt-1"; meta.textContent=fromNow(n.created_at);
+
+      flex.appendChild(title); flex.appendChild(meta);
+      a.appendChild(dot); a.appendChild(flex);
+
+      // dim if read (server or local)
+      if(n.is_read || isLocallyRead(n.id)) a.classList.add("opacity-70");
+
+      a.addEventListener("click",(ev)=>{
+        if(!n?.payload?.url) ev.preventDefault();
+        markRead(n.id).then(()=>{ decUnread(); markLocalRead(n.id); a.classList.add("opacity-70"); }).catch(()=>{});
+      });
+      return a;
+    }
+    function renderDropList(items){
+      if(!notifList) return;
+      notifList.innerHTML="";
+      if(!items.length){
+        const empty=document.createElement("div");
+        empty.className="px-4 py-3 text-sm text-gray-500";
+        empty.textContent="اعلان جدیدی نیست";
+        notifList.appendChild(empty);
+        return;
+      }
+      items.forEach(n=>notifList.appendChild(renderDropItem(n)));
+    }
+    function prependOrUpdateDrop(n){
+      if(!notifList) return;
+      const sel=`[data-nid="${n.id}"]`;
+      const exists=notifList.querySelector(sel);
+      const node=renderDropItem(n);
+      if(exists) notifList.replaceChild(node, exists);
+      else{
+        notifList.prepend(node);
+        const max=10;
+        const anchors=notifList.querySelectorAll("a.flex.items-start");
+        if(anchors.length>max){ for(let i=max;i<anchors.length;i++) anchors[i].remove(); }
+      }
+    }
+
+    // --- Recent Activity (dashboard box) ---
+    const recentBox=document.getElementById("recent-activity");
+    function renderActivityItem(n){
+      const hasUrl = n?.payload?.url && String(n.payload.url).trim();
+      const row=document.createElement(hasUrl?"a":"div");
+      if(hasUrl) row.href=n.payload.url;
+      row.dataset.nid=n.id;
+      row.className="flex items-center space-x-4 space-x-reverse";
+
+      const iconWrap=document.createElement("div");
+      iconWrap.className=`w-10 h-10 ${n.level==="success"?"bg-green-100 text-green-600":n.level==="warning"?"bg-orange-100 text-orange-600":n.level==="error"?"bg-rose-100 text-rose-600":"bg-blue-100 text-blue-600"} rounded-full flex items-center justify-center`;
+      iconWrap.innerHTML=`<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+
+      const middle=document.createElement("div"); middle.className="flex-1";
+      const title=document.createElement("p"); title.className="text-sm font-medium text-gray-900"; title.textContent=buildNotificationText(n);
+      const desc=document.createElement("p"); desc.className="text-sm text-gray-600";
+      if(n?.payload?.description) desc.textContent=n.payload.description;
+
+      middle.appendChild(title); if(desc.textContent) middle.appendChild(desc);
+
+      const time=document.createElement("span"); time.className="text-sm text-gray-500 whitespace-nowrap"; time.textContent=fromNow(n.created_at);
+
+      row.appendChild(iconWrap); row.appendChild(middle); row.appendChild(time);
+
+      if(n.is_read || isLocallyRead(n.id)) row.classList.add("opacity-70");
+
+      row.addEventListener("click",(ev)=>{ if(!hasUrl) ev.preventDefault(); markRead(n.id).then(()=>{ markLocalRead(n.id); }).catch(()=>{}); });
+
+      return row;
+    }
+    function renderActivityList(items){
+      if(!recentBox) return;
+      recentBox.innerHTML="";
+      if(!items.length){
+        const empty=document.createElement("div"); empty.className="text-sm text-gray-500"; empty.textContent="فعلاً فعالیتی ثبت نشده است.";
+        recentBox.appendChild(empty); return;
+      }
+      items.forEach(n=>recentBox.appendChild(renderActivityItem(n)));
+    }
+    function upsertActivity(n){
+      if(!recentBox) return;
+      const sel=`[data-nid="${n.id}"]`;
+      const exists=recentBox.querySelector(sel);
+      const node=renderActivityItem(n);
+      if(exists) recentBox.replaceChild(node, exists);
+      else{
+        recentBox.prepend(node);
+        const max=10; const children=recentBox.children;
+        if(children.length>max) children[max].remove();
+      }
+    }
+
+    // --- Initial load ---
+    fetchUnreadCount().then(n=>{ unreadCount=n; showBadges(badges, unreadCount); }).catch(()=>{});
+    fetchRecent(10).then(items=>{ renderDropList(items); renderActivityList(items); }).catch(()=>{});
+
+    // --- WebSocket ---
+    const scheme=(location.protocol==="https:"?"wss":"ws");
+    let ws;
+    try{ ws=new WebSocket(`${scheme}://${location.host}/ws/notifications/`); }catch{ ws=null; }
+    if(ws){
+      ws.onmessage=(e)=>{
+        const msg=JSON.parse(e.data);
+        if(msg.event==="created"||msg.event==="updated"){
+          const n=msg.data||{};
+          upsertToast(n,5000);
+          prependOrUpdateDrop(n);
+          upsertActivity(n);
+          if(msg.event==="created"){ incUnread(); ding(); }
+          if(msg.event==="updated" && n.is_read){ markLocalRead(n.id); } // keep dim on refresh
+        }
+      };
+    }
+
+    // --- expose helpers if needed ---
+    function incUnread(){ unreadCount=(unreadCount||0)+1; showBadges(badges, unreadCount); }
+    function decUnread(){ unreadCount=Math.max(0,(unreadCount||0)-1); showBadges(badges, unreadCount); }
+  }
+})();
+</script>
 </html>
