@@ -80,8 +80,10 @@
     </div>
 
     <!-- اکشن‌ها + منوی موبایل -->
+        <!-- اکشن‌ها + منوی موبایل -->
     <div class="flex items-center gap-4">
       {% if user.is_authenticated %}
+        <!-- Desktop: authenticated actions -->
         <div class="hidden sm:flex items-center gap-3 text-gray-700">
           <span>خوش آمدید، {{ user.profile.full_name|default:user.username }}</span>
           <a href="{% url 'admin_dashboard' %}" class="hover:text-orange-600 transition-colors">پنل کاربری</a>
@@ -90,10 +92,20 @@
             <button type="submit" class="text-orange-600 hover:text-orange-800 font-semibold">خروج</button>
           </form>
         </div>
+      {% else %}
+        <!-- Desktop: guest actions (login/register) -->
+        <div class="hidden sm:flex items-center gap-3">
+          <a href="{% url 'account_login' %}"
+             class="inline-flex items-center gap-2 px-3 py-2 border border-orange-500 text-orange-600 rounded-lg hover:bg-orange-50 transition">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>ورود / ثبت‌نام</span>
+          </a>
+        </div>
       {% endif %}
 
+      <!-- Cart -->
       <div class="relative">
-        <a href="{% url 'cart_detail' %}" class="p-2 text-gray-700 hover:text-orange-600 transition-colors">
+        <a href="{% url 'cart_detail' %}" class="p-2 text-gray-700 hover:text-orange-600 transition-colors" aria-label="سبد خرید">
           <i class="fa-solid fa-cart-shopping text-xl"></i>
         </a>
         <span class="absolute -top-3 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">

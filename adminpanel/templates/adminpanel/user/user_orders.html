@@ -1,0 +1,132 @@
+{% extends 'adminpanel/_admin_layout.html' %}
+{% load persian_numbers %}
+{% load jalali_filter %}
+{% block title %}
+     سفارش‌ها
+{% endblock %}
+{% block header_title %}
+     سفارش‌ها
+{% endblock %}
+{% block header_description %}
+    سفارش های شما
+{% endblock %}
+{% block content %}
+
+    <main class="p-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">کل سفارش‌ها</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_orders|translate_number }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">در حال پردازش</p>
+                        <p class="text-2xl font-bold text-warning">{{ processing_orders|translate_number }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-warning text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">تکمیل شده</p>
+                        <p class="text-2xl font-bold text-success">{{ completed_orders|translate_number }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-success text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">لغو شده</p>
+                        <p class="text-2xl font-bold text-danger">{{ cancelled_orders|translate_number }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-times-circle text-danger text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Filters -->
+        <form id="filterForm" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+                <div class="flex-1 max-w-md">
+                    <div class="relative">
+                        <input
+                                type="text"
+                                name="search"
+                                id="searchInput"
+                                placeholder="جستجو بر اساس شماره سفارش، نام مشتری یا ایمیل..."
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent"
+                                hx-get="{% url 'user_order_list' %}"
+                                hx-target="#orderList"
+                                hx-trigger="keyup changed delay:500ms"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <!-- Status Filter -->
+                    <select
+                            name="status"
+                            id="statusFilter"
+                            class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent"
+                            hx-get="{% url 'user_order_list' %}"
+                            hx-target="#orderList"
+                            hx-trigger="change"
+                    >
+                        <option value="">همه وضعیت‌ها</option>
+                        <option value="processing">در حال پردازش</option>
+                        <option value="shipped">ارسال شده</option>
+                        <option value="delivered">تحویل داده شده</option>
+                        <option value="cancelled">لغو شده</option>
+                    </select>
+
+                    <!-- Date Filter -->
+                    <select
+                            name="date"
+                            id="dateFilter"
+                            class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-light focus:border-transparent"
+                            hx-get="{% url 'admin_order_manage' %}"
+                            hx-target="#orderList"
+                            hx-trigger="change"
+                    >
+                        <option value="">همه تاریخ‌ها</option>
+                        <option value="today">امروز</option>
+                        <option value="week">هفته گذشته</option>
+                        <option value="month">ماه گذشته</option>
+                        <option value="year">سال گذشته</option>
+                    </select>
+
+                </div>
+            </div>
+        </form>
+
+        <!-- Orders Table -->
+        <div id="orderList">
+            {% include 'adminpanel/user/partials/orders_list.html' %}
+        </div>
+
+    </main>
+
+{% endblock %}

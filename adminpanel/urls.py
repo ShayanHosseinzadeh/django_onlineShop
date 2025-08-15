@@ -9,7 +9,7 @@ urlpatterns = [
     path('users/', views.AdminUserManage.as_view(), name='admin_user_manage'),
     path('users/bulk-action/', views.BulkUserActionView.as_view(), name='bulk_user_action'),
     path('users/export/excel/', views.ExportUsersToExcelView.as_view(), name='export_users_to_excel'),
-    path('orders/', views.AdminOrderManageView.as_view(), name='admin_order_manage'),
+    path('orders/manage/', views.AdminOrderManageView.as_view(), name='admin_order_manage'),
     path('reports/', views.AdminReportsView.as_view(), name='admin_reports'),
 
     path('users/new/', views.UserProfileCreateView.as_view(), name='user_create'),
@@ -48,4 +48,6 @@ urlpatterns = [
     path("panel/notifications/mark-all-read/", views.AdminNotificationsMarkAllReadView.as_view(),
          name="admin_notifications_mark_all"),
 
+
+    path('orders/',views.UserOrderListView.as_view(), name='user_order_list'),
 ]

@@ -1153,3 +1153,62 @@ class AdminNotificationsMarkAllReadView(AdminNotificationListMixin, generic.View
 
     def get(self, *args, **kwargs):
         return HttpResponseBadRequest("POST required")
+
+
+# users
+
+class UserOrderListView(LoginRequiredMixin, generic.ListView):
+    template_name = "adminpanel/user/user_orders.html"  # your user template path
+    model = Order
+    context_object_name = "orders"
+    paginate_by = 20
+
+    def get_queryset(self):
+        # Base: only this user's orders
+        qs = (self.model.objects
+              .select_related("user")
+              .filter(user=self.request.user))
+
+        # --- Search Filter ---
+        search = self.request.GET.get("search", "").strip()
+        if search:
+            qs = qs.filter(
+                Q(id__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        # --- Status Filter ---
+        status = self.request.GET.get("status", "").strip()
+        if status in ["pending", "processing", "shipped", "delivered", "cancelled", "completed"]:
+            qs = qs.filter(status=status)
+
+        # --- Date Filter ---
+        date_filter = self.request.GET.get("date", "").strip()
+        now = datetime.now()
+        if date_filter == "today":
+            qs = qs.filter(datetime_created__date=now.date())
+        elif date_filter == "week":
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=7))
+        elif date_filter == "month":
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=30))
+        elif date_filter == "year":
+            qs = qs.filter(datetime_created__gte=now - timedelta(days=365))
+
+        return qs.order_by("-datetime_created")
+
+    def get(self, request, *args, **kwargs):
+        # For HTMX requests, render only the partial list
+        if request.headers.get("HX-Request"):
+            self.template_name = "adminpanel/user/partials/orders_list.html"
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        base = self.model.objects.filter(user=self.request.user)
+        ctx["total_orders"] = base.count()
+        ctx["processing_orders"] = base.filter(status="processing").count()
+        ctx["completed_orders"] = base.filter(status="completed").count()
+        ctx["cancelled_orders"] = base.filter(status="cancelled").count()
+        return ctx
