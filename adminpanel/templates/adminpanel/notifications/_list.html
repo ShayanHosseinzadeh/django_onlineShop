@@ -1,0 +1,20 @@
+{% if object_list %}
+    {% for n in object_list %}
+        {% include "adminpanel/notifications/_item.html" with n=n %}
+    {% endfor %}
+
+    {% if is_paginated %}
+    <div class="border-t border-gray-100 p-4 flex justify-center">
+        {% if page_obj.has_previous %}
+            <button hx-get="?tab={{ tab }}&page={{ page_obj.previous_page_number }}" hx-target="#notif-list" hx-swap="outerHTML"
+                class="px-3 py-1 text-sm border rounded hover:bg-gray-50 mx-1">قبلی</button>
+        {% endif %}
+        {% if page_obj.has_next %}
+            <button hx-get="?tab={{ tab }}&page={{ page_obj.next_page_number }}" hx-target="#notif-list" hx-swap="outerHTML"
+                class="px-3 py-1 text-sm border rounded hover:bg-gray-50 mx-1">بعدی</button>
+        {% endif %}
+    </div>
+    {% endif %}
+{% else %}
+    <div class="px-6 py-4 text-gray-500">اعلان جدیدی نیست</div>
+{% endif %}

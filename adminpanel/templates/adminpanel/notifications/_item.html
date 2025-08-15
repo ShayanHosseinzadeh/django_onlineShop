@@ -1,0 +1,29 @@
+<div class="flex items-start gap-3 px-6 py-4 border-b border-gray-100 {% if n.read_at %}opacity-60{% endif %}"
+     data-nid="{{ n.id }}">
+    <div class="w-2 h-2 rounded-full mt-2 flex-shrink-0
+        {% if n.level == 'success' %}bg-green-500
+        {% elif n.level == 'warning' %}bg-orange-500
+        {% elif n.level == 'error' %}bg-red-500
+        {% else %}bg-blue-500{% endif %}">
+    </div>
+    <div class="flex-1">
+        <p class="text-sm font-medium text-gray-900">{{ n.verb }}</p>
+        {% if n.payload.description %}
+        <p class="text-xs text-gray-600 mt-1">{{ n.payload.description }}</p>
+        {% endif %}
+        <p class="text-xs text-gray-400 mt-1">{{ n.created_at|date:"Y/m/d H:i" }}</p>
+    </div>
+    <div class="flex flex-col items-end gap-2">
+        {% if n.payload.url %}
+        <a href="{{ n.payload.url }}" class="text-xs text-orange-600 hover:underline">مشاهده</a>
+        {% endif %}
+        <form hx-post="{% url 'admin_notification_toggle' n.id %}?tab={{ tab }}"
+              hx-target="closest [data-nid]" hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit"
+                    class="text-xs text-gray-500 hover:text-gray-700">
+                {% if n.read_at %}علامت‌گذاری به عنوان نخوانده{% else %}علامت‌گذاری به عنوان خوانده{% endif %}
+            </button>
+        </form>
+    </div>
+</div>

@@ -7,6 +7,7 @@ import openpyxl
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models.aggregates import Sum, Avg, Count
 from django.db.models.expressions import F, ExpressionWrapper
@@ -15,17 +16,20 @@ from django.db.models.functions.comparison import Cast
 from django.db.models.functions.datetime import TruncDate
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
-from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponseForbidden, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import redirect, get_object_or_404, render
+from django.template.loader import render_to_string
 from django.urls.base import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext
 from django.views import generic
+from django.views.generic.detail import SingleObjectMixin
 from openpyxl.styles import Font, Alignment
 
 from accounts.models import UserProfile
 from adminpanel.forms import UserProfileForm, OrderUpdateForm, OrderItemFormSet, UserCreateForm, ProductForm, \
     CommentInlineFormSet, CategoryForm
+from notifications.models import Notification
 from orders.models import Order, OrderItem
 from products.models import Product, Comment, Category
 
@@ -1048,17 +1052,104 @@ class AdminReportsView(generic.TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class AdminNotificationsView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+PAGE_SIZE = 10
+
+
+class AdminNotificationListMixin(AdminRequiredMixin, LoginRequiredMixin,generic.ListView):
+    """Common list behavior for admin panel."""
+    paginate_by = PAGE_SIZE
+
+    def get_tab(self) -> str:
+        tab = self.request.GET.get("tab", "unread")
+        return tab if tab in ("unread", "all") else "unread"
+
+    def get_queryset(self):
+        # Admin panel usually wants ALL notifications (system-wide) OR just admins’?
+        # If you want only current admin’s notifications, filter by user=self.request.user.
+        # If you want global notifications for admins, remove user filter or add a scope.
+        qs = (Notification.objects
+              .filter(user=self.request.user)  # keep per-admin; change if you want global
+              .order_by("-created_at"))
+        if self.get_tab() == "unread":
+            qs = qs.filter(read_at__isnull=True)
+        return qs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        ctx = super().get_context_data(**kwargs)
+        ctx["tab"] = self.get_tab()
+        return ctx
 
 
-class AdminSettingsView(AdminRequiredMixin, generic.TemplateView):
-    template_name = ""
+class AdminNotificationsIndexView(AdminNotificationListMixin, generic.ListView):
+    """
+    Full page (SSR) with tabs; includes partial for the list.
+    templates:
+      - notifications/index.html (shell)
+      - notifications/_list.html (items container)
+      - notifications/_item.html (single item)
+    """
+    template_name = "adminpanel/notifications/index.html"
+    context_object_name = "object_list"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+
+class AdminNotificationsPartialView(AdminNotificationListMixin, generic.ListView):
+    """Partial HTML (used by HTMX swaps)."""
+    template_name = "adminpanel/notifications/_list.html"
+    context_object_name = "object_list"
+
+
+class AdminNotificationToggleReadView(AdminRequiredMixin,LoginRequiredMixin, SingleObjectMixin, generic.View):
+    model = Notification
+    template_name = "adminpanel/notifications/_item.html"
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user_id != request.user.id:
+            return HttpResponseBadRequest("Forbidden")
+
+        obj.read_at = None if obj.read_at else timezone.now()
+        obj.save(update_fields=["read_at"])
+
+        # HTML همان ردیف
+        html = render_to_string(self.template_name, {"n": obj, "tab": request.GET.get("tab", "unread")}, request=request)
+
+        # تعداد نخوانده‌های جدید را حساب کن
+        unread_count = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
+
+        # پاسخ با HX-Trigger: notif:badge
+        resp = HttpResponse(html)
+        resp["HX-Trigger"] = json.dumps({"notif:badge": {"unread": unread_count}})
+        return resp
+
+    def get(self, *args, **kwargs):
+        return HttpResponseBadRequest("POST required")
+
+
+class AdminNotificationsMarkAllReadView(AdminNotificationListMixin, generic.View):
+    template_name = "adminpanel/notifications/_list.html"
+
+    def post(self, request, *args, **kwargs):
+        (Notification.objects
+         .filter(user=request.user, read_at__isnull=True)
+         .update(read_at=timezone.now()))
+
+        # بازسازی لیست تب فعلی
+        qs = self.get_queryset()
+        paginator = Paginator(qs, PAGE_SIZE)
+        page_obj = paginator.get_page(1)
+
+        html = render_to_string(
+            self.template_name,
+            {"tab": self.get_tab(), "page_obj": page_obj, "is_paginated": page_obj.has_other_pages()},
+            request=request,
+        )
+
+        # شمارش جدید
+        unread_count = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
+
+        resp = HttpResponse(html)
+        resp["HX-Trigger"] = json.dumps({"notif:badge": {"unread": unread_count}})
+        return resp
+
+    def get(self, *args, **kwargs):
+        return HttpResponseBadRequest("POST required")

@@ -154,9 +154,7 @@
                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-colors duration-200
                    {% if request.resolver_match.url_name == 'admin_notifications' %} bg-gray-800 text-white {% else %} text-gray-300 {% endif %}">
                         <i class="fas fa-bell ml-3"></i>
-                        اعلان‌ها و پیام‌ها
-                        <span class="mr-auto bg-orange-light text-white text-xs px-2 py-1 rounded-full">۳</span>
-                    </a>
+                        اعلان‌ها و پیام‌ها</a>
                 </li>
 
                 <!-- Site Settings -->
@@ -938,6 +936,19 @@
     function incUnread(){ unreadCount=(unreadCount||0)+1; showBadges(badges, unreadCount); }
     function decUnread(){ unreadCount=Math.max(0,(unreadCount||0)-1); showBadges(badges, unreadCount); }
   }
+
+
 })();
+
+</script>
+<script>
+  // Listen for server-sent HX-Trigger event and update the bell badge
+  document.body.addEventListener("notif:badge", function (e) {
+    var count = (e && e.detail && typeof e.detail.unread === "number") ? e.detail.unread : 0;
+    document.querySelectorAll(".notif-count").forEach(function(el){
+      el.textContent = String(count);
+      if (count > 0) el.classList.remove("hidden"); else el.classList.add("hidden");
+    });
+  });
 </script>
 </html>

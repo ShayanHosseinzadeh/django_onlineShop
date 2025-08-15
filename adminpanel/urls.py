@@ -1,7 +1,8 @@
+from django.urls import path
+
 from core.views import AdminSiteSettingsView
 from . import views
 from .views import BulkProductActionView, AdminProductUpdateView, AdminProductDeleteView
-from django.urls import path
 
 urlpatterns = [
     path('', views.Admin_Home.as_view(), name='admin_dashboard'),
@@ -10,8 +11,6 @@ urlpatterns = [
     path('users/export/excel/', views.ExportUsersToExcelView.as_view(), name='export_users_to_excel'),
     path('orders/', views.AdminOrderManageView.as_view(), name='admin_order_manage'),
     path('reports/', views.AdminReportsView.as_view(), name='admin_reports'),
-    path('notifications/', views.AdminNotificationsView.as_view(), name='admin_notifications'),
-    path('settings/', views.AdminSettingsView.as_view(), name='admin_settings'),
 
     path('users/new/', views.UserProfileCreateView.as_view(), name='user_create'),
     path('users/edit/<int:pk>/', views.UserProfileUpdateView.as_view(), name='edit_user_profile'),
@@ -32,12 +31,21 @@ urlpatterns = [
 
     path('categories/', views.AdminCategoryManageView.as_view(), name='admin_category_manage'),
     path('categories/create/modal/', views.AdminCategoryCreateModalView.as_view(), name='admin_category_create_modal'),
-    path('categories/<int:pk>/edit/modal/', views.AdminCategoryUpdateModalView.as_view(), name='admin_category_edit_modal'),
+    path('categories/<int:pk>/edit/modal/', views.AdminCategoryUpdateModalView.as_view(),
+         name='admin_category_edit_modal'),
     path('categories/<int:pk>/delete/modal/', views.AdminCategoryDeleteModalView.as_view(),
          name='admin_category_delete_modal'),
 
     path("admin/reports/", views.AdminReportsView.as_view(), name="admin_reports"),
 
-    path("panel/admin/settings/", AdminSiteSettingsView.as_view(), name="admin_settings"),
+    path("admin/settings/", AdminSiteSettingsView.as_view(), name="admin_settings"),
+
+
+    path("notifications/", views.AdminNotificationsIndexView.as_view(), name="admin_notifications"),
+    path("notifications/partial/", views.AdminNotificationsPartialView.as_view(), name="admin_notifications_partial"),
+    path("notifications/<int:pk>/toggle/", views.AdminNotificationToggleReadView.as_view(),
+         name="admin_notification_toggle"),
+    path("panel/notifications/mark-all-read/", views.AdminNotificationsMarkAllReadView.as_view(),
+         name="admin_notifications_mark_all"),
 
 ]
