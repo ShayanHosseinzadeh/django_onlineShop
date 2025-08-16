@@ -104,16 +104,16 @@ The app will be available at: 👉 `http://127.0.0.1:8000/`
 
 ### 🛒 Shop Frontend
 - **Product Detail**  
-  ![Product Detail](screenshots/product%20detail.jpg)
+  ![Product Detail](screenshots/product%20detail.png)
 
 - **Cart**  
-  ![Cart](screenshots/cart.jpg)
+  ![Cart](screenshots/cart.png)
 
 - **Sign Up**  
-  ![Signup](screenshots/signup.jpg)
+  ![Signup](screenshots/signup.png)
 
 - **Login**  
-  ![Sign In](screenshots/sign-in.jpg)
+  ![Sign In](screenshots/sign-in.png)
 
 ---
 
