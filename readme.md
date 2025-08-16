@@ -20,7 +20,10 @@ It provides product catalog, cart, orders, accounts, and **Realtime Notification
 - 📦 **Orders** with standard order statuses
 - 💳 **Payment** — *disabled by default (requires integration)*
 - 👤 **User Accounts & Profiles** (signup/login, profile management)
-- 🛠️ **Custom Admin Panel** (besides Django Admin)
+- 🛠️ **Custom Admin Panel** (besides Django Admin) — includes:
+  - **Order Management**
+  - **Product and Category Management**
+  - **Report with charts**
 - 🖼️ **Media uploads** (product images, avatars)
 - 🧰 **Seed/Demo Data** for quick testing
 - 🚧 **Maintenance Mode** middleware
@@ -73,6 +76,44 @@ python manage.py runserver
 ```
 
 The app will be available at: 👉 `http://127.0.0.1:8000/`
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Admin Panel
+- **Dashboard**  
+  ![Admin Dashboard](screenshots/admin%20dashboard.jpeg)
+
+- **User Management**  
+  ![User Management](screenshots/user%20management%20admin%20panel.jpeg)
+
+- **Orders**  
+  ![Orders Panel](screenshots/order%20panel.jpeg)
+
+- **Reports & Charts**  
+  ![Reports](screenshots/reports.jpeg)
+
+- **Notifications**  
+  ![Notifications](screenshots/notifications.jpeg)
+
+- **Site Settings**  
+  ![Site Settings](screenshots/site%20setting%20admin%20panel.jpeg)
+
+---
+
+### 🛒 Shop Frontend
+- **Product Detail**  
+  ![Product Detail](screenshots/product%20detail.jpeg)
+
+- **Cart**  
+  ![Cart](screenshots/cart.jpeg)
+
+- **Sign Up**  
+  ![Signup](screenshots/signup.jpeg)
+
+- **Login**  
+  ![Sign In](screenshots/sign-in.jpeg)
 
 ---
 
