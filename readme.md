@@ -83,37 +83,37 @@ The app will be available at: 👉 `http://127.0.0.1:8000/`
 
 ### 🏠 Admin Panel
 - **Dashboard**  
-  ![Admin Dashboard](screenshots/admin%20dashboard.jpeg)
+  ![Admin Dashboard](screenshots/admin%20dashboard.jpg)
 
 - **User Management**  
-  ![User Management](screenshots/user%20management%20admin%20panel.jpeg)
+  ![User Management](screenshots/user%20management%20admin%20panel.jpg)
 
 - **Orders**  
-  ![Orders Panel](screenshots/order%20panel.jpeg)
+  ![Orders Panel](screenshots/order%20panel.jpg)
 
 - **Reports & Charts**  
-  ![Reports](screenshots/reports.jpeg)
+  ![Reports](screenshots/reports.jpg)
 
 - **Notifications**  
-  ![Notifications](screenshots/notifications.jpeg)
+  ![Notifications](screenshots/notifications.jpg)
 
 - **Site Settings**  
-  ![Site Settings](screenshots/site%20setting%20admin%20panel.jpeg)
+  ![Site Settings](screenshots/site%20setting%20admin%20panel.jpg)
 
 ---
 
 ### 🛒 Shop Frontend
 - **Product Detail**  
-  ![Product Detail](screenshots/product%20detail.jpeg)
+  ![Product Detail](screenshots/product%20detail.jpg)
 
 - **Cart**  
-  ![Cart](screenshots/cart.jpeg)
+  ![Cart](screenshots/cart.jpg)
 
 - **Sign Up**  
-  ![Signup](screenshots/signup.jpeg)
+  ![Signup](screenshots/signup.jpg)
 
 - **Login**  
-  ![Sign In](screenshots/sign-in.jpeg)
+  ![Sign In](screenshots/sign-in.jpg)
 
 ---
 
