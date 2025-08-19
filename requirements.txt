@@ -6,6 +6,7 @@ certifi==2023.11.17
 cffi==1.17.1
 channels==4.3.1
 charset-normalizer==3.3.2
+click==8.2.1
 constantly==23.10.4
 crispy-bootstrap4==2023.1
 cryptography==41.0.7
@@ -26,6 +27,8 @@ environs==10.3.0
 et_xmlfile==2.0.0
 factory_boy==3.3.3
 Faker==37.5.3
+gunicorn==23.0.0
+h11==0.16.0
 hyperlink==21.0.0
 idna==3.6
 incremental==24.7.2
@@ -37,6 +40,7 @@ openpyxl==3.1.5
 packaging==23.2
 pillow==11.3.0
 polib==1.2.0
+psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.21
@@ -56,4 +60,5 @@ txaio==25.6.1
 typing_extensions==4.14.1
 tzdata==2021.5
 urllib3==2.1.0
+uvicorn==0.35.0
 zope.interface==7.2

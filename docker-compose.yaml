@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  shop-database:
+    image: postgres:15.1
+    container_name: shop_db
+    expose:
+      - "5432"
+    volumes:
+      - shop-db-storage:/var/lib/postgresql/data
+    env_file:
+      - ./docker/.envs/db.env
+    networks:
+      - db_network
+
+  shop:
+    container_name: shop_app
+    build: .
+    ports:
+      - "8000:8000"
+    command: [ "./docker/entrypoints/django-entrypoint.sh" ]
+    env_file:
+      - ./docker/.envs/django.env
+    restart: always
+    depends_on:
+      - shop-database
+    networks:
+      - db_network
+    volumes:
+      - media-files:/app/media
+      - static-files:/app/static
+
+
+volumes:
+  shop-db-storage:
+  media-files:
+  static-files:
+
+networks:
+  db_network:
+    driver: bridge
